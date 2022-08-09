@@ -3,4 +3,5 @@ from django.urls import path
 
 urlpatterns = [
 	path('', views.login), 
+	path('iniciarSesion/', views.iniciarSesion)
 ]
