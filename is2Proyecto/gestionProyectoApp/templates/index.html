@@ -11,12 +11,13 @@
     <hr>
 
     <br><h3>Ingrese sus datos para iniciar sesion</h3><br>
-    <form action="" method="" enctype="text/plain">
-          <label>Email:</label>
-          <input type="email" name="yourEmain" value=""><br>
-          <label>Contraseña</label>
-          <input type="password" name="yourPassword" id=""><br>
-          <input type="submit" name="">
+
+    <form action="/iniciarSesion/" method="POST">  {% csrf_token %} 
+        <input type="email" name="yourEmail" placeholder='email'
+          required><br>
+        <input type="password" name="yourPassword" placeholder='contraseña' 
+         required><br>
+        <input type="submit" name="">
     </form>
   </body>
 </html>
