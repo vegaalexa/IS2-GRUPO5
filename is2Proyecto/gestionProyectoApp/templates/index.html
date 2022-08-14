@@ -1,23 +1,26 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>IS 2 PROYECTO</title>
-  </head>
+{%extends './base.html'%}
 
-  <body>
-    <hr>
-    <h1>Bienvenidos</h1>
-    <hr>
+{% block title %} Login {% endblock %}
 
-    <br><h3>Ingrese sus datos para iniciar sesion</h3><br>
-
-    <form action="/homeProyecto/" method="POST">  {% csrf_token %} 
-        <input type="email" name="yourEmail" placeholder='email'
+{% block body %}
+    <div class="login-page">
+    <div class="form">
+      <!--<form class="register-form">
+        <input type="text" placeholder="name"/>
+        <input type="password" placeholder="password"/>
+        <input type="text" placeholder="email address"/>
+        <button>create</button>
+        <p class="message">Registrado? <a href="#">Ingresar</a></p>
+      </form>-->
+      
+      <form class="login-form" action="/homeProyecto/" method="POST">  {% csrf_token %}
+         <input type="email" name="yourEmail" placeholder='email'
+            required><br>
+          <input type="password" name="yourPassword" placeholder='contraseña' 
           required><br>
-        <input type="password" name="yourPassword" placeholder='contraseña' 
-         required><br>
-        <input type="submit" name="">
-    </form>
-  </body>
-</html>
+          <button>login</button>
+        <p class="message">No está registrado? <a href="#">Crear usuario</a></p>
+      </form>
+    </div>
+  </div>
+{% endblock%}
