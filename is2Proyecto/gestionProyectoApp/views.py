@@ -11,3 +11,6 @@ def iniciarSesion(request):
     email = request.POST['yourEmail']
     contrasenia = request.POST['yourPassword']
     return render(request, 'homeProyecto.html', {'email': email})
+
+def seguridad(request):
+    return render(request, 'seguridad.html')
