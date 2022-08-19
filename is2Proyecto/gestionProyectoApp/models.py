@@ -10,6 +10,7 @@ class Proyecto(models.Model):
         texto = '{0} ({1})'
         return texto.format(self.nombre, self.codigo)
     
+    #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Proyecto'
         db_table = 'Proyecto'
@@ -22,6 +23,8 @@ class Usuario(models.Model):
     def __str__(self):
         texto = '{0} ({1}) {2}'
         return texto.format(self.nombre, self.email, self.idUsuario)
+    
+    #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Usuario'
         db_table = 'Usuario'
@@ -32,6 +35,7 @@ class Formulario(models.Model):
     idFormulario = models.CharField(primary_key=True, max_length=6)
     #idFormulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
    
+   #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Formulario'
         db_table = 'Formulario'
@@ -46,9 +50,27 @@ class Permiso(models.Model):
     idPermiso = models.CharField(primary_key=True, max_length=6)
     idFormulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
     
+    #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Permiso'
         db_table = 'Permiso'
+        
+    def __str__(self):
+        texto = '{} {} {} {}'
+        return texto.format(self.nombre, self.descripcion, self.idPermiso, self.idPermiso)
+    
+    
+class Rol(models.Model):
+    nombre = models.CharField(max_length=50)
+    descripcion = models.CharField(max_length=200)
+    idRol = models.CharField(primary_key=True, max_length=6)
+    formulario = models.ManyToManyField(Permiso, related_name='rol_permiso')
+    
+    #personalizamos la tabla en posgres
+    class Meta:
+        verbose_name = 'Rol'
+        db_table = 'Rol'
+        
     #def __str__(self):
     #    texto = '{0} ({1}) {2}'
     #    return texto.format(self.nombre, self.email, self.idUsuario)
