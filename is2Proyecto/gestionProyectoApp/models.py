@@ -9,13 +9,81 @@ class Proyecto(models.Model):
    
     def __str__(self):
         texto = '{0} ({1})'
-        return texto.format(self.nombre, self.codigo)
+        return texto.format(self.nombre, self.idProyecto)
     
     #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Proyecto'
         db_table = 'Proyecto'
     
+class BackLog(models.Model):
+    nombre = models.CharField(max_length=50)
+    idBackLog = models.CharField(primary_key=True, max_length=6)
+    
+    proyecto = models.OneToOneField(Proyecto,on_delete=models.CASCADE,
+                                    null=False, blank=False)
+    
+   
+    def __str__(self):
+        texto = '{0} ({1})'
+        return texto.format(self.nombre, self.idBackLog)
+    
+    #personalizamos la tabla en posgres
+    class Meta:
+        verbose_name = 'BackLog'
+        db_table = 'BackLog'
+
+
+class SprintBackLog(models.Model):
+    nombre = models.CharField(max_length=50)
+    idSprintBackLog = models.CharField(primary_key=True, max_length=6)  
+    backLog = models.ForeignKey(BackLog, null=True,
+                                     blank=True, on_delete=models.CASCADE)
+    
+   
+    def __str__(self):
+        texto = '{} {} {}'
+        return texto.format(self.nombre, self.idSprintBackLog, self.backLog)
+    
+    #personalizamos la tabla en posgres
+    class Meta:
+        verbose_name = 'SprintBackLog'
+        db_table = 'SprintBackLog'
+
+
+class Sprint(models.Model):
+    nombre = models.CharField(max_length=50)
+    idSprint = models.CharField(primary_key=True, max_length=6)  
+    sprintBackLog = models.ForeignKey(SprintBackLog, null=True,
+                                     blank=True, on_delete=models.CASCADE)
+    
+   
+    def __str__(self):
+        texto = '{} {} {}'
+        return texto.format(self.nombre, self.idSprint, self.sprintBackLog)
+    
+    #personalizamos la tabla en posgres
+    class Meta:
+        verbose_name = 'Sprint'
+        db_table = 'Sprint'
+
+
+class UserStory(models.Model):
+    nombre = models.CharField(max_length=50)
+    idUserStory = models.CharField(primary_key=True, max_length=6)  
+    sprintBackLog = models.ForeignKey(SprintBackLog, null=True,
+                                     blank=True, on_delete=models.CASCADE)
+    
+   
+    def __str__(self):
+        texto = '{} {} {}'
+        return texto.format(self.nombre, self.idSprint, self.sprintBackLog)
+    
+    #personalizamos la tabla en posgres
+    class Meta:
+        verbose_name = 'UserStory'
+        db_table = 'UserStory'
+
 
 class Formulario(models.Model):
     nombre = models.CharField(max_length=50)
@@ -37,7 +105,7 @@ class Permiso(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, default='')
     idPermiso = models.CharField(primary_key=True, max_length=6)
-    idFormulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
+    formulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
     
     #personalizamos la tabla en posgres
     class Meta:
@@ -46,7 +114,7 @@ class Permiso(models.Model):
         
     def __str__(self):
         texto = '{} {} {} {}'
-        return texto.format(self.nombre, self.descripcion, self.idPermiso, self.idPermiso)
+        return texto.format(self.nombre, self.descripcion, self.idPermiso)
     
     
 class Rol(models.Model):
@@ -79,3 +147,4 @@ class Usuario(models.Model):
     class Meta:
         verbose_name = 'Usuario'
         db_table = 'Usuario'
+
