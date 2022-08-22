@@ -1,0 +1,68 @@
+{%extends './base.html'%}
+
+{% block title %} usuario {% endblock %}
+
+{% block body %}
+    <h1>MODULO SEGURIDAD/USUARIO</h1>
+    <h4>{{email}}</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Registrar Usuario</h3>
+			<div class="card">
+				<div class="card-body">
+					<form action="/registrarUsuario/{{email}}" method="POST"> {% csrf_token%}
+						<!--<div class="form-group py-2">
+							<input type="text" id="txtCodigo" name='txtCodigo' 
+								class="form-control" placeholder="Codigo" 
+								minlength="6" maxlength="6" required>
+						</div>-->
+						<div class="form-group py-2">
+							<input type="text" id="txtNombre" name='txtNombre' 
+								class="form-control" placeholder="Nombre" 
+								maxlength="50" required>
+						</div>
+                        <div class="form-group py-2">
+							<input type="email" id="txtEmail" name='txtEmail' 
+								class="form-control" placeholder="email" 
+							    required>
+						</div>
+
+						<div class="form-group py-2">
+							<button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+        
+		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de usuarios</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<!--<th>Codigo</th>-->
+							<th>Nombre</th>
+							<th>Email</th>
+							<th colspan="2">Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for u in usuarios %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{u.idUsuario}}</td>
+							<td>{{u.nombre}}</td>
+							<td>{{u.email}}</td>
+							<td><a href="#" class="btn btn-info">Editar</a></td>
+							<td><a href="/eliminarUsuario/{{email}}/{{u.email}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+{% endblock%}
