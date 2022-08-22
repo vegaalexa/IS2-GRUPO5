@@ -133,9 +133,9 @@ class Rol(models.Model):
     #    return texto.format(self.nombre, self.email, self.idUsuario)
     
 class Usuario(models.Model):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(primary_key=True, max_length=50)
     email = models.EmailField()
-    idUsuario = models.CharField(primary_key=True, max_length=6)
+    #idUsuario = models.CharField(primary_key=True, max_length=6)
     roles = models.ManyToManyField(Rol, related_name='usuario_rol')
     proyectos = models.ManyToManyField(Proyecto, related_name='usuario_proyecto')
    
