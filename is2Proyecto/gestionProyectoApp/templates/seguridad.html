@@ -4,13 +4,13 @@
 
 {% block body %}
     <h1>MODULO SEGURIDAD</h1>
-
+    <h4>{{email}}</h4>
     <h4>MENU</h4>
     <nav>
         <ul>
-            <li> <a href="#"> Usuario </a> </li>
-            <li> <a href="#"> Permisos </a> </li>
+            <li> <a href="/usuario/{{email}}"> Usuario </a> </li>
             <li> <a href="#"> Roles </a> </li>
+            <li> <a href="#"> Permisos </a> </li>
         </ul>
     </nav>
 {% endblock%}
