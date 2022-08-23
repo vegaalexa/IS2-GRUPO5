@@ -131,20 +131,20 @@ class Rol(models.Model):
     #def __str__(self):
     #    texto = '{0} ({1}) {2}'
     #    return texto.format(self.nombre, self.email, self.idUsuario)
-    
+ 
+
 class Usuario(models.Model):
-    nombre = models.CharField(primary_key=True, max_length=50)
-    email = models.EmailField()
-    #idUsuario = models.CharField(primary_key=True, max_length=6)
+    nombre = models.CharField(blank=True, null=True, max_length=50)
+    email = models.EmailField(primary_key=True)
+    
     roles = models.ManyToManyField(Rol, related_name='usuario_rol')
     proyectos = models.ManyToManyField(Proyecto, related_name='usuario_proyecto')
    
     def __str__(self):
         texto = '{0} ({1}) {2}'
-        return texto.format(self.nombre, self.email, self.idUsuario)
+        return texto.format(self.nombre, self.email)
     
     #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Usuario'
         db_table = 'Usuario'
-
