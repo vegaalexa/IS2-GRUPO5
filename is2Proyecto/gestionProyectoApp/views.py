@@ -22,9 +22,6 @@ def usuario(request, email):
                                             'email':email})
 
 def registrarUsuario(request, email):
-    print('llega aca??' + email)
-    print('llega o no?')
-    #codigo = request.POST.get('txtCodigo')
     nombre = request.POST.get('txtNombre')
     email1 = request.POST.get('txtEmail')
     
