@@ -56,7 +56,7 @@
 							<td>{{forloop.counter}}</td>
 							<td>{{u.nombre}}</td>
 							<td>{{u.email}}</td>
-							<td><a href="#" class="btn btn-info">Editar</a></td>
+							<td><a href="/edicionUsuario/{{email}}/{{u.email}}" class="btn btn-info">Editar</a></td>
 							<td><a href="/eliminarUsuario/{{email}}/{{u.email}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
 						</tr>
 						{% endfor %}
