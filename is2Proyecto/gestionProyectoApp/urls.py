@@ -4,8 +4,10 @@ from django.urls import path
 urlpatterns = [
 	path('', views.login), 
 	path('homeProyecto/', views.iniciarSesion),
-	path('seguridad/<email>', views.seguridad),
- 	path('usuario/<email>', views.usuario),
-  	path('registrarUsuario/<email>', views.registrarUsuario),
-   	path('eliminarUsuario/<email>/<emailAEliminar>', views.eliminarUsuario)
+	path('seguridad/<emailAdmin>', views.seguridad),
+ 	path('usuario/<emailAdmin>', views.usuario),
+  	path('registrarUsuario/<emailAdmin>', views.registrarUsuario),
+   	path('eliminarUsuario/<emailAdmin>/<emailAEliminar>', views.eliminarUsuario),
+    path('edicionUsuario/<emailAdmin>/<emailAEditar>', views.edicionUsuario),
+    path('editarUsuario/<emailAdmin>/<emailAEditar>', views.editarUsuario)
 ]
