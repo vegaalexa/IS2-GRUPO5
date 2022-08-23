@@ -13,29 +13,50 @@ def iniciarSesion(request):
     contrasenia = request.POST['yourPassword']
     return render(request, 'homeProyecto.html', {'email': email})
 
-def seguridad(request, email):
-    return render(request, 'seguridad.html', {'email': email})
+def seguridad(request, emailAdmin):
+    return render(request, 'seguridad.html', {'email': emailAdmin})
 
-def usuario(request, email):
+def usuario(request, emailAdmin):
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
-                                            'email':email})
+                                            'email':emailAdmin})
 
-def registrarUsuario(request, email):
+
+def registrarUsuario(request, emailAdmin):
     nombre = request.POST.get('txtNombre')
-    email1 = request.POST.get('txtEmail')
+    email = request.POST.get('txtEmail')
     
-    usuario = Usuario.objects.create(nombre=nombre, email=email1)
+    usuario = Usuario.objects.create(nombre=nombre, email=email)
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
-                                            'email':email})
-    #return render(request, 'usuario.html', {'email':email})
-    #return redirect('/usuario/<email>', email)
+                                            'email':emailAdmin})
 
-def eliminarUsuario(request, email, emailAEliminar):
+
+def eliminarUsuario(request, emailAdmin, emailAEliminar):
     usuario = Usuario.objects.get(email=emailAEliminar)
     usuario.delete()
     
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
-                                            'email':email})
+                                            'email':emailAdmin})
+
+
+def edicionUsuario(request, emailAdmin, emailAEditar):
+    usuario = Usuario.objects.get(email=emailAEditar)
+    
+    return render(request, 'EdicionUsuario.html', {'usuario': usuario,
+                                            'email':emailAdmin})
+
+
+def editarUsuario(request, emailAdmin, emailAEditar):
+    nombre = request.POST.get('txtNombre')
+    email = request.POST.get('txtEmail')
+    
+    usuario = Usuario.objects.get(email=emailAEditar)
+    usuario.nombre = nombre
+    usuario.email = email
+    usuario.save()
+    
+    listaUsuarios = Usuario.objects.all()
+    return render(request, 'usuario.html', {'usuarios': listaUsuarios,
+                                            'email':emailAdmin})
