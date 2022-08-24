@@ -4,6 +4,7 @@ from os import curdir
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from .models import Usuario
+from .models import Permiso
 
 def login(request):
 	return render(request, 'index.html')
@@ -59,4 +60,15 @@ def editarUsuario(request, emailAdmin, emailAEditar):
     
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
+                                            'email':emailAdmin})
+    
+    
+#********************************************
+
+#Agregamos las vistas para ABM de los permisos
+
+#********************************************
+def permiso(request, emailAdmin):
+    listaPermisos = Permiso.objects.all()
+    return render(request, 'permiso.html', {'permisos': listaPermisos,
                                             'email':emailAdmin})

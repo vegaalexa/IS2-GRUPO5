@@ -9,5 +9,6 @@ urlpatterns = [
   	path('registrarUsuario/<emailAdmin>', views.registrarUsuario),
    	path('eliminarUsuario/<emailAdmin>/<emailAEliminar>', views.eliminarUsuario),
     path('edicionUsuario/<emailAdmin>/<emailAEditar>', views.edicionUsuario),
-    path('editarUsuario/<emailAdmin>/<emailAEditar>', views.editarUsuario)
+    path('editarUsuario/<emailAdmin>/<emailAEditar>', views.editarUsuario),
+    path('permiso/<emailAdmin>', views.permiso)
 ]

@@ -1,0 +1,65 @@
+{%extends './base.html'%}
+
+{% block title %} permisos {% endblock %}
+
+{% block body %}
+    <h1>MODULO SEGURIDAD/PERMISOS</h1>
+    <h4>{{email}}</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Registrar Permiso</h3>
+			<div class="card">
+				<div class="card-body">
+					<form action="/registrarPermiso/{{email}}" method="POST"> {% csrf_token%}
+						<div class="form-group py-2">
+							<input type="text" id="txtNombre" name='txtNombre' 
+								class="form-control" placeholder="Nombre" 
+								maxlength="50" required>
+						</div>
+                        <div class="form-group py-2">
+							<input type="email" id="txtEmail" name='txtEmail' 
+								class="form-control" placeholder="email" 
+							    required>
+						</div>
+
+						<div class="form-group py-2">
+							<button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+        
+		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de permisos</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>id</th>
+							<th>Descripcion</th>
+							<th colspan="2">Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for p in permisos %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{p.nombre}}</td>
+							<td>{{p.idPermiso}}</td>
+							<td>{{p.descripcion}}</td>
+
+							<td>{{p.descripcion}}</td>
+							<td><a href="#" class="btn btn-info">Editar</a></td>
+							<td><a href="#" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+{% endblock%}
