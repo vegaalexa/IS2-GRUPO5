@@ -10,7 +10,10 @@ urlpatterns = [
    	path('eliminarUsuario/<emailAdmin>/<emailAEliminar>', views.eliminarUsuario),
     path('edicionUsuario/<emailAdmin>/<emailAEditar>', views.edicionUsuario),
     path('editarUsuario/<emailAdmin>/<emailAEditar>', views.editarUsuario),
+    #PERMISOS
     path('permiso/<emailAdmin>', views.permiso),
     path('registrarPermiso/<emailAdmin>', views.registrarPermiso),
-    path('eliminarPermiso/<emailAdmin>/<idPermisoAEliminar>', views.eliminarPermiso)
+    path('eliminarPermiso/<emailAdmin>/<idPermisoAEliminar>', views.eliminarPermiso),
+    path('edicionPermiso/<emailAdmin>/<idPermisoAEditar>', views.edicionPermiso),
+    path('editarPermiso/<emailAdmin>/<idPermisoAEditar>', views.editarPermiso)
 ]

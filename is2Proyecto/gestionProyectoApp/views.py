@@ -45,7 +45,7 @@ def eliminarUsuario(request, emailAdmin, emailAEliminar):
 def edicionUsuario(request, emailAdmin, emailAEditar):
     usuario = Usuario.objects.get(email=emailAEditar)
     
-    return render(request, 'EdicionUsuario.html', {'usuario': usuario,
+    return render(request, 'edicionUsuario.html', {'usuario': usuario,
                                             'email':emailAdmin})
 
 
@@ -87,10 +87,33 @@ def registrarPermiso(request, emailAdmin):
     
 
 def eliminarPermiso(request, emailAdmin, idPermisoAEliminar):
-    print(f'{idPermisoAEliminar}')
     permiso = Permiso.objects.get(idPermiso=idPermisoAEliminar)
     permiso.delete()
     
     listaPermiso = Permiso.objects.all()
     return render(request, 'permiso.html', {'permisos': listaPermiso,
+                                            'email':emailAdmin})
+    
+    
+def edicionPermiso(request, emailAdmin, idPermisoAEditar):
+    permiso = Permiso.objects.get(idPermiso=idPermisoAEditar)
+    
+    return render(request, 'edicionPermiso.html', {'permiso': permiso,
+                                            'email':emailAdmin})
+    
+    
+def editarPermiso(request, emailAdmin, idPermisoAEditar):
+    nombre = request.POST.get('txtNombre')
+    tipo = request.POST.get('txtTipo')
+    descripcion = request.POST.get('txtDescripcion')
+    
+    permiso = Permiso.objects.get(idPermiso=idPermisoAEditar)
+    
+    permiso.nombre = nombre
+    permiso.tipo = tipo
+    permiso.descripcion = descripcion
+    permiso.save()
+    
+    listaPermisos = Permiso.objects.all()
+    return render(request, 'permiso.html', {'permisos': listaPermisos,
                                             'email':emailAdmin})
