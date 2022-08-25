@@ -102,16 +102,31 @@ class Formulario(models.Model):
     
 
 class Permiso(models.Model):
+    '''
+    Abstraccion de la clase Permiso
+    '''
+    
+    def generarIdPermisos():
+        #este metodo nos ayuda a generar los valores de id para Permiso
+        valorPorDefecto = 100000
+        cantidad = Permiso.objects.count()
+        if cantidad == None:
+            return 1
+        else:
+            return cantidad + valorPorDefecto 
+    
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, default='')
-    idPermiso = models.CharField(primary_key=True, max_length=6)
+    idPermiso = models.IntegerField(primary_key=True, default=generarIdPermisos)
+    tipo = models.CharField(max_length=200, default='')
     formulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
     
     #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Permiso'
         db_table = 'Permiso'
-        
+
+    
     def __str__(self):
         texto = '{} {} {} {}'
         return texto.format(self.nombre, self.descripcion, self.idPermiso)
