@@ -3,7 +3,7 @@ import email
 from os import curdir
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from .models import Usuario
+from .models import Rol, Usuario
 from .models import Permiso
 
 def login(request):
@@ -116,4 +116,55 @@ def editarPermiso(request, emailAdmin, idPermisoAEditar):
     
     listaPermisos = Permiso.objects.all()
     return render(request, 'permiso.html', {'permisos': listaPermisos,
+                                            'email':emailAdmin})
+
+#********************************************
+
+#Vista para ABM de Roles
+
+#********************************************
+def rol(request, emailAdmin):
+    listaRol = Rol.objects.all()
+    return render(request, 'rol.html', {'roles': listaRol,
+                                            'email':emailAdmin})
+    
+def registrarRol(request, emailAdmin):
+    nombre = request.POST.get('txtNombre')
+    descripcion = request.POST.get('txtDescripcion')
+    
+    rol = Rol.objects.create(nombre=nombre, descripcion=descripcion)
+    listaRol = Rol.objects.all()
+    return render(request, 'rol.html', {'roles': listaRol,
+                                            'email':emailAdmin})
+    
+    
+
+def eliminarRol(request, emailAdmin, idRolAEliminar):
+    rol = Rol.objects.get(idRol=idRolAEliminar)
+    rol.delete()
+    
+    listaRol = Rol.objects.all()
+    return render(request, 'rol.html', {'roles': listaRol,
+                                            'email':emailAdmin})
+    
+    
+def edicionRol(request, emailAdmin, idRolAEditar):
+    rol = Rol.objects.get(idRol=idRolAEditar)
+    
+    return render(request, 'edicionRol.html', {'rol': rol,
+                                            'email':emailAdmin})
+    
+    
+def editarRol(request, emailAdmin, idRolAEditar):
+    nombre = request.POST.get('txtNombre')
+    descripcion = request.POST.get('txtDescripcion')
+    
+    rol = Rol.objects.get(idRol=idRolAEditar)
+    
+    rol.nombre = nombre
+    rol.descripcion = descripcion
+    rol.save()
+    
+    listaRol = Rol.objects.all()
+    return render(request, 'rol.html', {'rol': listaRol,
                                             'email':emailAdmin})
