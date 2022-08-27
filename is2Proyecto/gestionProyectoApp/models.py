@@ -146,7 +146,11 @@ class Rol(models.Model):
         if cantidad == None:
             return 1
         else:
-            return cantidad + valorPorDefecto 
+            if cantidad == 0:
+                return valorPorDefecto
+            #ordenamos y obtenemos el mayor id para luego sumarle 1
+            rol = Rol.objects.filter().order_by('idRol').last()
+            return rol.idRol + 1
         
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, default='')
