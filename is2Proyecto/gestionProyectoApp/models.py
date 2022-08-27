@@ -133,9 +133,19 @@ class Permiso(models.Model):
     
     
 class Rol(models.Model):
+    def generarIdRol():
+        #este metodo nos ayuda a generar los valores de id para Permiso
+        #se debe mejorar este metodo
+        valorPorDefecto = 100000
+        cantidad = Rol.objects.count()
+        if cantidad == None:
+            return 1
+        else:
+            return cantidad + valorPorDefecto 
+        
     nombre = models.CharField(max_length=50)
-    descripcion = models.CharField(max_length=200)
-    idRol = models.CharField(primary_key=True, max_length=6)
+    descripcion = models.CharField(max_length=200, default='')
+    idRol = models.IntegerField(primary_key=True, default=generarIdRol)
     permisos = models.ManyToManyField(Permiso, related_name='rol_permiso')
     
     #personalizamos la tabla en posgres
