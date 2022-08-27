@@ -110,10 +110,15 @@ class Permiso(models.Model):
         #este metodo nos ayuda a generar los valores de id para Permiso
         valorPorDefecto = 100000
         cantidad = Permiso.objects.count()
+        
         if cantidad == None:
             return 1
         else:
-            return cantidad + valorPorDefecto 
+            if cantidad == 0:
+                return valorPorDefecto
+            #ordenamos y obtenemos el mayor id para luego sumarle 1
+            per = Permiso.objects.filter().order_by('idPermiso').last()
+            return per.idPermiso + 1
     
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, default='')
