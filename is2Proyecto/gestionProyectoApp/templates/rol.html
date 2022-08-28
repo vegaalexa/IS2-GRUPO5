@@ -52,6 +52,9 @@
 							<td>{{r.nombre}}</td>
 							<td>{{r.descripcion}}</td>
 							<td><a href="/edicionRol/{{email}}/{{r.idRol}}" class="btn btn-info">Editar</a></td>
+							<!--ASIGNACION-->
+							<td><a href="/asignacionPermiso/{{email}}/{{r.idRol}}" class="btn btn-info">Asignar Permiso</a></td>
+							<!--ASIGNACION-->
 							<td><a href="/eliminarRol/{{email}}/{{r.idRol}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
 						</tr>
 						{% endfor %}
