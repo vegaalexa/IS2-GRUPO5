@@ -24,9 +24,18 @@ def seguridad(request, emailAdmin):
     return render(request, 'seguridad.html', {'email': emailAdmin})
 
 def usuario(request, emailAdmin):
+    perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
+    permisosPorPantalla = []
+    print('\n')
+    for permiso in perPorPatalla:
+        print(f'permiso: {permiso.tipo}')
+        permisosPorPantalla.append(permiso.tipo)
+    print('\n')
+    
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
-                                            'email':emailAdmin})
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla})
 
 
 def registrarUsuario(request, emailAdmin):
@@ -59,31 +68,6 @@ def eliminarUsuario(request, emailAdmin, emailAEliminar):
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
                                             'email':emailAdmin})
-
-
-'''
-#obtenemos el rol correspondiente
-    rol = Rol.objects.get(idRol=idRolAEliminar)
-    
-    listaRolesPermisos = []
-    listaPermisos = []
-    
-    #tabla intermedia entre Rol y Permiso (relacion M-M)
-    rolesPermisos = RolesPermisos.objects.all()
-    
-    #eliminamos todos las asociaciones entre el rol a eliminar y sus permisos
-    for rolPermiso in rolesPermisos:
-        if rolPermiso.rol_id == int(idRolAEliminar):
-            rolPermiso.delete()
-    
-    #eliminamos el rol
-    rol.delete()
-    
-    listaRol = Rol.objects.all()
-    return render(request, 'rol.html', {'roles': listaRol,
-                                            'email':emailAdmin})
-'''
-
 
 
 def edicionUsuario(request, emailAdmin, emailAEditar):
@@ -366,3 +350,62 @@ def getRolesDisponibles(emailUsuarioAsignar):
             listaRoles.append(rol)
         
     return listaRoles
+
+
+
+def getPermisosPorPantalla(emailAdmin, nombrePantalla):
+    permisos = Permiso.objects.all()
+    permisosPorPantalla = []
+    permisosAsignados = []
+    
+    #obtenemos los roles del usuario 
+    rolesAsignados = getRolesAsignados(emailAdmin)
+    
+    #recorremos dichos roles para obtener los permisos
+    for rolAsignado in rolesAsignados:
+        perAsignados = getPermisosAsignadosARol(rolAsignado.idRol)
+        permisosAsignados.extend(perAsignados)
+    
+    #verificamos que algunos de esos permisos correspondan a la pantalla/formulario
+    for permisoAsignado in permisosAsignados:
+        if permisoAsignado.descripcion.lower() == nombrePantalla:
+            permisosPorPantalla.append(permisoAsignado)
+
+    return permisosPorPantalla
+
+def getPermisosAsignadosARol(idRol):
+    permisosAsignados = []
+    rolesPermisos = []
+    try:
+        #tabla intermedia entre Rol y Permiso (relacion M-M)
+        rolesPermisos = RolesPermisos.objects.all()
+    except:
+        pass
+    
+    #tabla intermedia entre Rol y Permiso (relacion M-M)
+    for rolPermiso in rolesPermisos:
+        if rolPermiso.rol_id == idRol:
+            permiso = Permiso.objects.get(idPermiso=rolPermiso.permiso_id)
+            permisosAsignados.append(permiso)
+            
+    
+    return permisosAsignados
+
+
+def getRolesAsignados(emailAdmin):
+    usuariosRoles = []
+    rolesAsignados = []
+    try:
+        #tabla intermedia entre Usuario y Rol (relacion M-M)
+        usuariosRoles = UsuariosRoles.objects.all()
+    except:
+        pass
+    
+    #tabla intermedia entre Usuario y Rol (relacion M-M)
+    for usuarioRol in usuariosRoles:
+        if usuarioRol.usuario_id == emailAdmin:
+            rol = Rol.objects.get(idRol=usuarioRol.rol_id)
+            rolesAsignados.append(rol)
+            
+    
+    return rolesAsignados
