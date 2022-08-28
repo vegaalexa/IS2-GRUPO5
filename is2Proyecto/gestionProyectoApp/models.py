@@ -86,15 +86,30 @@ class UserStory(models.Model):
 
 
 class Formulario(models.Model):
+    def generarIdFormulario():
+        #este metodo nos ayuda a generar los valores de id para Permiso
+        #se debe mejorar este metodo
+        valorPorDefecto = 100000
+        cantidad = Formulario.objects.count()
+        if cantidad == None:
+            return 1
+        else:
+            if cantidad == 0:
+                return valorPorDefecto
+            #ordenamos y obtenemos el mayor id para luego sumarle 1
+            formulario = Formulario.objects.filter().order_by('idFormulario').last()
+            return formulario.idFormulario + 1
+        
     nombre = models.CharField(max_length=50)
-    tipo = models.CharField(max_length=4)
-    descripcion = models.CharField(max_length=200, default='')
-    idFormulario = models.CharField(primary_key=True, max_length=6)
+    #tipo = models.CharField(max_length=4)
+    #descripcion = models.CharField(max_length=200, default='')
+    idFormulario = models.IntegerField(primary_key=True)
    
    #personalizamos la tabla en posgres
     class Meta:
         verbose_name = 'Formulario'
         db_table = 'Formulario'
+        
     def __str__(self):
         texto = '{} {} {} {}'
         return texto.format(self.nombre, self.tipo,
@@ -123,7 +138,7 @@ class Permiso(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, default='')
     idPermiso = models.IntegerField(primary_key=True, default=generarIdPermisos)
-    tipo = models.CharField(max_length=200, default='')
+    tipo = models.CharField(max_length=1, default='')
     formulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
     
     #personalizamos la tabla en posgres
@@ -135,6 +150,15 @@ class Permiso(models.Model):
     def __str__(self):
         texto = '{} {} {} {}'
         return texto.format(self.nombre, self.descripcion, self.idPermiso)
+
+
+class RolesPermisos(models.Model):
+    rol = models.ForeignKey('Rol', related_name='roles_permisos', on_delete=models.SET_NULL, null=True)
+    permiso = models.ForeignKey('Permiso', related_name='roles_permisos', on_delete=models.SET_NULL, null=True)
+    
+    class Meta:
+        verbose_name = 'RolesPermisos'
+        db_table = 'RolesPermisos'
     
     
 class Rol(models.Model):
@@ -155,7 +179,7 @@ class Rol(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, default='')
     idRol = models.IntegerField(primary_key=True, default=generarIdRol)
-    permisos = models.ManyToManyField(Permiso, related_name='rol_permiso')
+    permisos = models.ManyToManyField(Permiso, through=RolesPermisos, related_name='rol_permiso')
     
     #personalizamos la tabla en posgres
     class Meta:
@@ -165,13 +189,26 @@ class Rol(models.Model):
     #def __str__(self):
     #    texto = '{0} ({1}) {2}'
     #    return texto.format(self.nombre, self.email, self.idUsuario)
- 
+
+
+
+class UsuariosRoles(models.Model):
+    '''UsuariosRoles es una tabla intermedia entre Usuarios y Roles M-M'''
+    usuario = models.ForeignKey('Usuario', related_name='usuarios_roles',
+                                on_delete=models.SET_NULL, null=True)
+    rol = models.ForeignKey('Rol', related_name='usuarios_roles',
+                            on_delete=models.SET_NULL, null=True)
+    
+    class Meta:
+        verbose_name = 'UsuariosRoles'
+        db_table = 'UsuariosRoles'
+
 
 class Usuario(models.Model):
     nombre = models.CharField(blank=True, null=True, max_length=50)
     email = models.EmailField(primary_key=True)
     
-    roles = models.ManyToManyField(Rol, related_name='usuario_rol')
+    roles = models.ManyToManyField(Rol, through=UsuariosRoles, related_name='usuario_rol')
     proyectos = models.ManyToManyField(Proyecto, related_name='usuario_proyecto')
    
     def __str__(self):
