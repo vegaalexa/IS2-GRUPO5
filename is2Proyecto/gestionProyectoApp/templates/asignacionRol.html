@@ -1,0 +1,65 @@
+{%extends './base.html'%}
+
+{% block title %} gestion de proyectos {% endblock %}
+
+{% block body %}
+    <h1>MODULO SEGURIDAD/USUARIO/ROLES</h1>
+    <h4>{{emailAdmin}}</h4>
+    <br>
+    <div class="row">
+		<!--<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Roles ya asignados</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>Permisos</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for r in roles %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{r.nombre}}</td>
+							<td>{{r.permisos}}</td>
+							<td>AGREGAR PERMISOS</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>-->
+
+		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de Roles Disponibles</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>Descripcion</th>
+							<th>Permisos</th>
+							<th colspan="2">Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for r in roles %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{r.nombre}}</td>
+							<td>{{r.descripcion}}</td>
+							<!--<td>{{r.permisos}}</td>-->
+							<td>AGREGAR PERMISOS</td>
+							<!--ASIGNACION-->
+							<td><a href="/asignarRol/{{emailAdmin}}/{{emailUsuarioAsignar}}/{{r.idRol}}" class="btn btn-info">Asignar</a></td>
+							<!--ASIGNACION-->
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+{% endblock %}
