@@ -15,12 +15,14 @@
 })();
 
 function habilitarDeshabilitarCRUD(permisosPorPantalla){
-    registrarUsuario(permisosPorPantalla)
+    registrar(permisosPorPantalla);
+    editar(permisosPorPantalla);
+    eliminar(permisosPorPantalla);
 }
 
-function registrarUsuario(permisosPorPantalla){
+function registrar(permisosPorPantalla){
     //obtenemos los campos 
-    const btnGuardarUsuario = document.querySelectorAll(".btnGuardarUsuario");
+    const btnGuardarUsuario = document.querySelectorAll(".btnGuardar");
     const inputEmail = document.getElementById("txtEmail");
     const inputNombre = document.getElementById("txtNombre");
 
@@ -38,10 +40,54 @@ function registrarUsuario(permisosPorPantalla){
         if(permisosPorPantalla[i] == 'C'){
             inputNombre.disabled = false;
             inputEmail.disabled = false;
-            const btnGuardarUsuario = document.querySelectorAll(".btnGuardarUsuario");
+            const btnGuardarUsuario = document.querySelectorAll(".btnGuardar");
 
             btnGuardarUsuario.forEach(btn => {
                 btn.disabled = false;
+            });
+
+            break;
+        }
+    }
+}
+
+
+function editar(permisosPorPantalla){
+    const btnEditar = document.querySelectorAll(".btnEditar");
+    //deshabilitamos la opcion de editar
+    btnEditar.forEach(btn => {
+        btn.classList.add("disabled");
+    });
+
+    //solo en caso de que tenga el permiso correspondiente
+    //lo habilitamos
+    for (let i = 0; i < permisosPorPantalla.length; i++) {
+        if(permisosPorPantalla[i] == 'U'){
+            const btnEditar = document.querySelectorAll(".btnEditar");
+
+            btnEditar.forEach(btn => {
+                btn.classList.remove("disabled");
+            });
+
+            break;
+        }
+    }
+}
+
+function eliminar(permisosPorPantalla){
+    const btnEliminacion = document.querySelectorAll(".btnEliminacion");
+    //deshabilitamos la opcion de editar
+    btnEliminacion.forEach(btn => {
+        btn.classList.add("disabled");
+    });
+
+    //solo en caso de que tenga el permiso correspondiente
+    //lo habilitamos
+    for (let i = 0; i < permisosPorPantalla.length; i++) {
+        if(permisosPorPantalla[i] == 'U'){
+
+            btnEliminacion.forEach(btn => {
+                btn.classList.remove("disabled");
             });
 
             break;
