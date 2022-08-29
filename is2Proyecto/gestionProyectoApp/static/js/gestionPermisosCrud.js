@@ -18,6 +18,7 @@ function habilitarDeshabilitarCRUD(permisosPorPantalla){
     registrar(permisosPorPantalla);
     editar(permisosPorPantalla);
     eliminar(permisosPorPantalla);
+    leer(permisosPorPantalla);
 }
 
 function registrar(permisosPorPantalla){
@@ -93,4 +94,20 @@ function eliminar(permisosPorPantalla){
             break;
         }
     }
+}
+
+function leer(permisosPorPantalla){
+    var permisoLectura = false;
+    for (let i = 0; i < permisosPorPantalla.length; i++) {
+        if(permisosPorPantalla[i] == 'R'){
+            permisoLectura = true;
+            break;
+        }
+    }
+
+    if(permisoLectura == false){
+        //no posee permiso de lectura, la pantalla se restringe
+        $('#divListado').css({"pointer-events" : "none" , "opacity" :  "0.0"}).attr("tabindex" , "-1");
+    }
+    
 }
