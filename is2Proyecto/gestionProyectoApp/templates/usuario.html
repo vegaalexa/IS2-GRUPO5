@@ -5,6 +5,11 @@
 {% block body %}
     <h1>MODULO SEGURIDAD/USUARIO</h1>
     <h4>{{email}}</h4>
+	<h4>Permisos sobre Usuario:
+		{% for p in permisosPorPantalla %}
+			{{p}}
+		{% endfor %}
+	</h4>
     <br>
 
     <div class="row">
@@ -25,14 +30,14 @@
 						</div>
 
 						<div class="form-group py-2">
-							<button type="submit" class="btn btn-success btn-block text-white btnGuardarUsuario">Guardar</button>
+							<button type="submit" class="btn btn-success btn-block text-white btnGuardar">Guardar</button>
 						</div>					
 					</form>
 				</div>
 			</div>
 		</div>
         
-		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+		<div id="divListado" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
 			<h3>Listado de usuarios</h3>
 			<div class="table-responsive py-2">
 				<table class='table table-striped'>
@@ -51,7 +56,7 @@
 							<td>{{forloop.counter}}</td>
 							<td>{{u.nombre}}</td>
 							<td>{{u.email}}</td>
-							<td><a href="/edicionUsuario/{{email}}/{{u.email}}" class="btn btn-info">Editar</a></td>
+							<td><a id="btnEditar" href="/edicionUsuario/{{email}}/{{u.email}}" class="btn btn-info btnEditar">Editar</a></td>
 							<!--ASIGNACION-->
 							<td><a href="/asignacionRol/{{email}}/{{u.email}}" class="btn btn-info">Asignar Rol</a></td>
 							<!--ASIGNACION-->
