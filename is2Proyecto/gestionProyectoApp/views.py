@@ -35,7 +35,8 @@ def usuario(request, emailAdmin):
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
                                             'email':emailAdmin,
-                                            'permisosPorPantalla': permisosPorPantalla})
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'Usuario'})
 
 
 def registrarUsuario(request, emailAdmin):
@@ -96,10 +97,18 @@ def editarUsuario(request, emailAdmin, emailAEditar):
 #Agregamos las vistas para ABM de los permisos
 
 #********************************************
-def permiso(request, emailAdmin):    
+def permiso(request, emailAdmin):
+    perPorPatalla = getPermisosPorPantalla(emailAdmin, 'permiso')
+    permisosPorPantalla = []
+    for permiso in perPorPatalla:
+        permisosPorPantalla.append(permiso.tipo)
+        
     listaPermisos = Permiso.objects.all()
     return render(request, 'permiso.html', {'permisos': listaPermisos,
-                                            'email':emailAdmin})
+                                            'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Permiso'})
+    
     
 def registrarPermiso(request, emailAdmin):
     nombre = request.POST.get('txtNombre')
@@ -163,9 +172,17 @@ def editarPermiso(request, emailAdmin, idPermisoAEditar):
 
 #********************************************
 def rol(request, emailAdmin):
+    perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
+    permisosPorPantalla = []
+    for permiso in perPorPatalla:
+        permisosPorPantalla.append(permiso.tipo)
+    
     listaRol = Rol.objects.all()
     return render(request, 'rol.html', {'roles': listaRol,
-                                            'email':emailAdmin})
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'Rol'})
+    
     
 def registrarRol(request, emailAdmin):
     nombre = request.POST.get('txtNombre')
