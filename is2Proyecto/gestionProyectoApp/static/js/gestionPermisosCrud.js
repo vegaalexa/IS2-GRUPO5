@@ -14,47 +14,76 @@
     
 })();
 
-function habilitarDeshabilitarCRUD(permisosPorPantalla){
-    registrar(permisosPorPantalla);
-    editar(permisosPorPantalla);
-    eliminar(permisosPorPantalla);
-    leer(permisosPorPantalla);
+function habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla){
+    registrar(permisosPorPantalla, nombrePantalla);
+    editar(permisosPorPantalla, nombrePantalla);
+    eliminar(permisosPorPantalla, nombrePantalla);
+    leer(permisosPorPantalla, nombrePantalla);
 }
 
-function registrar(permisosPorPantalla){
-    //obtenemos los campos 
-    const btnGuardarUsuario = document.querySelectorAll(".btnGuardar");
-    const inputEmail = document.getElementById("txtEmail");
-    const inputNombre = document.getElementById("txtNombre");
 
-    //deshabilitamos la opcion de registrar usuario
-    btnGuardarUsuario.forEach(btn => {
+function registrar(permisosPorPantalla, nombrePantalla){
+    //obtenemos los campos 
+    const btnGuardar = document.querySelectorAll(".btnGuardar".concat(nombrePantalla));
+    var inputEmail = null;
+    var inputTipo = null;
+    var inputDescripcion = null;
+    
+    if(nombrePantalla == 'Usuario'){
+        inputEmail = document.getElementById("txtEmail");
+        inputEmail.disabled = true;
+    }
+    else{
+        inputDescripcion = document.getElementById("txtDescripcion".concat(nombrePantalla));
+        inputDescripcion.disabled = true;
+
+        if(nombrePantalla == 'Permiso'){
+            inputTipo = document.getElementById("txtTipoPermiso");
+            inputTipo.disabled = true;
+        }
+    }
+
+
+
+    const inputNombre = document.getElementById("txtNombre".concat(nombrePantalla));
+    inputNombre.disabled = true;
+
+    //deshabilitamos la opcion de registrar
+    btnGuardar.forEach(btn => {
         btn.disabled = true;
     });
 
-    inputNombre.disabled = true;
-    inputEmail.disabled = true;
     
     //solo en caso de que tenga el permiso correspondiente
     //lo habilitamos
     for (let i = 0; i < permisosPorPantalla.length; i++) {
         if(permisosPorPantalla[i] == 'C'){
             inputNombre.disabled = false;
-            inputEmail.disabled = false;
-            const btnGuardarUsuario = document.querySelectorAll(".btnGuardar");
 
-            btnGuardarUsuario.forEach(btn => {
+            if(nombrePantalla == 'Usuario'){
+                inputEmail.disabled = false;
+            }
+            else{
+                inputDescripcion.disabled = false;
+
+                if(nombrePantalla == 'Permiso'){
+                    inputTipo.disabled = false;
+                }
+            }
+
+            btnGuardar.forEach(btn => {
                 btn.disabled = false;
             });
 
             break;
         }
     }
+
 }
 
 
-function editar(permisosPorPantalla){
-    const btnEditar = document.querySelectorAll(".btnEditar");
+function editar(permisosPorPantalla, nombrePantalla){
+    const btnEditar = document.querySelectorAll(".btnEditar".concat(nombrePantalla));
     //deshabilitamos la opcion de editar
     btnEditar.forEach(btn => {
         btn.classList.add("disabled");
@@ -64,8 +93,6 @@ function editar(permisosPorPantalla){
     //lo habilitamos
     for (let i = 0; i < permisosPorPantalla.length; i++) {
         if(permisosPorPantalla[i] == 'U'){
-            const btnEditar = document.querySelectorAll(".btnEditar");
-
             btnEditar.forEach(btn => {
                 btn.classList.remove("disabled");
             });
@@ -75,8 +102,8 @@ function editar(permisosPorPantalla){
     }
 }
 
-function eliminar(permisosPorPantalla){
-    const btnEliminacion = document.querySelectorAll(".btnEliminacion");
+function eliminar(permisosPorPantalla, nombrePantalla){
+    const btnEliminacion = document.querySelectorAll(".btnEliminar".concat(nombrePantalla));
     //deshabilitamos la opcion de editar
     btnEliminacion.forEach(btn => {
         btn.classList.add("disabled");
@@ -85,7 +112,7 @@ function eliminar(permisosPorPantalla){
     //solo en caso de que tenga el permiso correspondiente
     //lo habilitamos
     for (let i = 0; i < permisosPorPantalla.length; i++) {
-        if(permisosPorPantalla[i] == 'U'){
+        if(permisosPorPantalla[i] == 'D'){
 
             btnEliminacion.forEach(btn => {
                 btn.classList.remove("disabled");
@@ -96,7 +123,7 @@ function eliminar(permisosPorPantalla){
     }
 }
 
-function leer(permisosPorPantalla){
+function leer(permisosPorPantalla, nombrePantalla){
     var permisoLectura = false;
     for (let i = 0; i < permisosPorPantalla.length; i++) {
         if(permisosPorPantalla[i] == 'R'){
@@ -107,7 +134,7 @@ function leer(permisosPorPantalla){
 
     if(permisoLectura == false){
         //no posee permiso de lectura, la pantalla se restringe
-        $('#divListado').css({"pointer-events" : "none" , "opacity" :  "0.0"}).attr("tabindex" , "-1");
+        $('#divListado'.concat(nombrePantalla)).css({"pointer-events" : "none" , "opacity" :  "0.0"}).attr("tabindex" , "-1");
     }
     
 }
