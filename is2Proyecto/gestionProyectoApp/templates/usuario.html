@@ -3,6 +3,34 @@
 {% block title %} usuario {% endblock %}
 
 {% block body %}
+
+	<!--este input lo colocamos como hidden (oculto)
+	su funcion es asignarle el valor de permisosPorPantalla
+	para luego poder acceder a este valor desde el scrip
+	y pasarle como parametro a 
+	habilitarDeshabilitarCRUD()-->
+	<input id="permiso" name="permiso" type="hidden" value="{{permisosPorPantalla}}">
+	<input id="nombrePantalla" name="nombrePantalla" type="hidden" value="{{nombrePantalla}}">
+
+	<script type="text/javascript">
+		var input = document.getElementById("permiso");
+		var input_aux = document.getElementById("nombrePantalla");
+		var perPorPantalla = input.value;
+		var nombrePantalla = input_aux.value;
+		var permisosPorPantalla = "";
+		
+		//extraemos los permisos de perPorPantalla
+		for (let i = 0; i < perPorPantalla.length; i++) {
+			if(perPorPantalla[i] == 'C' || perPorPantalla[i] == 'R'
+						|| perPorPantalla[i] == 'U' || perPorPantalla[i] == 'D' ){
+				permisosPorPantalla = permisosPorPantalla.concat(perPorPantalla[i]);
+			}
+		}
+
+		//invocamos a la funcion de javascript
+		window.onload = function() { habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla); };
+	</script>
+
     <h1>MODULO SEGURIDAD/USUARIO</h1>
     <h4>{{email}}</h4>
 	<h4>Permisos sobre Usuario:
@@ -19,7 +47,7 @@
 				<div class="card-body">
 					<form action="/registrarUsuario/{{email}}" method="POST"> {% csrf_token%}
 						<div class="form-group py-2">
-							<input type="text" id="txtNombre" name='txtNombre' 
+							<input type="text" id="txtNombreUsuario" name='txtNombre' 
 								class="form-control" placeholder="Nombre" 
 								maxlength="50" required>
 						</div>
@@ -30,14 +58,14 @@
 						</div>
 
 						<div class="form-group py-2">
-							<button type="submit" class="btn btn-success btn-block text-white btnGuardar">Guardar</button>
+							<button type="submit" class="btn btn-success btn-block text-white btnGuardarUsuario">Guardar</button>
 						</div>					
 					</form>
 				</div>
 			</div>
 		</div>
         
-		<div id="divListado" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+		<div id="divListadoUsuario" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
 			<h3>Listado de usuarios</h3>
 			<div class="table-responsive py-2">
 				<table class='table table-striped'>
@@ -56,11 +84,11 @@
 							<td>{{forloop.counter}}</td>
 							<td>{{u.nombre}}</td>
 							<td>{{u.email}}</td>
-							<td><a id="btnEditar" href="/edicionUsuario/{{email}}/{{u.email}}" class="btn btn-info btnEditar">Editar</a></td>
+							<td><a id="btnEditar" href="/edicionUsuario/{{email}}/{{u.email}}" class="btn btn-info btnEditarUsuario">Editar</a></td>
 							<!--ASIGNACION-->
 							<td><a href="/asignacionRol/{{email}}/{{u.email}}" class="btn btn-info">Asignar Rol</a></td>
 							<!--ASIGNACION-->
-							<td><a href="/eliminarUsuario/{{email}}/{{u.email}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+							<td><a href="/eliminarUsuario/{{email}}/{{u.email}}" class="btn btn-danger btnEliminarUsuario">Eliminar</a></td>
 						</tr>
 						{% endfor %}
 					</tbody>

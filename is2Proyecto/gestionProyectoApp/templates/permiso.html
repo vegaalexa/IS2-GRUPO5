@@ -3,8 +3,40 @@
 {% block title %} permisos {% endblock %}
 
 {% block body %}
+	<!--este input lo colocamos como hidden (oculto)
+	su funcion es asignarle el valor de permisosPorPantalla
+	para luego poder acceder a este valor desde el scrip
+	y pasarle como parametro a 
+	habilitarDeshabilitarCRUD()-->
+	<input id="permiso" name="permiso" type="hidden" value="{{permisosPorPantalla}}">
+	<input id="nombrePantalla" name="nombrePantalla" type="hidden" value="{{nombrePantalla}}">
+
+	<script type="text/javascript">
+		var input = document.getElementById("permiso");
+		var input_aux = document.getElementById("nombrePantalla");
+		var perPorPantalla = input.value;
+		var nombrePantalla = input_aux.value;
+		var permisosPorPantalla = "";
+		
+		//extraemos los permisos de perPorPantalla
+		for (let i = 0; i < perPorPantalla.length; i++) {
+			if(perPorPantalla[i] == 'C' || perPorPantalla[i] == 'R'
+						|| perPorPantalla[i] == 'U' || perPorPantalla[i] == 'D' ){
+				permisosPorPantalla = permisosPorPantalla.concat(perPorPantalla[i]);
+			}
+		}
+
+		//invocamos a la funcion de javascript
+		window.onload = function() { habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla); };
+	</script>
+
     <h1>MODULO SEGURIDAD/PERMISOS</h1>
     <h4>{{email}}</h4>
+	<h4>Permisos sobre Permiso:
+		{% for p in permisosPorPantalla %}
+			{{p}}
+		{% endfor %}
+	</h4>
     <br>
     <div class="row">
 		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
@@ -13,17 +45,17 @@
 				<div class="card-body">
 					<form action="/registrarPermiso/{{email}}" method="POST"> {% csrf_token%}
 						<div class="form-group py-2">
-							<input type="text" id="txtNombre" name='txtNombre' 
+							<input type="text" id="txtNombrePermiso" name='txtNombre' 
 								class="form-control" placeholder="Nombre" 
 								maxlength="50" required>
 						</div>
 						<div class="form-group py-2">
-							<input type="text" id="txtTipo" name='txtTipo' 
+							<input type="text" id="txtTipoPermiso" name='txtTipo' 
 								class="form-control" placeholder="Tipo: C-R-U-D" 
 							    required>
 						</div>
                         <div class="form-group py-2">
-							<input type="text" id="txtDescripcion" name='txtDescripcion' 
+							<input type="text" id="txtDescripcionPermiso" name='txtDescripcion' 
 								class="form-control" placeholder="Descripcion" 
 							    required>
 						</div>
@@ -36,7 +68,7 @@
 						</div>-->
 
 						<div class="form-group py-2">
-							<button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+							<button type="submit" class="btn btn-success btn-block text-white btnGuardarPermiso">Guardar</button>
 						</div>
 					</form>
 				</div>
@@ -44,7 +76,7 @@
 		</div>
 
         
-		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+		<div id="divListadoPermiso" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
 			<h3>Listado de permisos</h3>
 			<div class="table-responsive py-2">
 				<table class='table table-striped'>
@@ -66,8 +98,8 @@
 							<td>{{p.tipo}}</td>
 							<td>{{p.idPermiso}}</td>
 							<td>{{p.descripcion}}</td>
-							<td><a href="/edicionPermiso/{{email}}/{{p.idPermiso}}" class="btn btn-info">Editar</a></td>
-							<td><a href="/eliminarPermiso/{{email}}/{{p.idPermiso}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+							<td><a href="/edicionPermiso/{{email}}/{{p.idPermiso}}" class="btn btn-info btnEditarPermiso">Editar</a></td>
+							<td><a href="/eliminarPermiso/{{email}}/{{p.idPermiso}}" class="btn btn-danger btnEliminarPermiso">Eliminar</a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
