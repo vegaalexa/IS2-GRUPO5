@@ -23,15 +23,27 @@ def iniciarSesion(request):
 def seguridad(request, emailAdmin):
     return render(request, 'seguridad.html', {'email': emailAdmin})
 
-def usuario(request, emailAdmin):
-    perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
-    permisosPorPantalla = []
-    print('\n')
-    for permiso in perPorPatalla:
-        print(f'permiso: {permiso.tipo}')
-        permisosPorPantalla.append(permiso.tipo)
-    print('\n')
+def siEsAdmin(emailAdmin):
+    indice = emailAdmin.index('@') #obtenemos la posición del carácter @
+    admin = emailAdmin[:indice]
     
+    return admin == 'admin'
+
+def usuario(request, emailAdmin):
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
+        permisosPorPantalla = []
+        print('\n')
+        for permiso in perPorPatalla:
+            print(f'permiso: {permiso.tipo}')
+            permisosPorPantalla.append(permiso.tipo)
+        print('\n')
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+        print(permisosPorPantalla)
+        
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
                                             'email':emailAdmin,
@@ -97,11 +109,17 @@ def editarUsuario(request, emailAdmin, emailAEditar):
 #Agregamos las vistas para ABM de los permisos
 
 #********************************************
+
 def permiso(request, emailAdmin):
-    perPorPatalla = getPermisosPorPantalla(emailAdmin, 'permiso')
     permisosPorPantalla = []
-    for permiso in perPorPatalla:
-        permisosPorPantalla.append(permiso.tipo)
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'permiso')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
         
     listaPermisos = Permiso.objects.all()
     return render(request, 'permiso.html', {'permisos': listaPermisos,
@@ -172,10 +190,15 @@ def editarPermiso(request, emailAdmin, idPermisoAEditar):
 
 #********************************************
 def rol(request, emailAdmin):
-    perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
     permisosPorPantalla = []
-    for permiso in perPorPatalla:
-        permisosPorPantalla.append(permiso.tipo)
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
     
     listaRol = Rol.objects.all()
     return render(request, 'rol.html', {'roles': listaRol,
