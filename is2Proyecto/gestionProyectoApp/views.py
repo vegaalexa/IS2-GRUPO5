@@ -3,7 +3,7 @@ import email
 from os import curdir
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from .models import Rol, Usuario
+from .models import Formulario, Rol, Usuario
 from .models import Permiso
 #ASIGNACION
 from .models import Rol
@@ -211,6 +211,7 @@ def registrarRol(request, emailAdmin):
     nombre = request.POST.get('txtNombre')
     descripcion = request.POST.get('txtDescripcion')
     
+    print(f'nombre: {nombre} descripcion: {descripcion}')
     rol = Rol.objects.create(nombre=nombre, descripcion=descripcion)
     listaRol = Rol.objects.all()
     return render(request, 'rol.html', {'roles': listaRol,
@@ -262,6 +263,32 @@ def editarRol(request, emailAdmin, idRolAEditar):
     return render(request, 'rol.html', {'roles': listaRoles,
                                             'email':emailAdmin})
     
+
+
+def verRolesAsignados(request, emailAdmin, emailUsuario):
+    rolesAsignados = getRolesAsignados(emailUsuario)
+    rolesPermisos = {}
+    
+    for rolAsignado in rolesAsignados:
+        permisosAsignadosARol = getPermisosAsignadosARol(rolAsignado.idRol)
+        #ordenamsos la lista
+        permisosAsignadosARol.sort(key=lambda permisosAsignadosARol: permisosAsignadosARol.descripcion)
+        rolesPermisos[rolAsignado] = permisosAsignadosARol
+
+    '''
+    print('\n#######\n')
+    for rolPermiso in rolesPermisos.keys():
+        print('----')
+        listaRolPermisos = rolesPermisos[rolPermiso]
+        for permiso in listaRolPermisos:
+            print(f'{rolPermiso.nombre} {permiso.descripcion} {permiso.tipo}')
+    '''
+        
+    return render(request, 'rolesAsignados.html', {
+                                    'emailAdmin':emailAdmin,
+                                    'emailUsuario': emailUsuario,
+                                    'roles': rolesAsignados,
+                                    'rolesPermisos':rolesPermisos})
 
 
 #ASIGNACION
@@ -347,7 +374,6 @@ def getPermisosDisponibles(idRolAsignar):
     return listaPermisos
 
 
-
 def getRolesDisponibles(emailUsuarioAsignar):
     '''
     Se obtiene todos los roles disponibles para ese usuario
@@ -392,9 +418,7 @@ def getRolesDisponibles(emailUsuarioAsignar):
     return listaRoles
 
 
-
 def getPermisosPorPantalla(emailAdmin, nombrePantalla):
-    permisos = Permiso.objects.all()
     permisosPorPantalla = []
     permisosAsignados = []
     
