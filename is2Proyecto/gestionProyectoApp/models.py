@@ -148,8 +148,8 @@ class Permiso(models.Model):
 
     
     def __str__(self):
-        texto = '{} {} {} {}'
-        return texto.format(self.nombre, self.descripcion, self.idPermiso)
+        texto = '{} {} {}'
+        return texto.format(self.nombre, self.descripcion, self.tipo)
 
 
 class RolesPermisos(models.Model):
@@ -212,7 +212,7 @@ class Usuario(models.Model):
     proyectos = models.ManyToManyField(Proyecto, related_name='usuario_proyecto')
    
     def __str__(self):
-        texto = '{0} ({1}) {2}'
+        texto = '{} {}'
         return texto.format(self.nombre, self.email)
     
     #personalizamos la tabla en posgres
