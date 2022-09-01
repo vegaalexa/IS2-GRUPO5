@@ -1,0 +1,49 @@
+{%extends './base.html'%}
+
+{% block title %} rol {% endblock %}
+
+{% block body %}
+    <h1>MODULO SEGURIDAD/USUARIO/ROLES ASIGNADOS</h1>
+    <h4>{{emailAdmin}}</h4>
+    <h4>Roles correspondientes a {{emailUsuario}}</h4>
+    <br>
+
+    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+        <h3>Listado de roles</h3>
+        <div class="table-responsive py-2">
+            <table class='table table-striped'>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Descripcion</th>
+                        <th>Permisos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rol, permisos in rolesPermisos.items %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{rol.nombre}}</td>
+                        <td>{{rol.descripcion}}</td>
+                        <td>
+                            <table class='table table-striped'>
+
+                                <tbody>
+                                    {% for permiso in permisos %}
+                                        <tr>
+                                            <td>{{permiso.descripcion}}</td>
+                                            <td>{{permiso.tipo}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock%}
