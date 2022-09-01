@@ -45,12 +45,12 @@
 				<div class="card-body">
 					<form action="/registrarRol/{{email}}" method="POST"> {% csrf_token%}
 						<div class="form-group py-2">
-							<input type="text" id="txtNombreRol" name='txtNombreRol' 
+							<input type="text" id="txtNombreRol" name='txtNombre' 
 								class="form-control" placeholder="Nombre" 
 								maxlength="50" required>
 						</div>
                         <div class="form-group py-2">
-							<input type="text" id="txtDescripcionRol" name='txtDescripcionRol' 
+							<input type="text" id="txtDescripcionRol" name='txtDescripcion' 
 								class="form-control" placeholder="Descripcion" 
 							    required>
 						</div>
