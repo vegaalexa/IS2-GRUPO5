@@ -284,13 +284,9 @@ def verRolesAsignados(request, emailAdmin, emailUsuario):
         dicRolesPermisos[rolAsignado] = dic
        
     #print('--------------')
-    for clave in dicRolesPermisos.keys(): 
-        for clave1 in dicRolesPermisos[clave].keys():
-            print(f'{clave} {clave1} {dicRolesPermisos[clave][clave1]}')
-    
-    #print('--------------')
-    #for clave in dic.keys():
-    #    print(f'{clave} {dic[clave]}')
+    #for clave in dicRolesPermisos.keys(): 
+    #    for clave1 in dicRolesPermisos[clave].keys():
+    #        print(f'{clave} {clave1} {dicRolesPermisos[clave][clave1]}')
     
     return render(request, 'rolesAsignados.html', {
                                     'emailAdmin':emailAdmin,
@@ -298,6 +294,41 @@ def verRolesAsignados(request, emailAdmin, emailUsuario):
                                     'roles': rolesAsignados,
                                     'rolesPermisos':dicRolesPermisos})
 
+
+def verPermisosAsignados(request, emailAdmin, idRol):
+    rol = Rol.objects.get(idRol=idRol)
+    permisosAsignados = getPermisosAsignadosARol(idRol)
+    permisosAsignados.sort(key=lambda permisosAsignados: permisosAsignados.descripcion)
+    
+    return render(request, 'permisosAsignados.html', {
+                                    'email':emailAdmin,
+                                    'rol': rol,
+                                    'permisos':permisosAsignados})
+    
+
+def desasignarPermiso(request, emailAdmin, idRolAsignar, idPermiso):
+    rol = Rol.objects.get(idRol=idRolAsignar)
+    #tabla intermedia entre Usuario y Rol (relacion M-M)
+    rolesPermisos = RolesPermisos.objects.all()
+
+    #eliminamos todos las asociaciones entre el usuario a eliminar y sus roles
+    for rolPermiso in rolesPermisos:
+        #lo convierto a int ya que por alguna razon me daba error
+        #a pasar de que ambos son int 
+        if int(rolPermiso.rol_id) == int(idRolAsignar):
+            if int(rolPermiso.permiso_id) == int(idPermiso):
+                print('quitando permiso...')
+                rolPermiso.delete()
+            
+    permisosAsignados = getPermisosAsignadosARol(idRolAsignar)
+    permisosAsignados.sort(key=lambda permisosAsignados: permisosAsignados.descripcion)
+    
+    return render(request, 'permisosAsignados.html', {
+                                    'email':emailAdmin,
+                                    'rol': rol,
+                                    'permisos':permisosAsignados})
+    
+        
 def desasignacionRol(request, emailAdmin, emailUsuarioQuitar):
     print('desasignando...')
     
@@ -486,11 +517,10 @@ def getPermisosAsignadosARol(idRol):
     
     #tabla intermedia entre Rol y Permiso (relacion M-M)
     for rolPermiso in rolesPermisos:
-        if rolPermiso.rol_id == idRol:
+        if int(rolPermiso.rol_id) == int(idRol):
             permiso = Permiso.objects.get(idPermiso=rolPermiso.permiso_id)
             permisosAsignados.append(permiso)
-            
-    
+
     return permisosAsignados
 
 
