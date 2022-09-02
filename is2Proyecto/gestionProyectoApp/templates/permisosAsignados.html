@@ -1,0 +1,40 @@
+{%extends './base.html'%}
+
+{% block title %} permisos {% endblock %}
+
+{% block body %}
+    <h1>MODULO SEGURIDAD/PERMISOS/PERMISOS ASIGNADOS</h1>
+    <h4>{{email}}</h4>
+	<h4>Permisos correspondientes al rol: {{rol.nombre}} - {{rol.idRol}}
+	</h4>
+    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+        <h3>Listado de permisos</h3>
+        <div class="table-responsive py-2">
+            <table class='table table-striped'>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>id</th>
+                        <th>Descripcion</th>
+                        <th>Opcion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in permisos %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{p.nombre}}</td>
+                        <td>{{p.tipo}}</td>
+                        <td>{{p.idPermiso}}</td>
+                        <td>{{p.descripcion}}</td>
+                        <td><a href="/desasignarPermiso/{{email}}/{{rol.idRol}}/{{p.idPermiso}}" class="btn btn-danger 
+                            btnDesasignarPermiso btnEliminacion">Quitar</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock%}
