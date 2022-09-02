@@ -23,19 +23,20 @@
                 <tbody>
                     {% for rol, permisos in rolesPermisos.items %}
                     <tr>
-                        <td>{{forloop.counter}}</td>
+                        <td >{{forloop.counter}}</td>
                         <td>{{rol.nombre}}</td>
                         <td>{{rol.descripcion}}</td>
                         <td>
                             <table class='table table-striped'>
 
                                 <tbody>
-                                    {% for permiso in permisos %}
+                                    {% for formulario, permiso in permisos.items %}
                                         <tr>
-                                            <td>{{permiso.descripcion}}</td>
-                                            <td>{{permiso.tipo}}</td>
+                                            <td width="120">{{formulario}}</td>
+                                            <td>{{permiso}}</td>
                                         </tr>
                                     {% endfor %}
+                                    
                                 </tbody>
 
                             </table>
