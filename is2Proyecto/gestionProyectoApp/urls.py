@@ -26,6 +26,8 @@ urlpatterns = [
     path('asignacionRol/<emailAdmin>/<emailUsuarioAsignar>', views.asignacionRol),
     path('asignarRol/<emailAdmin>/<emailUsuarioAsignar>/<idRol>', views.asignarRol),
     path('verRolesAsignados/<emailAdmin>/<emailUsuario>', views.verRolesAsignados),
+    path('desasignacionRol/<emailAdmin>/<emailUsuarioQuitar>', views.desasignacionRol),
+    path('desasignarRol/<emailAdmin>/<emailUsuarioQuitar>/<idRol>', views.desasignarRol),
     #ASIGNACION DE PERMISO
     path('asignacionPermiso/<emailAdmin>/<idRolAsignar>', views.asignacionPermiso),
     path('asignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.asignarPermiso)
