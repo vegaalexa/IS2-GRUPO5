@@ -85,10 +85,12 @@
 							<td>{{u.nombre}}</td>
 							<td>{{u.email}}</td>
 							<td><a id="btnEditar" href="/edicionUsuario/{{email}}/{{u.email}}" class="btn btn-info btnEditarUsuario">Editar</a></td>
-							<!--ASIGNACION-->
+							<!--asignar rol-->
 							<td><a href="/asignacionRol/{{email}}/{{u.email}}" class="btn btn-info">Asignar Rol</a></td>
 							<!--ver asignacion-->
 							<td><a href="/verRolesAsignados/{{email}}/{{u.email}}" class="btn btn-info">Ver Roles</a></td>
+							<!--desasignar rol-->
+							<td><a href="/desasignacionRol/{{email}}/{{u.email}}" class="btn btn-info">Quitar Rol</a></td>
 							<td><a href="/eliminarUsuario/{{email}}/{{u.email}}" class="btn btn-danger
 								btnEliminarUsuario btnEliminacion">Eliminar</a></td>
 						</tr>
