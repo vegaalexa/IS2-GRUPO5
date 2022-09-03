@@ -190,7 +190,7 @@ def rol(request, emailAdmin):
     permisosPorPantalla = []
     
     if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'rol')
         permisosPorPantalla = []
         for permiso in perPorPatalla:
             permisosPorPantalla.append(permiso.tipo)
