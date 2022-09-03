@@ -35,14 +35,10 @@ def usuario(request, emailAdmin):
     if siEsAdmin(emailAdmin) == False:
         perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
         permisosPorPantalla = []
-        print('\n')
         for permiso in perPorPatalla:
-            print(f'permiso: {permiso.tipo}')
             permisosPorPantalla.append(permiso.tipo)
-        print('\n')
     else:
         permisosPorPantalla = ['C','R','U','D']
-        print(permisosPorPantalla)
         
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
@@ -208,7 +204,6 @@ def registrarRol(request, emailAdmin):
     nombre = request.POST.get('txtNombre')
     descripcion = request.POST.get('txtDescripcion')
     
-    print(f'nombre: {nombre} descripcion: {descripcion}')
     rol = Rol.objects.create(nombre=nombre, descripcion=descripcion)
     listaRol = Rol.objects.all()
     return render(request, 'rol.html', {'roles': listaRol,
