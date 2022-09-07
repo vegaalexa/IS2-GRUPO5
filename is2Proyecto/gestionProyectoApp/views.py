@@ -146,6 +146,18 @@ def registrarPermiso(request, emailAdmin):
     
 
 def eliminarPermiso(request, emailAdmin, idPermisoAEliminar):
+    rolesPermisos = []
+    try:
+        rolesPermisos = RolesPermisos.objects.all()
+    except:
+        pass
+    
+    #eliminamos todos las asociaciones entre el rol a eliminar y sus permisos
+    for rolPermiso in rolesPermisos:
+        if int(rolPermiso.permiso_id) == int(idPermisoAEliminar):
+            rolPermiso.delete()
+    
+    
     permiso = Permiso.objects.get(idPermiso=idPermisoAEliminar)
     permiso.delete()
     
@@ -216,12 +228,30 @@ def eliminarRol(request, emailAdmin, idRolAEliminar):
     rol = Rol.objects.get(idRol=idRolAEliminar)
     
     #tabla intermedia entre Rol y Permiso (relacion M-M)
-    rolesPermisos = RolesPermisos.objects.all()
+    rolesPermisos = []
+    try:
+        rolesPermisos = RolesPermisos.objects.all()
+    except:
+        pass
     
     #eliminamos todos las asociaciones entre el rol a eliminar y sus permisos
     for rolPermiso in rolesPermisos:
-        if rolPermiso.rol_id == int(idRolAEliminar):
+        if int(rolPermiso.rol_id) == int(idRolAEliminar):
             rolPermiso.delete()
+    
+    
+    #tabla intermedia entre Usuario y Rol (relacion M-M)
+    usuariosRoles = []
+    try:
+        usuariosRoles = UsuariosRoles.objects.all()
+    except:
+        pass
+    
+    #eliminamos todos las asociaciones entre el rol a eliminar y sus permisos
+    for usuarioRol in usuariosRoles:
+        if int(usuarioRol.rol_id) == int(idRolAEliminar):
+            usuarioRol.delete()
+    
     
     #eliminamos el rol
     rol.delete()
