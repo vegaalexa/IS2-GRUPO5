@@ -566,3 +566,13 @@ def getRolesAsignados(email):
             
     
     return rolesAsignados
+
+
+'''
+*************************
+    MODULO PROYECTO
+*************************
+'''
+
+def proyecto(request, emailAdmin):
+    return render(request, 'proyecto.html', {'email': emailAdmin})
