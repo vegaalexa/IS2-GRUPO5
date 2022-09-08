@@ -22,18 +22,24 @@ urlpatterns = [
 	path('eliminarRol/<emailAdmin>/<idRolAEliminar>', views.eliminarRol),
 	path('edicionRol/<emailAdmin>/<idRolAEditar>', views.edicionRol),
 	path('editarRol/<emailAdmin>/<idRolAEditar>', views.editarRol),
-    #ASIGNACION DE ROL
-    path('asignacionRol/<emailAdmin>/<emailUsuarioAsignar>', views.asignacionRol),
-    path('asignarRol/<emailAdmin>/<emailUsuarioAsignar>/<idRol>', views.asignarRol),
-    path('verRolesAsignados/<emailAdmin>/<emailUsuario>', views.verRolesAsignados),
-    path('desasignacionRol/<emailAdmin>/<emailUsuarioQuitar>', views.desasignacionRol),
-    path('desasignarRol/<emailAdmin>/<emailUsuarioQuitar>/<idRol>', views.desasignarRol),
-    #ASIGNACION DE PERMISO
-    path('asignacionPermiso/<emailAdmin>/<idRolAsignar>', views.asignacionPermiso),
-    path('asignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.asignarPermiso),
-    path('verPermisosAsignados/<emailAdmin>/<idRol>', views.verPermisosAsignados),
-    path('desasignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.desasignarPermiso),
-    path('proyecto/<emailAdmin>', views.proyecto),
-    #BACKLOG
-    path('backlog/<emailAdmin>', views.backlog),
+    	#ASIGNACION DE ROL
+    	path('asignacionRol/<emailAdmin>/<emailUsuarioAsignar>', views.asignacionRol),
+    	path('asignarRol/<emailAdmin>/<emailUsuarioAsignar>/<idRol>', views.asignarRol),
+    	path('verRolesAsignados/<emailAdmin>/<emailUsuario>', views.verRolesAsignados),
+   	path('desasignacionRol/<emailAdmin>/<emailUsuarioQuitar>', views.desasignacionRol),
+   	path('desasignarRol/<emailAdmin>/<emailUsuarioQuitar>/<idRol>', views.desasignarRol),
+    	#ASIGNACION DE PERMISO
+   	path('asignacionPermiso/<emailAdmin>/<idRolAsignar>', views.asignacionPermiso),
+    	path('asignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.asignarPermiso),
+    	path('verPermisosAsignados/<emailAdmin>/<idRol>', views.verPermisosAsignados),
+    	path('desasignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.desasignarPermiso),
+    	path('proyecto/<emailAdmin>', views.proyecto),
+   	#BACKLOG
+   	path('backlog/<emailAdmin>', views.backlog),
+   	#PROYECTO
+	path('proyectoAbm/<emailAdmin>', views.proyectoAbm),
+	path('registrarProyectoAbm/<emailAdmin>', views.registrarProyectoAbm),
+	path('eliminarProyectoAbm/<emailAdmin>/<idProyectoAbmAEliminar>', views.eliminarProyectoAbm),
+	path('edicionProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.edicionProyectoAbm),
+	path('editarProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.editarProyectoAbm)
 ]
