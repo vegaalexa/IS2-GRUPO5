@@ -576,3 +576,6 @@ def getRolesAsignados(email):
 
 def proyecto(request, emailAdmin):
     return render(request, 'proyecto.html', {'email': emailAdmin})
+
+def backlog(request, emailAdmin):
+    return render(request, 'backlog.html', {'email': emailAdmin})

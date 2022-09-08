@@ -33,5 +33,7 @@ urlpatterns = [
     path('asignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.asignarPermiso),
     path('verPermisosAsignados/<emailAdmin>/<idRol>', views.verPermisosAsignados),
     path('desasignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.desasignarPermiso),
-    path('proyecto/<emailAdmin>', views.proyecto)
+    path('proyecto/<emailAdmin>', views.proyecto),
+    #BACKLOG
+    path('backlog/<emailAdmin>', views.backlog),
 ]
