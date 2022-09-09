@@ -41,5 +41,7 @@ urlpatterns = [
 	path('registrarProyectoAbm/<emailAdmin>', views.registrarProyectoAbm),
 	path('eliminarProyectoAbm/<emailAdmin>/<idProyectoAbmAEliminar>', views.eliminarProyectoAbm),
 	path('edicionProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.edicionProyectoAbm),
-	path('editarProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.editarProyectoAbm)
+	path('editarProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.editarProyectoAbm),
+	#USER HISTORY
+	path('userstory/<emailAdmin>', views.userstory),
 ]
