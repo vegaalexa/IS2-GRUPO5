@@ -3,7 +3,7 @@ import email
 from os import curdir
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from .models import Formulario, Rol, Usuario
+from .models import BackLog, Formulario, Rol, Usuario
 from .models import Permiso
 from .models import Proyecto
 #ASIGNACION
@@ -11,6 +11,7 @@ from .models import Rol
 from .models import Permiso
 from .models import RolesPermisos
 from .models import UsuariosRoles
+from .models import SprintBackLog
 #ASIGNACION
 
 def login(request):
@@ -568,6 +569,138 @@ def getRolesAsignados(email):
     
     return rolesAsignados
 
+'''
+*************************
+    MODULO BACKLOG
+*************************
+'''
+
+def backlog(request, emailAdmin):
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+
+    listaBackLogs = BackLog.objects.all()
+    #return render(request, 'backlog.html', {'email': emailAdmin})
+    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Backlog'})
+
+
+def registrarBackLog(request, emailAdmin):
+
+    nombre = request.POST.get('txtNombreBackLog')
+    descripcion = request.POST.get('txtDescripcionBackLog')
+
+    backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion)
+    
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+    
+    listaBackLogs = BackLog.objects.all()    
+    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Backlog'})
+    
+
+def edicionBackLog(request, emailAdmin, idBackLogAEditar):
+    backLog = BackLog.objects.get(idBackLog=idBackLogAEditar)
+    
+    return render(request, 'edicionBackLog.html', {'backLog': backLog,
+                                            'email':emailAdmin})  
+    
+
+
+def editarBackLog(request, emailAdmin, idBackLogAEditar):
+    nombre = request.POST.get('txtNombreBackLog')
+    descripcion = request.POST.get('txtDescripcionBackLog')
+    
+    backLog = BackLog.objects.get(idBackLog=idBackLogAEditar)
+    
+    backLog.nombre = nombre
+    backLog.descripcion = descripcion
+    backLog.save()
+    
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+    
+    listaBackLogs = BackLog.objects.all()    
+    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Backlog'})
+
+
+def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
+    #obtenemos el BackLog correspondiente
+    backLog = BackLog.objects.get(idBackLog=idBackLogAEliminar)
+    
+    sprintBackLogs = []
+    try:
+        sprintBackLogs = SprintBackLog.objects.all()
+    except:
+        pass
+    
+    #eliminamos todos las asociaciones entre el BackLog a eliminar y sus SprintBackLog
+    for sprintBackLog in sprintBackLogs:
+        if int(sprintBackLogs.backLog_id) == int(idBackLogAEliminar):
+            sprintBackLog.delete()
+    
+    '''
+    #tabla intermedia entre Usuario y Rol (relacion M-M)
+    usuariosRoles = []
+    try:
+        usuariosRoles = UsuariosRoles.objects.all()
+    except:
+        pass
+    
+    #eliminamos todos las asociaciones entre el rol a eliminar y sus permisos
+    for usuarioRol in usuariosRoles:
+        if int(usuarioRol.rol_id) == int(idRolAEliminar):
+            usuarioRol.delete()
+    
+    
+    '''
+    #eliminamos el backLog
+    backLog.delete()
+    
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+    
+    listaBackLogs = BackLog.objects.all()    
+    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Backlog'})
 
 '''
 *************************
@@ -579,12 +712,6 @@ def getRolesAsignados(email):
 def proyecto(request, emailAdmin):
     return render(request, 'proyecto.html', {'email': emailAdmin})
 
-def backlog(request, emailAdmin):
-    return render(request, 'backlog.html', {'email': emailAdmin})
-
-def userstory(request, emailAdmin):
-    return render(request, 'userstory.html', {'email': emailAdmin})
-    
 #ABM de Proyecto
 def proyectoAbm(request, emailAdmin):
     permisosPorPantalla = []
@@ -643,3 +770,11 @@ def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
     listaProyectoAbm = Proyecto.objects.all()
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                             'email':emailAdmin})
+                                            
+'''
+*************************
+    MODULO USER STORY
+*************************
+'''
+def userstory(request, emailAdmin):
+    return render(request, 'userstory.html', {'email': emailAdmin})

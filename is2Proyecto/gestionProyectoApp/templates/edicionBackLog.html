@@ -1,31 +1,32 @@
 {%extends './base.html'%}
 
-{% block title %} gestion de proyectos {% endblock %}
+{% block title %} backlog {% endblock %}
 
 {% block body %}
-    <h1>MODULO SEGURIDAD/ROL</h1>
+    <h1>MODULO PROYECTO/BACKLOG</h1>
     <h4>{{email}}</h4>
     <br>
     <div class="row">
 		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-			<h3>Editar Rol</h3>
+			<h3>Editar Backlog</h3>
 			<div class="card">
 				<div class="card-body">
-					<form action="/editarRol/{{email}}/{{rol.idRol}}" method="POST"> {% csrf_token %}
+					<form action="/editarBackLog/{{email}}/{{backLog.idBackLog}}" method="POST"> {% csrf_token %}
 						<!--<div class="form-group py-2">
 							<input type="text" id="txtCodigo" name='txtCodigo' 
 								class="form-control" placeholder="Codigo" 
 								minlength="6" maxlength="6" required>
 						</div>-->
+                        hola
 						<div class="form-group py-2">
 							<input type="text" id="txtNombreBackLog" name='txtNombreBackLog' 
-                                value="{{rol.nombre}}"
+                                value="{{backLog.nombre}}"
 								class="form-control" placeholder="Nombre" 
 								maxlength="50" required>
 						</div>
                         <div class="form-group py-2">
-							<input type="text" id="txtDescripcion" name='txtDescripcionBackLog' 
-                            value="{{rol.descripcion}}"
+							<input type="text" id="txtDescripcionBackLog" name='txtDescripcionBackLog' 
+                            value="{{backLog.descripcion}}"
 								class="form-control" placeholder="Descripcion" 
 							    required>
 						</div>
