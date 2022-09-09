@@ -36,4 +36,8 @@ urlpatterns = [
     path('proyecto/<emailAdmin>', views.proyecto),
     #BACKLOG
     path('backlog/<emailAdmin>', views.backlog),
+    path('registrarBackLog/<emailAdmin>', views.registrarBackLog),
+    path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>', views.edicionBackLog),
+    path('editarBackLog/<emailAdmin>/<idBackLogAEditar>', views.editarBackLog),
+    path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>', views.eliminarBackLog),
 ]
