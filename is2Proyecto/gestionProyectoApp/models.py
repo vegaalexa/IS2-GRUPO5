@@ -17,11 +17,25 @@ class Proyecto(models.Model):
         db_table = 'Proyecto'
     
 class BackLog(models.Model):
+    def generarIdBackLog():
+        #este metodo nos ayuda a generar los valores de id para Permiso
+        #se debe mejorar este metodo
+        valorPorDefecto = 100000
+        cantidad = BackLog.objects.count()
+        if cantidad == None:
+            return 1
+        else:
+            if cantidad == 0:
+                return valorPorDefecto
+            #ordenamos y obtenemos el mayor id para luego sumarle 1
+            backLog = BackLog.objects.filter().order_by('idBackLog').last()
+            return backLog.idBackLog + 1
+        
     nombre = models.CharField(max_length=50)
-    idBackLog = models.CharField(primary_key=True, max_length=6)
-    
+    descripcion = models.CharField(max_length=200, default='')
+    idBackLog = models.IntegerField(primary_key=True, default=generarIdBackLog)
     proyecto = models.OneToOneField(Proyecto,on_delete=models.CASCADE,
-                                    null=False, blank=False)
+                                    null=True, blank=False)
     
    
     def __str__(self):
@@ -38,7 +52,7 @@ class SprintBackLog(models.Model):
     nombre = models.CharField(max_length=50)
     idSprintBackLog = models.CharField(primary_key=True, max_length=6)  
     backLog = models.ForeignKey(BackLog, null=True,
-                                     blank=True, on_delete=models.CASCADE)
+                                     blank=True, on_delete=models.CASCADE)    
     
    
     def __str__(self):
