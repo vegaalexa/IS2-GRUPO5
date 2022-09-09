@@ -5,13 +5,68 @@
 {% block body %}
     <h1>MODULO PROYECTO/BACKLOG</h1>
     <h4>{{email}}</h4>
-    <h4>MENU</h4>
-    <nav>
-        HOLA
-        <!--<ul>
-            <li> <a href="/proyecto/{{email}}"> Proyecto </a> </li>
-            <li> <a href="/backlog/{{email}}"> BackLog </a> </li>
-            <li> <a href="#"> User story </a> </li>
-        </ul>-->
-    </nav>
+    <h4>Permisos sobre Backlog:
+		{% for p in permisosPorPantalla %}
+			{{p}}
+		{% endfor %}
+	</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Registrar Backlog</h3>
+			<div class="card">
+				<div class="card-body">
+					<form action="/registrarBackLog/{{email}}" method="POST"> {% csrf_token%}
+						<div class="form-group py-2">
+							<input type="text" id="txtNombreBackLog" name='txtNombre' 
+								class="form-control" placeholder="Nombre" 
+								maxlength="50" required>
+						</div>
+                        <div class="form-group py-2">
+							<input type="text" id="txtDescripcionBackLog" name='txtDescripcion' 
+								class="form-control" placeholder="Descripcion" 
+							    required>
+						</div>
+
+						<div class="form-group py-2">
+							<button type="submit" class="btn btn-success btn-block text-white btnGuardarRol">Guardar</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+        
+		<div id="divListadoRol" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de Backlogs</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<!--<th>Codigo</th>-->
+							<th>Nombre</th>
+							<th>Descripcion</th>
+							<th colspan="2">Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for bg in backlogs %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{bg.nombre}}</td>
+							<td>{{bg.descripcion}}</td>
+							<td><a href="/edicionBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-info btnEditarBackLog">Editar</a></td>
+							<!--ASIGNACION
+							<td><a href="/asignacionPermiso/{{email}}/{{r.idRol}}" class="btn btn-info">Asignar Permiso</a></td>
+							<td><a href="/verPermisosAsignados/{{email}}/{{r.idRol}}" class="btn btn-info">Ver Permisos</a></td>-->
+							<td><a href="/eliminarBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-danger
+								btnEliminarBackLog btnEliminacion">ESSSliminar</a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 {% endblock%}
