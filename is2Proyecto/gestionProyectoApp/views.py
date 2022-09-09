@@ -581,6 +581,9 @@ def proyecto(request, emailAdmin):
 
 def backlog(request, emailAdmin):
     return render(request, 'backlog.html', {'email': emailAdmin})
+
+def userstory(request, emailAdmin):
+    return render(request, 'userstory.html', {'email': emailAdmin})
     
 #ABM de Proyecto
 def proyectoAbm(request, emailAdmin):
