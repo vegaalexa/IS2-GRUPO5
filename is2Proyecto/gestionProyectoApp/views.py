@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from .models import BackLog, Formulario, Rol, Usuario
 from .models import Permiso
+from .models import Proyecto
 #ASIGNACION
 from .models import Rol
 from .models import Permiso
@@ -568,15 +569,11 @@ def getRolesAsignados(email):
     
     return rolesAsignados
 
-
 '''
 *************************
-    MODULO PROYECTO
+    MODULO BACKLOG
 *************************
 '''
-
-def proyecto(request, emailAdmin):
-    return render(request, 'proyecto.html', {'email': emailAdmin})
 
 def backlog(request, emailAdmin):
     permisosPorPantalla = []
@@ -704,3 +701,80 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'Backlog'})
+
+'''
+*************************
+    MODULO PROYECTO
+*************************
+'''
+
+#Home del modulo
+def proyecto(request, emailAdmin):
+    return render(request, 'proyecto.html', {'email': emailAdmin})
+
+#ABM de Proyecto
+def proyectoAbm(request, emailAdmin):
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+    
+    listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
+    return render(request, 'proyectoAbm.html', {'proyectoAbm': listaProyectoAbm,
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'ProyectoAbm'})
+    
+    
+def registrarProyectoAbm(request, emailAdmin):
+    nombre = request.POST.get('txtNombre')
+
+    proyectoAbm = Proyecto.objects.create(nombre=nombre)
+    listaProyectoAbm = Proyecto.objects.all()
+    return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
+                                            'email':emailAdmin})
+       
+
+def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
+    #obtenemos el Proyecto correspondiente
+    proyectoAbm = proyectoAbm.objects.get(idProyectoAbm=idProyectoAbmAEliminar)
+    
+    #eliminamos el proyecto
+    proyectoAbm.delete()
+    
+    listaProyectoAbm = Proyecto.objects.all()
+    return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
+                                            'email':emailAdmin})
+    
+    
+def edicionProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
+    proyectoAbm = proyectoAbm.objects.get(idProyectoAbm=idProyectoAbmAEditar)
+    
+    return render(request, 'proyectoAbm.html', {'proyecto': proyectoAbm,
+                                            'email':emailAdmin})
+    
+    
+def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
+    nombre = request.POST.get('txtNombre')
+    
+    proyectoAbm = proyectoAbm.objects.get(idProyectoAbm=idProyectoAbmAEditar)
+    
+    proyectoAbm.nombre = nombre
+    proyectoAbm.save()
+    
+    listaProyectoAbm = Proyecto.objects.all()
+    return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
+                                            'email':emailAdmin})
+                                            
+'''
+*************************
+    MODULO USER STORY
+*************************
+'''
+def userstory(request, emailAdmin):
+    return render(request, 'userstory.html', {'email': emailAdmin})

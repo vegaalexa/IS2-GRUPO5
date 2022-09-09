@@ -4,7 +4,24 @@ from django.db import models
 # Create your models here.
 class Proyecto(models.Model):
     nombre = models.CharField(max_length=50)
-    idProyecto = models.CharField(primary_key=True, max_length=6)
+    #Se comenta porque no corresponde el tipo de dato
+    #idProyecto = models.CharField(primary_key=True, max_length=6)
+    
+    def generarIdProyecto():
+            #este metodo nos ayuda a generar los valores de id para Proyecto
+            #se debe mejorar este metodo
+            valorPorDefecto = 100000
+            cantidad = Proyecto.objects.count()
+            if cantidad == None:
+                return 1
+            else:
+                if cantidad == 0:
+                    return valorPorDefecto
+                #ordenamos y obtenemos el mayor id para luego sumarle 1
+                proyecto = Proyecto.objects.filter().order_by('idProyecto').last()
+                return proyecto.idProyecto + 1
+
+    idProyecto = models.IntegerField(primary_key=True, default=generarIdProyecto)
     
    
     def __str__(self):

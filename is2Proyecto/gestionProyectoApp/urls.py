@@ -40,4 +40,12 @@ urlpatterns = [
     path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>', views.edicionBackLog),
     path('editarBackLog/<emailAdmin>/<idBackLogAEditar>', views.editarBackLog),
     path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>', views.eliminarBackLog),
+    #PROYECTO
+    path('proyectoAbm/<emailAdmin>', views.proyectoAbm),
+    path('registrarProyectoAbm/<emailAdmin>', views.registrarProyectoAbm),
+    path('eliminarProyectoAbm/<emailAdmin>/<idProyectoAbmAEliminar>', views.eliminarProyectoAbm),
+    path('edicionProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.edicionProyectoAbm),
+    path('editarProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.editarProyectoAbm),
+    #USER HISTORY
+    path('userstory/<emailAdmin>', views.userstory),
 ]

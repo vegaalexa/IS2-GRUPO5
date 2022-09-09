@@ -1,0 +1,92 @@
+{%extends './base.html'%}
+
+{% block title %} rol {% endblock %}
+
+{% block body %}
+	<!--este input lo colocamos como hidden (oculto)
+	su funcion es asignarle el valor de permisosPorPantalla
+	para luego poder acceder a este valor desde el scrip
+	y pasarle como parametro a 
+	habilitarDeshabilitarCRUD()-->
+	<input id="permiso" name="permiso" type="hidden" value="{{permisosPorPantalla}}">
+	<input id="nombrePantalla" name="nombrePantalla" type="hidden" value="{{nombrePantalla}}">
+
+	<script type="text/javascript">
+		var input = document.getElementById("permiso");
+		var input_aux = document.getElementById("nombrePantalla");
+		var perPorPantalla = input.value;
+		var nombrePantalla = input_aux.value;
+		var permisosPorPantalla = "";
+		
+		//extraemos los permisos de perPorPantalla
+		for (let i = 0; i < perPorPantalla.length; i++) {
+			if(perPorPantalla[i] == 'C' || perPorPantalla[i] == 'R'
+						|| perPorPantalla[i] == 'U' || perPorPantalla[i] == 'D' ){
+				permisosPorPantalla = permisosPorPantalla.concat(perPorPantalla[i]);
+			}
+		}
+
+		//invocamos a la funcion de javascript
+		window.onload = function() { habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla); };
+	</script>
+
+    <h1>MODULO PROYECTO/PROYECTO ABM</h1>
+    <h4>{{email}}</h4>
+	<h4>Permisos sobre Proyectos:
+		{% for p in permisosPorPantalla %}
+			{{p}}
+		{% endfor %}
+	</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Registrar Proyecto</h3>
+			<div class="card">
+				<div class="card-body">
+					<form action="/registrarProyectoAbm/{{email}}" method="POST"> {% csrf_token%}
+						<div class="form-group py-2">
+							<input type="text" id="txtNombre" name='txtNombre' 
+								class="form-control" placeholder="Nombre" 
+								maxlength="50" required>
+						</div>
+						<div class="form-group py-2">
+							<button type="submit" class="btn btn-success btn-block text-white btnGuardarProyecto">Guardar</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="divListadoProyecto" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de Proyectos</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<!--<th>Codigo</th>-->
+							<th>Nombre</th>
+							<th colspan="2">Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for p in proyecto %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{p.nombre}}</td>
+							<!--td>{{r.descripcion}}</td-->
+							<td><a href="/edicionProyectoAbm/{{email}}/{{p.idProyectoAbm}}" class="btn btn-info btnEditarProyectoAbm">Editar</a></td>
+							<!--ASIGNACION-->
+							<td><a href="/asignacionPermiso/{{email}}/{{p.idProyectoAbm}}" class="btn btn-info">Asignar Permiso</a></td>
+							<td><a href="/verPermisosAsignados/{{email}}/{{p.idProyectoAbm}}" class="btn btn-info">Ver Permisos</a></td>
+							<!--FIN ASIGNACION-->
+                            <td><a href="/eliminarProyectoAbm/{{email}}/{{p.idProyectoAbm}}" class="btn btn-danger
+								btnEliminarRol btnEliminacion">Eliminar</a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+{% endblock%}
