@@ -49,6 +49,12 @@ urlpatterns = [
     path('eliminarProyectoAbm/<emailAdmin>/<idProyectoAbmAEliminar>', views.eliminarProyectoAbm),
     path('edicionProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.edicionProyectoAbm),
     path('editarProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.editarProyectoAbm),
+    #PROYECTO: ASIGNACION USUARIO A PROYECTOS
+    path('asignacionUsuarioProyecto/<emailAdmin>/<idProyecto>', views.asignacionUsuarioProyecto),
+    path('asignarUsuarioProyecto/<emailAdmin>/<idProyecto>/<emailUsuarioAsignar>', views.asignarUsuarioProyecto),
+    #verUsuariosAsignadosProyectos
+    path('verUsuariosAsignadosProyecto/<emailAdmin>/<idProyecto>', views.verUsuariosAsignadosProyecto),
+    path('desasignarUsuarioProyecto/<emailAdmin>/<idProyecto>/<emailUsuarioADesasignar>', views.desasignarUsuarioProyecto),
     #USER HISTORY
     path('userstory/<emailAdmin>', views.userstory),
 ]

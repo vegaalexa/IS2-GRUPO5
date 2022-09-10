@@ -82,12 +82,12 @@
 							<td>{{p.descripcion}}</td>
 							<!--td>{{r.descripcion}}</td-->
 							<td><a href="/edicionProyectoAbm/{{email}}/{{p.idProyecto}}" class="btn btn-info btnEditarProyectoAbm">Editar</a></td>
-							<!--ASIGNACION-->
-							<!--<td><a href="/asignacionPermiso/{{email}}/{{p.idProyecto}}" class="btn btn-info">Asignar Permiso</a></td>-->
-							<!--<td><a href="/verPermisosAsignados/{{email}}/{{p.idProyecto}}" class="btn btn-info">Ver Permisos</a></td>-->
-							<!--FIN ASIGNACION-->
+							<!--agregar usuario-->
+							<td><a href="/asignacionUsuarioProyecto/{{email}}/{{p.idProyecto}}" class="btn btn-info">Agregar Usuario</a></td>
+							<!--ver usuarios-->
+							<td><a href="/verUsuariosAsignadosProyecto/{{email}}/{{p.idProyecto}}" class="btn btn-info">Ver Usuario</a></td>
                             <td><a href="/eliminarProyectoAbm/{{email}}/{{p.idProyecto}}" class="btn btn-danger
-								btnEliminarRol btnEliminacion">Eliminar</a></td>
+								btnEliminarProyecto btnEliminacion">Eliminar</a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
