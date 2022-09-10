@@ -1008,6 +1008,81 @@ def asignarUsuarioProyecto(request, emailAdmin, idProyecto, emailUsuarioAsignar)
                                     'proyecto': proyecto,
                                     'usuarios': listaUsuariosDisponibles})
    
+
+
+def verUsuariosAsignadosProyecto(request, emailAdmin, idProyecto):
+    usuariosAsignados = getUsuariosAsignadosProyecto(idProyecto)
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+
+    
+    return render(request, 'verUsuariosAsignadosProyecto.html', {
+                                    'email':emailAdmin,
+                                    'proyecto': proyecto,
+                                    'usuarios':usuariosAsignados})
+
+
+def desasignarUsuarioProyecto(request, emailAdmin, idProyecto, emailUsuarioADesasignar):
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    #tabla intermedia entre Usuario y Proyecto (relacion M-M)
+    usuariosProyectos = UsuariosProyectos.objects.all()
+    
+    #eliminamos todos las asociaciones entre el proyecto a eliminar y el usuario
+    for usuarioProyecto in usuariosProyectos:
+        if int(usuarioProyecto.proyecto_id) == int(idProyecto):
+            if usuarioProyecto.usuario_id == emailUsuarioADesasignar:
+                print('quitando usuario...')
+                usuarioProyecto.delete()
+                
+    usuariosAsignados = getUsuariosAsignadosProyecto(idProyecto)
+    
+    return render(request, 'verUsuariosAsignadosProyecto.html', {
+                                    'email':emailAdmin,
+                                    'proyecto': proyecto,
+                                    'usuarios':usuariosAsignados})
+                
+'''
+def desasignarPermiso(request, emailAdmin, idRolAsignar, idPermiso):
+    rol = Rol.objects.get(idRol=idRolAsignar)
+    #tabla intermedia entre Usuario y Rol (relacion M-M)
+    rolesPermisos = RolesPermisos.objects.all()
+
+    #eliminamos todos las asociaciones entre el usuario a eliminar y sus roles
+    for rolPermiso in rolesPermisos:
+        #lo convierto a int ya que por alguna razon me daba error
+        #a pasar de que ambos son int 
+        if int(rolPermiso.rol_id) == int(idRolAsignar):
+            if int(rolPermiso.permiso_id) == int(idPermiso):
+                print('quitando permiso...')
+                rolPermiso.delete()
+            
+    permisosAsignados = getPermisosAsignadosARol(idRolAsignar)
+    permisosAsignados.sort(key=lambda permisosAsignados: permisosAsignados.descripcion)
+    
+    return render(request, 'permisosAsignados.html', {
+                                    'email':emailAdmin,
+                                    'rol': rol,
+                                    'permisos':permisosAsignados})
+    
+'''
+
+def getUsuariosAsignadosProyecto(idProyecto):
+    usuariosProyectos = []
+    usuariosAsignados = []
+    try:
+        #tabla intermedia entre Usuario y Rol (relacion M-M)
+        usuariosProyectos = UsuariosProyectos.objects.all()
+    except:
+        pass
+    
+    #tabla intermedia entre Usuario y Rol (relacion M-M)
+    for usuarioProyecto in usuariosProyectos:
+        if int(usuarioProyecto.proyecto_id) == int(idProyecto):
+            usuario = Usuario.objects.get(email=usuarioProyecto.usuario_id)
+            usuariosAsignados.append(usuario)
+    
+    return usuariosAsignados
+
                                           
 '''
 *************************
