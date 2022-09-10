@@ -902,11 +902,23 @@ def registrarProyectoAbm(request, emailAdmin):
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
                                     'nombrePantalla': 'ProyectoAbm'})
-       
+
 
 def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
     #obtenemos el Proyecto correspondiente
     proyectoAbm = Proyecto.objects.get(idProyecto=idProyectoAbmAEliminar)
+    
+    #tabla intermedia entre Proyecto y Usuario (relacion M-M)
+    usuariosProyectos = []
+    try:
+        usuariosProyectos = UsuariosProyectos.objects.all()
+    except:
+        pass
+    
+    #eliminamos todos las asociaciones entre el proyecto a eliminar y sus usuarios
+    for usuarioProyecto in usuariosProyectos:
+        if int(usuarioProyecto.proyecto_id) == int(idProyectoAbmAEliminar):
+            usuarioProyecto.delete()
     
     #eliminamos el proyecto
     proyectoAbm.delete()
@@ -996,24 +1008,7 @@ def asignarUsuarioProyecto(request, emailAdmin, idProyecto, emailUsuarioAsignar)
                                     'proyecto': proyecto,
                                     'usuarios': listaUsuariosDisponibles})
    
-'''
-def asignarRol(request, emailAdmin, emailUsuarioAsignar, idRol):
-    #obtenemos el rol y el permiso
-    print('asignando rol a un usuario...')
-    usuario = Usuario.objects.get(email=emailUsuarioAsignar)
-    rol = Rol.objects.get(idRol=idRol)
-    
-    #creamos la tabla intermedia la cual almacena los ids de rol y permiso
-    usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol)
-    
-    listaRolesDisponibles = getRolesDisponibles(emailUsuarioAsignar)
-    
-    return render(request, 'asignacionRol.html', {
-                                    'emailAdmin':emailAdmin,
-                                    'emailUsuarioAsignar': emailUsuarioAsignar,
-                                    'roles': listaRolesDisponibles})
-'''
-                                            
+                                          
 '''
 *************************
     MODULO USER STORY
