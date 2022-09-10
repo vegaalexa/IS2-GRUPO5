@@ -587,19 +587,25 @@ def backlog(request, emailAdmin):
         permisosPorPantalla = ['C','R','U','D']
 
     listaBackLogs = BackLog.objects.all()
+    proyecto = None
     #return render(request, 'backlog.html', {'email': emailAdmin})
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog'})
+                                        'nombrePantalla': 'Backlog',
+                                        'proyecto':proyecto})
 
 
-def registrarBackLog(request, emailAdmin):
+def registrarBackLog(request, emailAdmin, idProyecto):
 
     nombre = request.POST.get('txtNombreBackLog')
     descripcion = request.POST.get('txtDescripcionBackLog')
 
-    backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion)
+    #verificar en caso de que no tenga un proyecto
+    print(f'{nombre} {descripcion}')
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    print(f'proyecto {proyecto}')
+    backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion, proyecto=proyecto)
     
     permisosPorPantalla = []
     
@@ -702,6 +708,63 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'Backlog'})
 
+
+def asignacionProyecto(request, emailAdmin):
+    proyectos = getProyectosSinBackLog()
+    
+    return render(request, 'asignacionProyecto.html', {
+                                    'email':emailAdmin,
+                                    'proyectos': proyectos})
+
+
+def asignarProyecto(request, emailAdmin, idProyecto):
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+
+    listaBackLogs = BackLog.objects.all()
+
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    #return render(request, 'backlog.html', {'email': emailAdmin})
+    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Backlog',
+                                        'proyecto':proyecto})
+
+
+
+def getProyectosSinBackLog():
+    proyectosSinBackLog = []
+    
+    try:
+        proyectos = Proyecto.objects.all()
+        backLogs = BackLog.objects.all()
+    except:
+        pass
+    
+    
+    for proyecto in proyectos:
+        band = True
+        for backLog in backLogs:
+            print(f'{backLog.proyecto_id} {proyecto.idProyecto}')
+            if backLog.proyecto_id == proyecto.idProyecto:
+                band = False
+                break
+            
+        if band:
+            proyectosSinBackLog.append(proyecto)
+    
+    return proyectosSinBackLog
+    '''
+    
+    '''
 '''
 *************************
     MODULO PROYECTO

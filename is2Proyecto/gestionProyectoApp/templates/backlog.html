@@ -16,16 +16,23 @@
 			<h3>Registrar Backlog</h3>
 			<div class="card">
 				<div class="card-body">
-					<form action="/registrarBackLog/{{email}}" method="POST"> {% csrf_token%}
+					<form action="/registrarBackLog/{{email}}/{{proyecto.idProyecto}}" method="POST"> {% csrf_token%}
 						<div class="form-group py-2">
-							<input type="text" id="txtNombreBackLog" name='txtNombre' 
+							<input type="text" id="txtNombreBackLog" name='txtNombreBackLog' 
 								class="form-control" placeholder="Nombre" 
 								maxlength="50" required>
 						</div>
                         <div class="form-group py-2">
-							<input type="text" id="txtDescripcionBackLog" name='txtDescripcion' 
+							<input type="text" id="txtDescripcionBackLog" name='txtDescripcionBackLog' 
 								class="form-control" placeholder="Descripcion" 
 							    required>
+						</div>
+                        <div style="height:50px; border-width:10px; padding-top: 10px" class="proyectoBackLog">
+							Proyecto: {{proyecto.nombre}}
+						</div>
+                        <div class="form-group py-2">
+							
+                            <a href="/asignacionProyecto/{{email}}" class="btn btn-info btnAsignarProyecto">Asignar proyecto</a>
 						</div>
 
 						<div class="form-group py-2">
@@ -47,6 +54,7 @@
 							<!--<th>Codigo</th>-->
 							<th>Nombre</th>
 							<th>Descripcion</th>
+							<th>Proyecto</th>
 							<th colspan="2">Opciones</th>
 						</tr>
 					</thead>
@@ -56,12 +64,13 @@
 							<td>{{forloop.counter}}</td>
 							<td>{{bg.nombre}}</td>
 							<td>{{bg.descripcion}}</td>
+							<td>{{bg.proyecto.nombre}}</td>
 							<td><a href="/edicionBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-info btnEditarBackLog">Editar</a></td>
 							<!--ASIGNACION
 							<td><a href="/asignacionPermiso/{{email}}/{{r.idRol}}" class="btn btn-info">Asignar Permiso</a></td>
 							<td><a href="/verPermisosAsignados/{{email}}/{{r.idRol}}" class="btn btn-info">Ver Permisos</a></td>-->
 							<td><a href="/eliminarBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-danger
-								btnEliminarBackLog btnEliminacion">ESSSliminar</a></td>
+								btnEliminarBackLog btnEliminacion">Eliminar</a></td>
 						</tr>
 						{% endfor %}
 					</tbody>

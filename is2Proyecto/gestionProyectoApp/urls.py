@@ -36,16 +36,19 @@ urlpatterns = [
     path('proyecto/<emailAdmin>', views.proyecto),
     #BACKLOG
     path('backlog/<emailAdmin>', views.backlog),
-    path('registrarBackLog/<emailAdmin>', views.registrarBackLog),
+    path('registrarBackLog/<emailAdmin>/<idProyecto>', views.registrarBackLog),
     path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>', views.edicionBackLog),
     path('editarBackLog/<emailAdmin>/<idBackLogAEditar>', views.editarBackLog),
     path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>', views.eliminarBackLog),
+    #BACKLOG: ASIGNACION CON PROYECTO
+    path('asignacionProyecto/<emailAdmin>', views.asignacionProyecto),
+    path('asignarProyecto/<emailAdmin>/<idProyecto>', views.asignarProyecto),
     #PROYECTO
     path('proyectoAbm/<emailAdmin>', views.proyectoAbm),
     path('registrarProyectoAbm/<emailAdmin>', views.registrarProyectoAbm),
     path('eliminarProyectoAbm/<emailAdmin>/<idProyectoAbmAEliminar>', views.eliminarProyectoAbm),
     path('edicionProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.edicionProyectoAbm),
-    path('editarProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.editarProyectoAbm),
+    path('editarProyectoAbm/<emailAdmin>/<idBackLog>/<idProyectoAbmAEditar>', views.editarProyectoAbm),
     #USER HISTORY
     path('userstory/<emailAdmin>', views.userstory),
 ]
