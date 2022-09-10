@@ -22,6 +22,7 @@ class Proyecto(models.Model):
                 return proyecto.idProyecto + 1
 
     idProyecto = models.IntegerField(primary_key=True, default=generarIdProyecto)
+    descripcion = models.CharField(max_length=200, default='')
     
    
     def __str__(self):

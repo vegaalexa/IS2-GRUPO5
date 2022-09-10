@@ -788,51 +788,91 @@ def proyectoAbm(request, emailAdmin):
         permisosPorPantalla = ['C','R','U','D']
     
     listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
-    return render(request, 'proyectoAbm.html', {'proyectoAbm': listaProyectoAbm,
+    return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
                                     'nombrePantalla': 'ProyectoAbm'})
     
     
 def registrarProyectoAbm(request, emailAdmin):
-    nombre = request.POST.get('txtNombre')
+    nombre = request.POST.get('txtNombreProyecto')
+    descripcion = request.POST.get('txtDescripcionProyecto')
 
-    proyectoAbm = Proyecto.objects.create(nombre=nombre)
-    listaProyectoAbm = Proyecto.objects.all()
+    proyectoAbm = Proyecto.objects.create(nombre=nombre, descripcion=descripcion)
+    
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+    
+    listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
-                                            'email':emailAdmin})
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'ProyectoAbm'})
        
 
 def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
     #obtenemos el Proyecto correspondiente
-    proyectoAbm = proyectoAbm.objects.get(idProyectoAbm=idProyectoAbmAEliminar)
+    proyectoAbm = Proyecto.objects.get(idProyecto=idProyectoAbmAEliminar)
     
     #eliminamos el proyecto
     proyectoAbm.delete()
     
-    listaProyectoAbm = Proyecto.objects.all()
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+    
+    listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
-                                            'email':emailAdmin})
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'ProyectoAbm'})
     
     
 def edicionProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
-    proyectoAbm = proyectoAbm.objects.get(idProyectoAbm=idProyectoAbmAEditar)
+    proyectoAbm = Proyecto.objects.get(idProyecto=idProyectoAbmAEditar)
     
-    return render(request, 'proyectoAbm.html', {'proyecto': proyectoAbm,
+    return render(request, 'edicionProyectoAbm.html', {'proyecto': proyectoAbm,
                                             'email':emailAdmin})
     
     
 def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
-    nombre = request.POST.get('txtNombre')
+    nombre = request.POST.get('txtNombreProyecto')
+    descripcion = request.POST.get('txtDescripcionProyecto')
     
-    proyectoAbm = proyectoAbm.objects.get(idProyectoAbm=idProyectoAbmAEditar)
+    proyectoAbm = Proyecto.objects.get(idProyecto=idProyectoAbmAEditar)
     
     proyectoAbm.nombre = nombre
+    proyectoAbm.descripcion = descripcion
     proyectoAbm.save()
     
-    listaProyectoAbm = Proyecto.objects.all()
+    permisosPorPantalla = []
+    
+    if siEsAdmin(emailAdmin) == False:
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        permisosPorPantalla = []
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+    
+    listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
-                                            'email':emailAdmin})
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'ProyectoAbm'})
                                             
 '''
 *************************
