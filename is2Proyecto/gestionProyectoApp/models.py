@@ -236,12 +236,23 @@ class UsuariosRoles(models.Model):
         db_table = 'UsuariosRoles'
 
 
+class UsuariosProyectos(models.Model):
+    '''UsuariosProyectos es una tabla intermedia entre Usuarios y Proyectos M-M'''
+    usuario = models.ForeignKey('Usuario', related_name='usuarios_proyectos',
+                                on_delete=models.SET_NULL, null=True)
+    proyecto = models.ForeignKey('Proyecto', related_name='usuarios_proyectos',
+                            on_delete=models.SET_NULL, null=True)
+    
+    class Meta:
+        verbose_name = 'UsuariosProyectos'
+        db_table = 'UsuariosProyectos'
+
 class Usuario(models.Model):
     nombre = models.CharField(blank=True, null=True, max_length=50)
     email = models.EmailField(primary_key=True)
     
     roles = models.ManyToManyField(Rol, through=UsuariosRoles, related_name='usuario_rol')
-    proyectos = models.ManyToManyField(Proyecto, related_name='usuario_proyecto')
+    proyectos = models.ManyToManyField(Proyecto, through=UsuariosProyectos, related_name='usuario_proyecto')
    
     def __str__(self):
         texto = '{} {}'
