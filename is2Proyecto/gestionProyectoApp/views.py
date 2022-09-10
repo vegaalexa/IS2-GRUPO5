@@ -297,6 +297,10 @@ def verRolesAsignados(request, emailAdmin, emailUsuario):
         #ordenamsos la lista
         permisosAsignadosARol.sort(key=lambda permisosAsignadosARol: permisosAsignadosARol.descripcion)
         
+        if len(permisosAsignadosARol) == 0:
+            print('Error: este rol no tiene ningun permiso asociado')
+            break
+        
         p_aux = permisosAsignadosARol[0]
         permisosTipos = ''
         dic = {}
@@ -867,7 +871,7 @@ def proyectoAbm(request, emailAdmin):
     permisosPorPantalla = []
     
     if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
         permisosPorPantalla = []
         for permiso in perPorPatalla:
             permisosPorPantalla.append(permiso.tipo)
@@ -878,7 +882,7 @@ def proyectoAbm(request, emailAdmin):
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
-                                    'nombrePantalla': 'ProyectoAbm'})
+                                    'nombrePantalla': 'Proyecto'})
     
     
 def registrarProyectoAbm(request, emailAdmin):
