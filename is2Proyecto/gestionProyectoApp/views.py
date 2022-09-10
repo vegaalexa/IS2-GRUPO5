@@ -12,6 +12,7 @@ from .models import Permiso
 from .models import RolesPermisos
 from .models import UsuariosRoles
 from .models import SprintBackLog
+from .models import UsuariosProyectos
 #ASIGNACION
 
 def login(request):
@@ -470,6 +471,92 @@ def getPermisosDisponibles(idRolAsignar):
     return listaPermisos
 
 
+def getUsuariosDisponibles(idProyecto):
+    '''
+    Se obtiene todos los usuarios disponibles para ese proyecto
+    '''
+    listaUsuariosAsociados = []
+    listaUsuarios = []
+    usuariosProyectos = []
+    
+    #tabla intermedia entre Usuario y Proyecto (relacion M-M)
+    try:
+        usuariosProyectos = UsuariosProyectos.objects.all()
+    except:
+        #en caso de que no haya ningun rol todavia en la BD
+        pass
+    
+    #obtenemos todos los usuarios actuales asociados a dicho proyecto
+    for usuarioProyecto in usuariosProyectos:
+        if int(usuarioProyecto.proyecto_id) == int(idProyecto):
+            usuario = Usuario.objects.get(email=usuarioProyecto.usuario_id)
+            listaUsuariosAsociados.append(usuario)
+            
+    #obtenemos todos los usuarios
+    listaUsuariosAux = []
+    try:
+        #en caso de que no exista ningun usuario
+        listaUsuariosAux = Usuario.objects.all()
+    except:
+        pass
+    
+    #obtenemos todos los usuarios disponibles para ser asignados
+    for usuario in listaUsuariosAux:
+        siEsta = False
+        for usuarioAsociado in listaUsuariosAsociados:
+            if usuario.email == usuarioAsociado.email:
+                siEsta = True
+                break
+            
+        if siEsta == False:
+            listaUsuarios.append(usuario)
+        
+    return listaUsuarios
+
+'''
+def getRolesDisponibles(emailUsuarioAsignar):
+    Se obtiene todos los roles disponibles para ese usuario
+    
+    listaRolesAsociados = []
+    listaRoles = []
+    usuariosRoles = []
+    
+    #tabla intermedia entre Rol y Permiso (relacion M-M)
+    try:
+        usuariosRoles = UsuariosRoles.objects.all()
+    except:
+        #en caso de que no hay ningun rol todavia en la BD
+        pass
+    
+    #obtenemos todos los permisos actuales asociados a dicho rol
+    for usuarioRol in usuariosRoles:
+        if usuarioRol.usuario_id == emailUsuarioAsignar:
+            rol = Rol.objects.get(idRol=usuarioRol.rol_id)
+            listaRolesAsociados.append(rol)
+    
+    #obtenemos todos los permisos
+    listaRolesAux = []
+    try:
+        #en caso de que no exista ningun rol
+        listaRolesAux = Rol.objects.all()
+    except:
+        pass
+            
+    #obtenemos todos los permisos disponibles para ser asignados
+    for rol in listaRolesAux:
+        siEsta = False
+        for rolAsociado in listaRolesAsociados:
+            if rol.idRol == rolAsociado.idRol:
+                siEsta = True
+                break
+            
+        if siEsta == False:
+            listaRoles.append(rol)
+        
+    return listaRoles
+'''
+
+
 def getRolesDisponibles(emailUsuarioAsignar):
     '''
     Se obtiene todos los roles disponibles para ese usuario
@@ -873,6 +960,59 @@ def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
                                     'nombrePantalla': 'ProyectoAbm'})
+    
+    
+
+'''
+*******************************************
+    MODULO ASIGNACION USUARIO A PROYECTO
+*******************************************
+'''
+
+def asignacionUsuarioProyecto(request,emailAdmin, idProyecto):
+    listaUsuariosDisponibles = getUsuariosDisponibles(idProyecto)
+    
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    return render(request, 'asignacionUsuarioProyecto.html', {
+                                    'emailAdmin':emailAdmin,
+                                    'proyecto': proyecto,
+                                    'usuarios': listaUsuariosDisponibles})
+
+   
+def asignarUsuarioProyecto(request, emailAdmin, idProyecto, emailUsuarioAsignar):
+    #obtenemos el proyecto y el usuario
+    print('asignando un nuevo usuario al proyecto...')
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    usuario = Usuario.objects.get(email=emailUsuarioAsignar)
+    
+    #creamos la tabla intermedia la cual almacena los ids de proyecto y de usuario
+    usuarioProyecto = UsuariosProyectos.objects.create(usuario=usuario, proyecto=proyecto)
+    
+    listaUsuariosDisponibles = getUsuariosDisponibles(idProyecto)
+    
+    return render(request, 'asignacionUsuarioProyecto.html', {
+                                    'emailAdmin':emailAdmin,
+                                    'proyecto': proyecto,
+                                    'usuarios': listaUsuariosDisponibles})
+   
+'''
+def asignarRol(request, emailAdmin, emailUsuarioAsignar, idRol):
+    #obtenemos el rol y el permiso
+    print('asignando rol a un usuario...')
+    usuario = Usuario.objects.get(email=emailUsuarioAsignar)
+    rol = Rol.objects.get(idRol=idRol)
+    
+    #creamos la tabla intermedia la cual almacena los ids de rol y permiso
+    usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol)
+    
+    listaRolesDisponibles = getRolesDisponibles(emailUsuarioAsignar)
+    
+    return render(request, 'asignacionRol.html', {
+                                    'emailAdmin':emailAdmin,
+                                    'emailUsuarioAsignar': emailUsuarioAsignar,
+                                    'roles': listaRolesDisponibles})
+'''
                                             
 '''
 *************************
