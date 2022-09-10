@@ -1,0 +1,38 @@
+{%extends './base.html'%}
+
+{% block title %} proyectos {% endblock %}
+
+{% block body %}
+    <h1>MODULO SEGURIDAD/PROYECTO/USUARIOS</h1>
+    <h4>{{emailAdmin}}</h4>
+    <h4>Proyecto actual: {{proyecto.nombre}} - {{proyecto.idProyecto}}</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de Usuarios Disponibles</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>Email</th>
+							<th colspan="2">Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for u in usuarios %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{u.nombre}}</td>
+							<td>{{u.email}}</td>
+							<!--ASIGNACION-->
+							<td><a href="/asignarUsuarioProyecto/{{emailAdmin}}/{{proyecto.idProyecto}}/{{u.email}}" class="btn btn-info">Asignar</a></td>
+							<!--ASIGNACION-->
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+{% endblock %}
