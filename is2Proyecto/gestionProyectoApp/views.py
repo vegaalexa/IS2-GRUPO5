@@ -13,6 +13,7 @@ from .models import RolesPermisos
 from .models import UsuariosRoles
 from .models import SprintBackLog
 from .models import UsuariosProyectos
+from .models import UserStory
 #ASIGNACION
 
 def login(request):
@@ -1044,31 +1045,7 @@ def desasignarUsuarioProyecto(request, emailAdmin, idProyecto, emailUsuarioADesa
                                     'email':emailAdmin,
                                     'proyecto': proyecto,
                                     'usuarios':usuariosAsignados})
-                
-'''
-def desasignarPermiso(request, emailAdmin, idRolAsignar, idPermiso):
-    rol = Rol.objects.get(idRol=idRolAsignar)
-    #tabla intermedia entre Usuario y Rol (relacion M-M)
-    rolesPermisos = RolesPermisos.objects.all()
-
-    #eliminamos todos las asociaciones entre el usuario a eliminar y sus roles
-    for rolPermiso in rolesPermisos:
-        #lo convierto a int ya que por alguna razon me daba error
-        #a pasar de que ambos son int 
-        if int(rolPermiso.rol_id) == int(idRolAsignar):
-            if int(rolPermiso.permiso_id) == int(idPermiso):
-                print('quitando permiso...')
-                rolPermiso.delete()
-            
-    permisosAsignados = getPermisosAsignadosARol(idRolAsignar)
-    permisosAsignados.sort(key=lambda permisosAsignados: permisosAsignados.descripcion)
     
-    return render(request, 'permisosAsignados.html', {
-                                    'email':emailAdmin,
-                                    'rol': rol,
-                                    'permisos':permisosAsignados})
-    
-'''
 
 def getUsuariosAsignadosProyecto(idProyecto):
     usuariosProyectos = []
@@ -1094,4 +1071,92 @@ def getUsuariosAsignadosProyecto(idProyecto):
 *************************
 '''
 def userstory(request, emailAdmin):
-    return render(request, 'userstory.html', {'email': emailAdmin})
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+        
+    listaUserStory = UserStory.objects.all()
+    return render(request, 'userstory.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'UserStory'})
+
+
+def registrarUserStory(request, emailAdmin):
+    nombre = request.POST.get('txtNombreUserStory')
+    descripcion = request.POST.get('txtDescripcionUserStory')
+    
+    userStory = UserStory.objects.create(nombre=nombre, descripcion=descripcion)
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+        
+    listaUserStory = UserStory.objects.all()
+    return render(request, 'userstory.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'UserStory'})
+
+
+def edicionUserStory(request, emailAdmin, idUserStoryAEditar):
+    userStory = UserStory.objects.get(idUserStory=idUserStoryAEditar)
+    
+    return render(request, 'edicionUserStory.html', {'userStory': userStory,
+                                            'email':emailAdmin})
+
+
+def editarUserStory(request, emailAdmin, idUserStoryAEditar):
+    nombre = request.POST.get('txtNombreUserStory')
+    descripcion = request.POST.get('txtDescripcionUserStory')
+    
+    userStory = UserStory.objects.get(idUserStory=idUserStoryAEditar)
+    
+    userStory.nombre = nombre
+    userStory.descripcion = descripcion
+    userStory.save()
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+        
+    listaUserStory = UserStory.objects.all()
+    return render(request, 'userstory.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'UserStory'})
+    
+    
+def eliminarUserStory(request, emailAdmin, idUserStoryAEliminar):
+    userStory = UserStory.objects.get(idUserStory=idUserStoryAEliminar)
+    userStory.delete()
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    
+    listaUserStory = UserStory.objects.all()
+    return render(request, 'userstory.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'UserStory'})
+    
+    
+def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
+    permisosPorPantalla = []
+    permisosAsignados = []
+    perPorPatalla = []
+
+    if siEsAdmin(emailAdmin) == False:
+        #obtenemos los roles del usuario 
+        rolesAsignados = getRolesAsignados(emailAdmin)
+        
+        #recorremos dichos roles para obtener los permisos
+        for rolAsignado in rolesAsignados:
+            perAsignados = getPermisosAsignadosARol(rolAsignado.idRol)
+            permisosAsignados.extend(perAsignados)
+        
+        #verificamos que algunos de esos permisos correspondan a la pantalla/formulario
+        for permisoAsignado in permisosAsignados:
+            if permisoAsignado.descripcion.lower() == nombrePantalla:
+                perPorPatalla.append(permisoAsignado)
+                
+        for permiso in perPorPatalla:
+            permisosPorPantalla.append(permiso.tipo)
+    else:
+        permisosPorPantalla = ['C','R','U','D']
+        
+    return permisosPorPantalla

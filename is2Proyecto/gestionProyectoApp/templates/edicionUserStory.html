@@ -1,0 +1,36 @@
+{%extends './base.html'%}
+
+{% block title %} gestion de proyectos {% endblock %}
+
+{% block body %}
+    <h1>MODULO PROYECTO/USER STORY</h1>
+    <h4>{{email}}</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Editar User Story</h3>
+			<div class="card">
+				<div class="card-body">
+					<form action="/editarUserStory/{{email}}/{{userStory.idUserStory}}" method="POST"> {% csrf_token %}
+						
+						<div class="form-group py-2">
+							<input type="text" id="txtNombreUserStory" name='txtNombreUserStory' 
+                                value="{{userStory.nombre}}"
+								class="form-control" placeholder="Nombre" 
+								maxlength="50" required>
+						</div>
+                        <div class="form-group py-2">
+							<input type="text" id="txtDescripcionUserStory" name='txtDescripcionUserStory' 
+                            value="{{userStory.descripcion}}"
+								class="form-control" placeholder="Descripcion" 
+							    required>
+						</div>
+
+						<div class="form-group py-2">
+							<button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+{% endblock %}

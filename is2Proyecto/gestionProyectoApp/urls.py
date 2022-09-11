@@ -57,4 +57,8 @@ urlpatterns = [
     path('desasignarUsuarioProyecto/<emailAdmin>/<idProyecto>/<emailUsuarioADesasignar>', views.desasignarUsuarioProyecto),
     #USER HISTORY
     path('userstory/<emailAdmin>', views.userstory),
+    path('registrarUserStory/<emailAdmin>', views.registrarUserStory),
+    path('edicionUserStory/<emailAdmin>/<idUserStoryAEditar>', views.edicionUserStory),
+    path('editarUserStory/<emailAdmin>/<idUserStoryAEditar>', views.editarUserStory),
+    path('eliminarUserStory/<emailAdmin>/<idUserStoryAEliminar>', views.eliminarUserStory),
 ]
