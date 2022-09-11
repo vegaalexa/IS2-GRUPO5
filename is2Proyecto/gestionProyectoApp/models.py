@@ -82,6 +82,7 @@ class SprintBackLog(models.Model):
             return sprintBackLog.idSprintBackLog + 1
         
     nombre = models.CharField(max_length=50)
+    descripcion = models.CharField(max_length=200, default='')
     idSprintBackLog = models.IntegerField(primary_key=True, default=generarId)
     backLog = models.ForeignKey(BackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)    

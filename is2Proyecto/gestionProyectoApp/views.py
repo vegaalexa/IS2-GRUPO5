@@ -668,24 +668,114 @@ def getRolesAsignados(email):
 '''
 
 def backlog(request, emailAdmin):
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
 
     listaBackLogs = BackLog.objects.all()
+    
+    '''
+    dicBackLogs = {}
+    for backLog in listaBackLogs:
+        sprintBackLogs = getSprintBackLogAsociados(backLog.idBacklog)
+        dicBackLogs[backLog] = sprintBackLogs
+    '''
     proyecto = None
-    #return render(request, 'backlog.html', {'email': emailAdmin})
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'Backlog',
                                         'proyecto':proyecto})
+
+
+def sprintBackLog(request, emailAdmin, idBackLog):
+    backLog = BackLog.objects.get(idBackLog=idBackLog)
+    
+    #traemos todos los SprintBackLogs que corresponden al BackLog
+    listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
+    
+    return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'backLog': backLog,
+                                        'nombrePantalla': 'SprintBacklog'})
+
+
+def registrarSprintBackLog(request, emailAdmin, idBackLog):
+    nombre = request.POST.get('txtNombreSprintBackLog')
+    descripcion = request.POST.get('txtDescripcionSprintBackLog')
+    backLog = BackLog.objects.get(idBackLog=idBackLog)
+    
+    #se crear el SprintBackLog asociandolo a un BackLog
+    sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion, backLog=backLog)
+    
+    listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
+    
+    return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'backLog': backLog,
+                                        'nombrePantalla': 'SprintBacklog'})
+
+
+def edicionSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEditar)
+    
+    return render(request, 'edicionSprintBackLog.html', {'sprintBackLog': sprintBackLog,
+                                            'email':emailAdmin})  
+
+
+def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
+    nombre = request.POST.get('txtNombreSprintBackLog')
+    descripcion = request.POST.get('txtDescripcionSprintBackLog')
+    
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEditar)
+    sprintBackLog.nombre = nombre
+    sprintBackLog.descripcion = descripcion
+    sprintBackLog.save()
+    
+    listaSprintBackLogs = getSprintBackLogAsociados(sprintBackLog.backLog.idBackLog)
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
+    
+    return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'backLog': sprintBackLog.backLog,
+                                        'nombrePantalla': 'SprintBacklog'})
+    
+
+def eliminarSprintBackLog(request, emailAdmin, idSprintBackLogAEliminar):
+    #obtenemos el SprintBackLog correspondiente
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEliminar)
+    backLog = sprintBackLog.backLog
+    
+    sprintBackLog.delete()
+    
+    listaSprintBackLogs = getSprintBackLogAsociados(backLog.idBackLog)
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
+    
+    return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'backLog': backLog,
+                                        'nombrePantalla': 'SprintBacklog'})
+    
+    
+def getSprintBackLogAsociados(idBackLog):
+    sprintBackLogs = []
+    sprintBackLogsTemp = []
+    
+    try:
+        sprintBackLogsTemp = SprintBackLog.objects.all()
+    except:
+        pass
+    
+    for sprintBackLog in sprintBackLogsTemp:
+        if sprintBackLog.backLog_id == int(idBackLog):
+            sprintBackLogs.append(sprintBackLog)
+    
+    return sprintBackLogs
 
 
 def registrarBackLog(request, emailAdmin, idProyecto):
@@ -763,24 +853,9 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
     
     #eliminamos todos las asociaciones entre el BackLog a eliminar y sus SprintBackLog
     for sprintBackLog in sprintBackLogs:
-        if int(sprintBackLogs.backLog_id) == int(idBackLogAEliminar):
+        if int(sprintBackLog.backLog_id) == int(idBackLogAEliminar):
             sprintBackLog.delete()
     
-    '''
-    #tabla intermedia entre Usuario y Rol (relacion M-M)
-    usuariosRoles = []
-    try:
-        usuariosRoles = UsuariosRoles.objects.all()
-    except:
-        pass
-    
-    #eliminamos todos las asociaciones entre el rol a eliminar y sus permisos
-    for usuarioRol in usuariosRoles:
-        if int(usuarioRol.rol_id) == int(idRolAEliminar):
-            usuarioRol.delete()
-    
-    
-    '''
     #eliminamos el backLog
     backLog.delete()
     
@@ -895,7 +970,7 @@ def registrarProyectoAbm(request, emailAdmin):
     permisosPorPantalla = []
     
     if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
         permisosPorPantalla = []
         for permiso in perPorPatalla:
             permisosPorPantalla.append(permiso.tipo)
@@ -931,7 +1006,7 @@ def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
     permisosPorPantalla = []
     
     if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
         permisosPorPantalla = []
         for permiso in perPorPatalla:
             permisosPorPantalla.append(permiso.tipo)
@@ -965,7 +1040,7 @@ def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
     permisosPorPantalla = []
     
     if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyectoAbm')
+        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
         permisosPorPantalla = []
         for permiso in perPorPatalla:
             permisosPorPantalla.append(permiso.tipo)
