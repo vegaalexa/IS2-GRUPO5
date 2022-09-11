@@ -12,12 +12,6 @@
 			<div class="card">
 				<div class="card-body">
 					<form action="/editarBackLog/{{email}}/{{backLog.idBackLog}}" method="POST"> {% csrf_token %}
-						<!--<div class="form-group py-2">
-							<input type="text" id="txtCodigo" name='txtCodigo' 
-								class="form-control" placeholder="Codigo" 
-								minlength="6" maxlength="6" required>
-						</div>-->
-                        hola
 						<div class="form-group py-2">
 							<input type="text" id="txtNombreBackLog" name='txtNombreBackLog' 
                                 value="{{backLog.nombre}}"
