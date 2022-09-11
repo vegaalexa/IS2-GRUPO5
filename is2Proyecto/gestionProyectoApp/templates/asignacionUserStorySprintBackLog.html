@@ -1,0 +1,42 @@
+{%extends './base.html'%}
+
+{% block title %} gestion de proyectos {% endblock %}
+
+{% block body %}
+    <h1>MODULO PROYECTO/BACKLOG/SPRINT BACKLOG/USER STORY</h1>
+    <h4>{{emailAdmin}}</h4>
+	<h4>UserStories disponibles para el SprintBackLog: {{sprintBackLog.nombre}} - {{sprintBackLog.idSprintBackLog}}
+	</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de Permisos Disponibles</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>Descripcion</th>
+							<th>ID</th>
+							<th colspan="2">Opciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for p in userStories %}
+						<tr>
+							<td>{{forloop.counter}}</td>
+							<td>{{p.nombre}}</td>
+							<td>{{p.descripcion}}</td>
+							<td>{{p.idUserStory}}</td>
+							<!--ASIGNACION-->
+							<td><a href="/asignarUserStorySprintBackLog/{{emailAdmin}}/{{sprintBackLog.idSprintBackLog}}/{{p.idUserStory}}"
+								class="btn btn-info">Asignar</a></td>
+							<!--ASIGNACION-->
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+{% endblock %}
