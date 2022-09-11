@@ -662,29 +662,10 @@ def getRolesAsignados(email):
     return rolesAsignados
 
 '''
-*************************
-    MODULO BACKLOG
-*************************
+****************************
+    MODULO SPRINTBACKLOG
+****************************
 '''
-
-def backlog(request, emailAdmin):
-    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
-
-    listaBackLogs = BackLog.objects.all()
-    
-    '''
-    dicBackLogs = {}
-    for backLog in listaBackLogs:
-        sprintBackLogs = getSprintBackLogAsociados(backLog.idBacklog)
-        dicBackLogs[backLog] = sprintBackLogs
-    '''
-    proyecto = None
-    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
-                                        'email':emailAdmin,
-                                        'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog',
-                                        'proyecto':proyecto})
-
 
 def sprintBackLog(request, emailAdmin, idBackLog):
     backLog = BackLog.objects.get(idBackLog=idBackLog)
@@ -778,6 +759,114 @@ def getSprintBackLogAsociados(idBackLog):
     return sprintBackLogs
 
 
+'''
+********************************************************
+    MODULO ASIGNACION ENTRE USER STORY Y SPRINTBACKLOG
+********************************************************
+'''
+
+def asignacionUserStorySprintBackLog(request, emailAdmin, idSprintBackLogAsignar):
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAsignar)
+    listaUserStoryDisponibles = getUserStoryDisponibles()
+
+    return render(request, 'asignacionUserStorySprintBackLog.html', {
+                                    'emailAdmin':emailAdmin,
+                                    'sprintBackLog': sprintBackLog,
+                                    'userStories': listaUserStoryDisponibles})
+
+
+def asignarUserStorySprintBackLog(request, emailAdmin, idSprintBackLog, idUserStory):
+    #obtenemos el rol y el permiso
+    print('asignando user story a un sprint backlog...')
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
+    userStory = UserStory.objects.get(idUserStory=idUserStory)
+    
+    userStory.sprintBackLog = sprintBackLog
+    userStory.save()
+    
+    listaUserStoryDisponibles = getUserStoryDisponibles()
+        
+    return render(request, 'asignacionUserStorySprintBackLog.html', {
+                                    'emailAdmin':emailAdmin,
+                                    'sprintBackLog': sprintBackLog,
+                                    'userStories': listaUserStoryDisponibles})
+    
+
+
+def verUserStorySprintBackLog(request, emailAdmin, idSprintBackLog):
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
+    
+    #traemos los user stories que ya fueron asignados a esta sprintBackLog
+    userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
+    
+    return render(request, 'verUserStorySprintBackLog.html', {
+                                    'email':emailAdmin,
+                                    'sprintBackLog': sprintBackLog,
+                                    'userStories':userStoryAsignados})
+    
+
+def desasignarUserStorySprintBackLog(request, emailAdmin, idSprintBackLog, idUserStory):
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
+    userStory = UserStory.objects.get(idUserStory=idUserStory)
+    
+    userStory.sprintBackLog = None
+    userStory.save()
+    
+    userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
+    
+    return render(request, 'verUserStorySprintBackLog.html', {
+                                    'email':emailAdmin,
+                                    'sprintBackLog': sprintBackLog,
+                                    'userStories':userStoryAsignados})
+
+    
+def getUserStoryAsignadosASprintBackLog(idSprintBackLog):
+    listaUserStory = []
+    
+    #obtenemos todos los User Story
+    listaUserStoryAux = UserStory.objects.all()
+    
+    #obtenemos todos los User Story asociados a el SprintBackLog
+    for userStory in listaUserStoryAux:
+        if userStory.sprintBackLog_id != None:
+            if userStory.sprintBackLog_id == int(idSprintBackLog):
+                listaUserStory.append(userStory)
+        
+    return listaUserStory
+
+
+def getUserStoryDisponibles():
+    listaUserStory = []
+    
+    #obtenemos todos los User Story
+    listaUserStoryAux = UserStory.objects.all()
+    
+    #obtenemos todos los User Story disponibles para ser asignados
+    for userStory in listaUserStoryAux:
+        if userStory.sprintBackLog_id == None:
+            listaUserStory.append(userStory)
+        
+    return listaUserStory
+
+
+'''
+*************************
+    MODULO BACKLOG
+*************************
+'''
+
+def backlog(request, emailAdmin):
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
+
+    listaBackLogs = BackLog.objects.all()
+
+    proyecto = None
+    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Backlog',
+                                        'proyecto':proyecto})
+    
 def registrarBackLog(request, emailAdmin, idProyecto):
 
     nombre = request.POST.get('txtNombreBackLog')
