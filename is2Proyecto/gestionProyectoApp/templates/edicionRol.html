@@ -12,19 +12,14 @@
 			<div class="card">
 				<div class="card-body">
 					<form action="/editarRol/{{email}}/{{rol.idRol}}" method="POST"> {% csrf_token %}
-						<!--<div class="form-group py-2">
-							<input type="text" id="txtCodigo" name='txtCodigo' 
-								class="form-control" placeholder="Codigo" 
-								minlength="6" maxlength="6" required>
-						</div>-->
 						<div class="form-group py-2">
-							<input type="text" id="txtNombreBackLog" name='txtNombreBackLog' 
+							<input type="text" id="txtNombreRol" name='txtNombreRol' 
                                 value="{{rol.nombre}}"
 								class="form-control" placeholder="Nombre" 
 								maxlength="50" required>
 						</div>
                         <div class="form-group py-2">
-							<input type="text" id="txtDescripcion" name='txtDescripcionBackLog' 
+							<input type="text" id="txtDescripcionRol" name='txtDescripcionRol' 
                             value="{{rol.descripcion}}"
 								class="form-control" placeholder="Descripcion" 
 							    required>

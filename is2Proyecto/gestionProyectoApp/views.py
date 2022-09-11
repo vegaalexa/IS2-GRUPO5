@@ -273,8 +273,8 @@ def edicionRol(request, emailAdmin, idRolAEditar):
     
     
 def editarRol(request, emailAdmin, idRolAEditar):
-    nombre = request.POST.get('txtNombre')
-    descripcion = request.POST.get('txtDescripcion')
+    nombre = request.POST.get('txtNombreRol')
+    descripcion = request.POST.get('txtDescripcionRol')
     
     rol = Rol.objects.get(idRol=idRolAEditar)
     
