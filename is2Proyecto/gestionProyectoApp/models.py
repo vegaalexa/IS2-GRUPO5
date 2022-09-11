@@ -67,8 +67,22 @@ class BackLog(models.Model):
 
 
 class SprintBackLog(models.Model):
+    def generarId():
+        #este metodo nos ayuda a generar los valores de id para Permiso
+        #se debe mejorar este metodo
+        valorPorDefecto = 100000
+        cantidad = SprintBackLog.objects.count()
+        if cantidad == None:
+            return 1
+        else:
+            if cantidad == 0:
+                return valorPorDefecto
+            #ordenamos y obtenemos el mayor id para luego sumarle 1
+            sprintBackLog = SprintBackLog.objects.filter().order_by('idSprintBackLog').last()
+            return sprintBackLog.idSprintBackLog + 1
+        
     nombre = models.CharField(max_length=50)
-    idSprintBackLog = models.CharField(primary_key=True, max_length=6)  
+    idSprintBackLog = models.IntegerField(primary_key=True, default=generarId)
     backLog = models.ForeignKey(BackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)    
     
@@ -101,8 +115,23 @@ class Sprint(models.Model):
 
 
 class UserStory(models.Model):
+    def generarIdUserStory():
+        #este metodo nos ayuda a generar los valores de id para Permiso
+        #se debe mejorar este metodo
+        valorPorDefecto = 100000
+        cantidad = UserStory.objects.count()
+        if cantidad == None:
+            return 1
+        else:
+            if cantidad == 0:
+                return valorPorDefecto
+            #ordenamos y obtenemos el mayor id para luego sumarle 1
+            userStory = UserStory.objects.filter().order_by('idUserStory').last()
+            return userStory.idUserStory + 1
+        
     nombre = models.CharField(max_length=50)
-    idUserStory = models.CharField(primary_key=True, max_length=6)  
+    descripcion = models.CharField(max_length=200, default='')
+    idUserStory = models.IntegerField(primary_key=True, default=generarIdUserStory)
     sprintBackLog = models.ForeignKey(SprintBackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)
     
