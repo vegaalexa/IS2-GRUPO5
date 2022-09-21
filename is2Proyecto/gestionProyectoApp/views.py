@@ -24,6 +24,10 @@ def iniciarSesion(request):
     contrasenia = request.POST['yourPassword']
     return render(request, 'homeProyecto.html', {'email': email})
 
+def iniciarSesion2(request, emailAdmin):
+    return render(request, 'homeProyecto.html', {'email': emailAdmin})
+
+
 def seguridad(request, emailAdmin):
     return render(request, 'seguridad.html', {'email': emailAdmin})
 
