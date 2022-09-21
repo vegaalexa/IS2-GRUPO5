@@ -25,6 +25,7 @@ def iniciarSesion(request):
     return render(request, 'homeProyecto.html', {'email': email})
 
 def iniciarSesion2(request, emailAdmin):
+    #es llamado desde el navbar
     return render(request, 'homeProyecto.html', {'email': emailAdmin})
 
 
@@ -38,15 +39,7 @@ def siEsAdmin(emailAdmin):
     return admin == 'admin'
 
 def usuario(request, emailAdmin):
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'usuario')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'usuario')
         
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
@@ -112,15 +105,7 @@ def editarUsuario(request, emailAdmin, emailAEditar):
 #********************************************
 
 def permiso(request, emailAdmin):
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'permiso')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
         
     listaPermisos = Permiso.objects.all()
     return render(request, 'permiso.html', {'permisos': listaPermisos,
@@ -202,16 +187,8 @@ def editarPermiso(request, emailAdmin, idPermisoAEditar):
 #Vista para ABM de Roles
 
 #********************************************
-def rol(request, emailAdmin):
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'rol')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+def rol(request, emailAdmin):        
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'rol')
     
     listaRol = Rol.objects.all()
     return render(request, 'rol.html', {'roles': listaRol,
@@ -881,16 +858,8 @@ def registrarBackLog(request, emailAdmin, idProyecto):
     proyecto = Proyecto.objects.get(idProyecto=idProyecto)
     print(f'proyecto {proyecto}')
     backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion, proyecto=proyecto)
-    
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+        
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     listaBackLogs = BackLog.objects.all()    
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
@@ -917,15 +886,7 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar):
     backLog.descripcion = descripcion
     backLog.save()
     
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     listaBackLogs = BackLog.objects.all()    
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
@@ -952,15 +913,7 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
     #eliminamos el backLog
     backLog.delete()
     
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     listaBackLogs = BackLog.objects.all()    
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
@@ -980,13 +933,7 @@ def asignacionProyecto(request, emailAdmin):
 def asignarProyecto(request, emailAdmin, idProyecto):
     permisosPorPantalla = []
     
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'backlog')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
 
     listaBackLogs = BackLog.objects.all()
 
@@ -1039,13 +986,7 @@ def proyecto(request, emailAdmin):
 def proyectoAbm(request, emailAdmin):
     permisosPorPantalla = []
     
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
     listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
@@ -1060,15 +1001,7 @@ def registrarProyectoAbm(request, emailAdmin):
 
     proyectoAbm = Proyecto.objects.create(nombre=nombre, descripcion=descripcion)
     
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
     listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
@@ -1096,15 +1029,7 @@ def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
     #eliminamos el proyecto
     proyectoAbm.delete()
     
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
     listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
@@ -1130,15 +1055,7 @@ def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
     proyectoAbm.descripcion = descripcion
     proyectoAbm.save()
     
-    permisosPorPantalla = []
-    
-    if siEsAdmin(emailAdmin) == False:
-        perPorPatalla = getPermisosPorPantalla(emailAdmin, 'proyecto')
-        permisosPorPantalla = []
-        for permiso in perPorPatalla:
-            permisosPorPantalla.append(permiso.tipo)
-    else:
-        permisosPorPantalla = ['C','R','U','D']
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
     listaProyectoAbm = Proyecto.objects.all() #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
