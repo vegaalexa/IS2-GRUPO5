@@ -751,7 +751,7 @@ def asignacionUserStorySprintBackLog(request, emailAdmin, idSprintBackLogAsignar
     listaUserStoryDisponibles = getUserStoryDisponibles()
 
     return render(request, 'asignacionUserStorySprintBackLog.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'sprintBackLog': sprintBackLog,
                                     'userStories': listaUserStoryDisponibles})
 
@@ -1077,7 +1077,7 @@ def asignacionUsuarioProyecto(request,emailAdmin, idProyecto):
     proyecto = Proyecto.objects.get(idProyecto=idProyecto)
     
     return render(request, 'asignacionUsuarioProyecto.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'proyecto': proyecto,
                                     'usuarios': listaUsuariosDisponibles})
 
