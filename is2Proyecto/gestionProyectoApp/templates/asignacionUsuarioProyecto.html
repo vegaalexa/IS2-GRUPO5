@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1>MODULO SEGURIDAD/PROYECTO/USUARIOS</h1>
-    <h4>{{emailAdmin}}</h4>
+    <h4>{{email}}</h4>
     <h4>Proyecto actual: {{proyecto.nombre}} - {{proyecto.idProyecto}}</h4>
     <br>
     <div class="row">
@@ -27,7 +27,7 @@
 							<td>{{u.nombre}}</td>
 							<td>{{u.email}}</td>
 							<!--ASIGNACION-->
-							<td><a href="/asignarUsuarioProyecto/{{emailAdmin}}/{{proyecto.idProyecto}}/{{u.email}}" class="btn btn-info">Asignar</a></td>
+							<td><a href="/asignarUsuarioProyecto/{{email}}/{{proyecto.idProyecto}}/{{u.email}}" class="btn btn-info">Asignar</a></td>
 							<!--ASIGNACION-->
 						</tr>
 						{% endfor %}

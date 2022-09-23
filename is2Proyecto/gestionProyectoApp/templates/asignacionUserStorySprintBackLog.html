@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1>MODULO PROYECTO/BACKLOG/SPRINT BACKLOG/USER STORY</h1>
-    <h4>{{emailAdmin}}</h4>
+    <h4>{{email}}</h4>
 	<h4>UserStories disponibles para el SprintBackLog: {{sprintBackLog.nombre}} - {{sprintBackLog.idSprintBackLog}}
 	</h4>
     <br>
@@ -30,7 +30,7 @@
 							<td>{{p.descripcion}}</td>
 							<td>{{p.idUserStory}}</td>
 							<!--ASIGNACION-->
-							<td><a href="/asignarUserStorySprintBackLog/{{emailAdmin}}/{{sprintBackLog.idSprintBackLog}}/{{p.idUserStory}}"
+							<td><a href="/asignarUserStorySprintBackLog/{{email}}/{{sprintBackLog.idSprintBackLog}}/{{p.idUserStory}}"
 								class="btn btn-info">Asignar</a></td>
 							<!--ASIGNACION-->
 						</tr>
