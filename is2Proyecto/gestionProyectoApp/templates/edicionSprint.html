@@ -1,0 +1,35 @@
+{%extends './base.html'%}
+
+{% block title %} backlog {% endblock %}
+
+{% block body %}
+    <h1>MODULO PROYECTO/SPRINT</h1>
+    <h4>{{email}}</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Editar Sprint</h3>
+			<div class="card">
+				<div class="card-body">
+					<form action="/editarSprint/{{email}}/{{sprint.idSprint}}" method="POST"> {% csrf_token %}
+						<div class="form-group py-2">
+							<input type="text" id="txtNombreSprint" name='txtNombreSprint' 
+                                value="{{sprint.nombre}}"
+								class="form-control" placeholder="Nombre" 
+								maxlength="50" required>
+						</div>
+                        <div class="form-group py-2">
+							<input type="text" id="txtDescripcionSprint" name='txtDescripcionSprint' 
+                            value="{{sprint.descripcion}}"
+								class="form-control" placeholder="Descripcion" 
+							    required>
+						</div>
+
+						<div class="form-group py-2">
+							<button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+{% endblock %}
