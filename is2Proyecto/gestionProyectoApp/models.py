@@ -1,5 +1,7 @@
+from email.policy import default
 from tabnanny import verbose
 from django.db import models
+import django.utils.timezone
 
 # Create your models here.
 class Proyecto(models.Model):
@@ -275,6 +277,9 @@ class UsuariosRoles(models.Model):
                                 on_delete=models.SET_NULL, null=True)
     rol = models.ForeignKey('Rol', related_name='usuarios_roles',
                             on_delete=models.SET_NULL, null=True)
+    
+    fechaDesde = models.DateField(null=True, default=django.utils.timezone.now)
+    fechaHasta = models.DateField(null=True, default=None)
     
     class Meta:
         verbose_name = 'UsuariosRoles'
