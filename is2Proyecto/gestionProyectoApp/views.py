@@ -14,6 +14,7 @@ from .models import UsuariosRoles
 from .models import SprintBackLog
 from .models import UsuariosProyectos
 from .models import UserStory
+from .models import Sprint
 #ASIGNACION
 
 def login(request):
@@ -1245,3 +1246,81 @@ def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
         permisosPorPantalla = ['C','R','U','D']
         
     return permisosPorPantalla
+
+
+'''
+*************************
+    MODULO SPRINT
+*************************
+'''
+
+def sprint(request, emailAdmin):
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+        
+    listaSprint = Sprint.objects.all()
+    return render(request, 'sprint.html', {'sprints': listaSprint,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'Sprint'})
+    
+
+
+def registrarSprint(request, emailAdmin):
+    nombre = request.POST.get('txtNombreSprint')
+    descripcion = request.POST.get('txtDescripcionSprint')
+
+    #verificar en caso de que no tenga un proyecto
+    print(f'{nombre} {descripcion}')
+    sprint = Sprint.objects.create(nombre=nombre, descripcion=descripcion)
+        
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+        
+    listaSprint = Sprint.objects.all()
+    return render(request, 'sprint.html', {'sprints': listaSprint,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'Sprint'})
+    
+    
+def eliminarSprint(request, emailAdmin, idSprint):
+    #obtenemos el Sprint correspondiente
+    sprint = Sprint.objects.get(idSprint=idSprint)
+    
+    
+    #eliminamos el Sprint
+    sprint.delete()
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+        
+    listaSprints = Sprint.objects.all()
+    return render(request, 'sprint.html', {'sprints': listaSprints,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'Sprint'})
+
+
+
+def edicionSprint(request, emailAdmin, idSprintAEditar):
+    sprint = Sprint.objects.get(idSprint=idSprintAEditar)
+    
+    return render(request, 'edicionSprint.html', {'sprint': sprint,
+                                            'email':emailAdmin})  
+
+    
+def editarSprint(request, emailAdmin, idSprint):
+    nombre = request.POST.get('txtNombreSprint')
+    descripcion = request.POST.get('txtDescripcionSprint')
+    
+    sprint = Sprint.objects.get(idSprint=idSprint)
+    
+    sprint.nombre = nombre
+    sprint.descripcion = descripcion
+    sprint.save()
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+        
+    listaSprints = Sprint.objects.all()
+    return render(request, 'sprint.html', {'sprints': listaSprints,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'Sprint'})

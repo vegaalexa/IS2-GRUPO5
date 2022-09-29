@@ -74,4 +74,10 @@ urlpatterns = [
     path('asignarUserStorySprintBackLog/<emailAdmin>/<idSprintBackLog>/<idUserStory>', views.asignarUserStorySprintBackLog),
     path('verUserStorySprintBackLog/<emailAdmin>/<idSprintBackLog>', views.verUserStorySprintBackLog),
     path('desasignarUserStorySprintBackLog/<emailAdmin>/<idSprintBackLog>/<idUserStory>', views.desasignarUserStorySprintBackLog),
+    #SPRINT
+    path('sprint/<emailAdmin>', views.sprint),
+    path('registrarSprint/<emailAdmin>', views.registrarSprint),
+    path('eliminarSprint/<emailAdmin>/<idSprint>', views.eliminarSprint),
+    path('edicionSprint/<emailAdmin>/<idSprintAEditar>', views.edicionSprint),
+    path('editarSprint/<emailAdmin>/<idSprint>', views.editarSprint),
 ]

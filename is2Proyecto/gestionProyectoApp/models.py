@@ -99,8 +99,23 @@ class SprintBackLog(models.Model):
 
 
 class Sprint(models.Model):
+    def generarId():
+        #este metodo nos ayuda a generar los valores de id para Permiso
+        #se debe mejorar este metodo
+        valorPorDefecto = 100000
+        cantidad = Sprint.objects.count()
+        if cantidad == None:
+            return 1
+        else:
+            if cantidad == 0:
+                return valorPorDefecto
+            #ordenamos y obtenemos el mayor id para luego sumarle 1
+            sprint = Sprint.objects.filter().order_by('idSprint').last()
+            return sprint.idSprint + 1
+        
     nombre = models.CharField(max_length=50)
-    idSprint = models.CharField(primary_key=True, max_length=6)  
+    descripcion = models.CharField(max_length=200, default='')
+    idSprint = models.IntegerField(primary_key=True, default=generarId)
     sprintBackLog = models.ForeignKey(SprintBackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)
     
