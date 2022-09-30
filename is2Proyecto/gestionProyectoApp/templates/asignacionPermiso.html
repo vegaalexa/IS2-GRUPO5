@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1>MODULO SEGURIDAD/ROLES/PERMISOS</h1>
-    <h4>{{emailAdmin}}</h4>
+    <h4>{{email}}</h4>
     <br>
     <div class="row">
 		<!--<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
@@ -53,7 +53,7 @@
 							<td>{{p.descripcion}}</td>
 							<td>{{p.tipo}}</td>
 							<!--ASIGNACION-->
-							<td><a href="/asignarPermiso/{{emailAdmin}}/{{idRolAsignar}}/{{p.idPermiso}}" class="btn btn-info">Asignar</a></td>
+							<td><a href="/asignarPermiso/{{email}}/{{idRolAsignar}}/{{p.idPermiso}}" class="btn btn-info">Asignar</a></td>
 							<!--ASIGNACION-->
 						</tr>
 						{% endfor %}

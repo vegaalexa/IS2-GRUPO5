@@ -413,7 +413,7 @@ def asignacionPermiso(request, emailAdmin, idRolAsignar):
     listaPermisosDisponibles = getPermisosDisponibles(idRolAsignar)
     
     return render(request, 'asignacionPermiso.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'idRolAsignar': idRolAsignar,
                                     'permisos': listaPermisosDisponibles})
     
@@ -430,7 +430,7 @@ def asignarPermiso(request, emailAdmin, idRolAsignar, idPermiso):
     listaPermisosDisponibles = getPermisosDisponibles(idRolAsignar)
     
     return render(request, 'asignacionPermiso.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'idRolAsignar': idRolAsignar,
                                     'permisos': listaPermisosDisponibles})
     
