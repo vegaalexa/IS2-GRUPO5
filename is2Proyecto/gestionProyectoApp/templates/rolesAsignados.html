@@ -29,15 +29,15 @@
                         <td>{{rol.descripcion}}</td>
 
                         <td>
-                            <table class='table table-striped'>
-                                <tbody>
-                                    {% for r, fechas in roles.items %}
+                            {% for r, fechas in roles.items %}
+                                <table class='table table-striped'>
+                                    <tbody>
                                         {% for f in fechas %}
-                                            <tr>{{f}}</tr><br>
+                                            <tr><td>{{f}}</td></tr>
                                         {% endfor %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            {% endfor %}
                         </td>
 
                         <td>

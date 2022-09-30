@@ -651,7 +651,7 @@ def getRolesAsignados(email):
             fechas = []
             #rolesAsignados.append(rol)
             
-    print(f'roles y fechas {rolesAsignados}')
+    #print(f'roles y fechas {rolesAsignados}')
     
     return rolesAsignados
 
