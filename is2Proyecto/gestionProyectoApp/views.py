@@ -15,6 +15,7 @@ from .models import SprintBackLog
 from .models import UsuariosProyectos
 from .models import UserStory
 from .models import Sprint
+from django.utils.dateparse import parse_date
 #ASIGNACION
 
 def login(request):
@@ -276,6 +277,7 @@ def verRolesAsignados(request, emailAdmin, emailUsuario):
     dicRolesPermisos = {}
     
     for rolAsignado in rolesAsignados:
+        #print(rolAsignado)
         permisosAsignadosARol = getPermisosAsignadosARol(rolAsignado.idRol)
         #ordenamsos la lista
         permisosAsignadosARol.sort(key=lambda permisosAsignadosARol: permisosAsignadosARol.descripcion)
@@ -386,18 +388,22 @@ def desasignarRol(request, emailAdmin, emailUsuarioQuitar, idRol):
 
 
 def asignarRol(request, emailAdmin, emailUsuarioAsignar, idRol):
+    fechaDesde = parse_date(request.POST.get('txtFechaDesde'))
+    fechaHasta = parse_date(request.POST.get('txtFechaHasta'))
+    
     #obtenemos el rol y el permiso
     print('asignando rol a un usuario...')
     usuario = Usuario.objects.get(email=emailUsuarioAsignar)
     rol = Rol.objects.get(idRol=idRol)
     
     #creamos la tabla intermedia la cual almacena los ids de rol y permiso
-    usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol)
+    usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol,
+                            fechaDesde=fechaDesde, fechaHasta=fechaHasta)
     
     listaRolesDisponibles = getRolesDisponibles(emailUsuarioAsignar)
     
     return render(request, 'asignacionRol.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'emailUsuarioAsignar': emailUsuarioAsignar,
                                     'roles': listaRolesDisponibles})
     
@@ -627,7 +633,8 @@ def getPermisosAsignadosARol(idRol):
 
 def getRolesAsignados(email):
     usuariosRoles = []
-    rolesAsignados = []
+    rolesAsignados = {}
+    fechas = []
     try:
         #tabla intermedia entre Usuario y Rol (relacion M-M)
         usuariosRoles = UsuariosRoles.objects.all()
@@ -638,8 +645,13 @@ def getRolesAsignados(email):
     for usuarioRol in usuariosRoles:
         if usuarioRol.usuario_id == email:
             rol = Rol.objects.get(idRol=usuarioRol.rol_id)
-            rolesAsignados.append(rol)
+            fechas.append(usuarioRol.fechaDesde)
+            fechas.append(usuarioRol.fechaHasta)
+            rolesAsignados[rol] = fechas
+            fechas = []
+            #rolesAsignados.append(rol)
             
+    print(f'roles y fechas {rolesAsignados}')
     
     return rolesAsignados
 
