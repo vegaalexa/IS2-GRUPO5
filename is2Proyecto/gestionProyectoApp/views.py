@@ -304,7 +304,7 @@ def verRolesAsignados(request, emailAdmin, emailUsuario):
     #        print(f'{clave} {clave1} {dicRolesPermisos[clave][clave1]}')
     
     return render(request, 'rolesAsignados.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'emailUsuario': emailUsuario,
                                     'roles': rolesAsignados,
                                     'rolesPermisos':dicRolesPermisos})
@@ -350,7 +350,7 @@ def desasignacionRol(request, emailAdmin, emailUsuarioQuitar):
     rolesAsignados = getRolesAsignados(emailUsuarioQuitar)
 
     return render(request, 'desasignacionRol.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'emailUsuarioAsignar': emailUsuarioQuitar,
                                     'roles': rolesAsignados})
 #ASIGNACION
@@ -358,7 +358,7 @@ def asignacionRol(request, emailAdmin, emailUsuarioAsignar):
     listaRolesDisponibles = getRolesDisponibles(emailUsuarioAsignar)
 
     return render(request, 'asignacionRol.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'emailUsuarioAsignar': emailUsuarioAsignar,
                                     'roles': listaRolesDisponibles})
 #ASIGNACION
@@ -380,7 +380,7 @@ def desasignarRol(request, emailAdmin, emailUsuarioQuitar, idRol):
     rolesAsignados = getRolesAsignados(emailUsuarioQuitar)
     
     return render(request, 'desasignacionRol.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'emailUsuarioAsignar': emailUsuarioQuitar,
                                     'roles': rolesAsignados})
 
