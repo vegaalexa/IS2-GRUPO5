@@ -17,6 +17,7 @@
                         <th>#</th>
                         <th>Nombre</th>
                         <th>Descripcion</th>
+                        <th>Fecha</th>
                         <th>Permisos</th>
                     </tr>
                 </thead>
@@ -26,6 +27,19 @@
                         <td >{{forloop.counter}}</td>
                         <td>{{rol.nombre}}</td>
                         <td>{{rol.descripcion}}</td>
+
+                        <td>
+                            <table class='table table-striped'>
+                                <tbody>
+                                    {% for r, fechas in roles.items %}
+                                        {% for f in fechas %}
+                                            <tr>{{f}}</tr><br>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+
                         <td>
                             <table class='table table-striped'>
 
