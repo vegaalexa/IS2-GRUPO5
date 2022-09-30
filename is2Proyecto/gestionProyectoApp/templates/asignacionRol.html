@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1>MODULO SEGURIDAD/USUARIO/ROLES</h1>
-    <h4>{{emailAdmin}}</h4>
+    <h4>{{email}}</h4>
     <br>
     <div class="row">
 		<!--<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
@@ -41,8 +41,7 @@
 							<th>#</th>
 							<th>Nombre</th>
 							<th>Descripcion</th>
-							<th>Permisos</th>
-							<th colspan="2">Opciones</th>
+							<th>Fechas</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -52,9 +51,31 @@
 							<td>{{r.nombre}}</td>
 							<td>{{r.descripcion}}</td>
 							<!--<td>{{r.permisos}}</td>-->
-							<td>AGREGAR PERMISOS</td>
+							<td>
+								<form action="/asignarRol/{{email}}/{{emailUsuarioAsignar}}/{{r.idRol}}"
+									method="POST"> {% csrf_token%}
+									<div class="form-group py-2">
+										<input type="date" id="fechaDesde" style="width:231px" name='txtFechaDesde' 
+											class="form-control" placeholder="fecha desde" 
+											maxlength="50" required>
+									</div>
+									<div class="form-group py-2">
+										<input type="date" id="fechaHasta" style="width:231px" name='txtFechaHasta' 
+											class="form-control" placeholder="fecha hasta" 
+											maxlength="50" required>
+									</div>
+			
+									<div class="form-group py-2">
+										<button type="submit" class="btn btn-info">Asignar</button>
+									</div>
+
+									<!-- <div class="form-group py-2">
+										<a href="/asignarRol/{{email}}/{{emailUsuarioAsignar}}/{{r.idRol}}" class="btn btn-info">Asignar</a>
+									</div> -->
+								</form>
+							</td>
 							<!--ASIGNACION-->
-							<td><a href="/asignarRol/{{emailAdmin}}/{{emailUsuarioAsignar}}/{{r.idRol}}" class="btn btn-info">Asignar</a></td>
+							
 							<!--ASIGNACION-->
 						</tr>
 						{% endfor %}
