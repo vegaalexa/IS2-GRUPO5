@@ -151,6 +151,7 @@ class UserStory(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, default='')
     idUserStory = models.IntegerField(primary_key=True, default=generarIdUserStory)
+    estado = models.CharField(max_length=200, default='Por hacer')
     sprintBackLog = models.ForeignKey(SprintBackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)
     

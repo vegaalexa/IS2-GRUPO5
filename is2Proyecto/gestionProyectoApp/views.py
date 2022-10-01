@@ -1182,7 +1182,6 @@ def getUsuariosAsignadosProyecto(idProyecto):
 *************************
 '''
 def userstory(request, emailAdmin):
-    
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
         
     listaUserStory = UserStory.objects.all()
@@ -1245,6 +1244,31 @@ def eliminarUserStory(request, emailAdmin, idUserStoryAEliminar):
                                             'permisosPorPantalla': permisosPorPantalla,
                                             'nombrePantalla': 'UserStory'})
     
+
+def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSprintBackLog):
+    userStory = UserStory.objects.get(idUserStory=idUserStory)
+    userStory.estado = nuevoEstado
+    userStory.save()
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    
+    listaUserStory = UserStory.objects.all()
+    
+    if int(idSprintBackLog) == 0:
+        #para este caso se asigna el estado desde el modulo PROYECTO/ USER STORY
+        return render(request, 'userstory.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'UserStory'})
+    else:
+        #para este caso se asigna el estado desde el modulo SPRINT BACKLOG/ USER STORY
+        sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
+        userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
+        return render(request, 'verUserStorySprintBackLog.html', {
+                                    'email':emailAdmin,
+                                    'sprintBackLog': sprintBackLog,
+                                    'userStories':userStoryAsignados})
+        
     
 def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
     permisosPorPantalla = []
