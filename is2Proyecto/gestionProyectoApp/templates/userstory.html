@@ -85,6 +85,25 @@
 							<td><a href="/edicionUserStory/{{email}}/{{us.idUserStory}}" class="btn btn-info btnEditarUserStory">Editar</a></td>
 							<td><a href="/eliminarUserStory/{{email}}/{{us.idUserStory}}" class="btn btn-danger 
 								btnEliminarUserStory btnEliminacion">Eliminar</a></td>
+							<td>
+	
+									<ul class="navbar-nav"> 
+										<li class="nav-item dropdown"> 
+											<a class="btn btn-info" href="http://example.com" id="navbarDropdownMenuLink"
+												data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												{{us.estado}}
+												<i class="fa fa-angle-down"></i>
+											</a>
+											<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
+												style="position: absolute; top: 100px;" > 
+												<a class="dropdown-item" href="/cambiarEstadoUserStory/{{email}}/{{us.idUserStory}}/Por hacer/0">Por hacer</a> 
+												<a class="dropdown-item" href="/cambiarEstadoUserStory/{{email}}/{{us.idUserStory}}/En curso/0">En curso</a> 
+												<a class="dropdown-item" href="/cambiarEstadoUserStory/{{email}}/{{us.idUserStory}}/Finalizado/0">Finalizado</a> 
+											</div> 
+										</li>
+									</ul>
+								<!--</a>-->
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
