@@ -781,7 +781,7 @@ def asignarUserStorySprintBackLog(request, emailAdmin, idSprintBackLog, idUserSt
     listaUserStoryDisponibles = getUserStoryDisponibles()
         
     return render(request, 'asignacionUserStorySprintBackLog.html', {
-                                    'emailAdmin':emailAdmin,
+                                    'email':emailAdmin,
                                     'sprintBackLog': sprintBackLog,
                                     'userStories': listaUserStoryDisponibles})
     
@@ -842,6 +842,19 @@ def getUserStoryDisponibles():
         
     return listaUserStory
 
+
+def getSprintBackLogDisponibles():
+    listaSprintBackLog = []
+    
+    #obtenemos todos los Sprint BackLog
+    listaSprintBackLogAux = SprintBackLog.objects.all()
+    
+    #obtenemos todos los User Story disponibles para ser asignados
+    #for sprintBackLog in listaSprintBackLogAux:
+    #    if sprintBackLog.sprintBackLog_id == None:
+    #        listaUserStory.append(userStory)
+        
+    return listaSprintBackLogAux
 
 '''
 *************************
@@ -1336,3 +1349,18 @@ def editarSprint(request, emailAdmin, idSprint):
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
                                             'nombrePantalla': 'Sprint'})
+    
+
+'''
+    ASIGNACION SPRINT BACKLOG A UN SPRINT
+'''
+
+def asignacionSprintBackloASprint(request, emailAdmin, idSprint):
+    sprint = Sprint.objects.get(idSprint=idSprint)
+
+    listaSprintBackLogDisponibles = getSprintBackLogDisponibles()
+
+    return render(request, 'asignacionSprintBackloASprint.html', {
+                                    'email':emailAdmin,
+                                    'sprint': sprint,
+                                    'sprintBackLogs': listaSprintBackLogDisponibles})

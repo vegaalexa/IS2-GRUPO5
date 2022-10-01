@@ -80,4 +80,5 @@ urlpatterns = [
     path('eliminarSprint/<emailAdmin>/<idSprint>', views.eliminarSprint),
     path('edicionSprint/<emailAdmin>/<idSprintAEditar>', views.edicionSprint),
     path('editarSprint/<emailAdmin>/<idSprint>', views.editarSprint),
+    path('asignacionSprintBackloASprint/<emailAdmin>/<idSprint>', views.asignacionSprintBackloASprint),
 ]
