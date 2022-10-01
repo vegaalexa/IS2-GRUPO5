@@ -30,6 +30,29 @@
                         <td><a href="/desasignarUserStorySprintBackLog/{{email}}/{{sprintBackLog.idSprintBackLog}}/{{p.idUserStory}}"
                             class="btn btn-danger btnDesasignarUserStorySprintBackLog
                             btnEliminacion">Quitar</a></td>
+                        <td>
+                            <ul class="navbar-nav"> 
+                                <li class="nav-item dropdown"> 
+                                    <a class="btn btn-info" href="http://example.com" id="navbarDropdownMenuLink"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {{p.estado}}
+                                        <i class="fa fa-angle-down"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
+                                        style="position: absolute; top: 100px;" > 
+                                        <a class="dropdown-item"
+                                            href="/cambiarEstadoUserStory/{{email}}/{{p.idUserStory}}/Por hacer/{{sprintBackLog.idSprintBackLog}}">
+                                            Por hacer</a> 
+                                        <a class="dropdown-item"
+                                            href="/cambiarEstadoUserStory/{{email}}/{{p.idUserStory}}/En curso/{{sprintBackLog.idSprintBackLog}}">
+                                            En curso</a> 
+                                        <a class="dropdown-item"
+                                            href="/cambiarEstadoUserStory/{{email}}/{{p.idUserStory}}/Finalizado/{{sprintBackLog.idSprintBackLog}}">
+                                            Finalizado</a> 
+                                    </div> 
+                                </li>
+                            </ul>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
