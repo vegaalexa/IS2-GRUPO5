@@ -88,7 +88,8 @@ class SprintBackLog(models.Model):
     idSprintBackLog = models.IntegerField(primary_key=True, default=generarId)
     backLog = models.ForeignKey(BackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)    
-    
+    #sprint = models.OneToOneField('Sprint', on_delete=models.CASCADE,
+    #                                null=True, blank=False)
    
     def __str__(self):
         texto = '{} {} {}'
