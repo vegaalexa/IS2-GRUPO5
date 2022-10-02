@@ -30,7 +30,7 @@
 		window.onload = function() { habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla); };
 	</script>
 
-    <h1>MODULO PROYECTO/PROYECTO ABM</h1>
+    <h1>MODULO PROYECTO</h1>
     <h4>{{email}}</h4>
 	<h4>Permisos sobre Proyectos:
 		{% for p in permisosPorPantalla %}
@@ -86,6 +86,7 @@
 							<td><a href="/asignacionUsuarioProyecto/{{email}}/{{p.idProyecto}}" class="btn btn-info">Agregar Usuario</a></td>
 							<!--ver usuarios-->
 							<td><a href="/verUsuariosAsignadosProyecto/{{email}}/{{p.idProyecto}}" class="btn btn-info">Ver Usuario</a></td>
+							<td><a href="/tableroKanban/{{email}}/{{p.idProyecto}}" class="btn btn-info">Tablero Kanban</a></td>
                             <td><a href="/eliminarProyectoAbm/{{email}}/{{p.idProyecto}}" class="btn btn-danger
 								btnEliminarProyecto btnEliminacion">Eliminar</a></td>
 						</tr>
