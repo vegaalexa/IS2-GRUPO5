@@ -1268,6 +1268,19 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
                                     'email':emailAdmin,
                                     'sprintBackLog': sprintBackLog,
                                     'userStories':userStoryAsignados})
+
+def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, idProyecto):
+    userStory = UserStory.objects.get(idUserStory=idUserStory)
+    userStory.estado = nuevoEstado
+    userStory.save()
+    
+    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    proyecto = Proyecto.objects.get(idProyecto = idProyecto)
+    
+    return render(request, 'tableroKanban.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'proyecto': proyecto,
+                                            'nombrePantalla': 'UserStory'})
         
     
 def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
@@ -1388,3 +1401,16 @@ def asignacionSprintBackloASprint(request, emailAdmin, idSprint):
                                     'email':emailAdmin,
                                     'sprint': sprint,
                                     'sprintBackLogs': listaSprintBackLogDisponibles})
+    
+    
+    
+
+def tableroKanban(request, emailAdmin, idProyecto):
+    #permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    proyecto = Proyecto.objects.get(idProyecto = idProyecto)
+    
+    return render(request, 'tableroKanban.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'proyecto': proyecto,
+                                            'nombrePantalla': 'UserStory'})
