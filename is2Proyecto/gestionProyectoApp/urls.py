@@ -64,6 +64,7 @@ urlpatterns = [
     path('editarUserStory/<emailAdmin>/<idUserStoryAEditar>', views.editarUserStory),
     path('eliminarUserStory/<emailAdmin>/<idUserStoryAEliminar>', views.eliminarUserStory),
     path('cambiarEstadoUserStory/<emailAdmin>/<idUserStory>/<nuevoEstado>/<idSprintBackLog>', views.cambiarEstadoUserStory),
+    path('cambiarEstadoUSDesdeKanban/<emailAdmin>/<idUserStory>/<nuevoEstado>/<idProyecto>', views.cambiarEstadoUSDesdeKanban),
     #SPRINTBACKLOGS
     path('sprintBackLog/<emailAdmin>/<idBackLog>', views.sprintBackLog),
     path('registrarSprintBackLog/<emailAdmin>/<idBackLog>', views.registrarSprintBackLog),
@@ -82,4 +83,6 @@ urlpatterns = [
     path('edicionSprint/<emailAdmin>/<idSprintAEditar>', views.edicionSprint),
     path('editarSprint/<emailAdmin>/<idSprint>', views.editarSprint),
     path('asignacionSprintBackloASprint/<emailAdmin>/<idSprint>', views.asignacionSprintBackloASprint),
+    #KAMBAN
+    path('tableroKanban/<emailAdmin>/<idProyecto>', views.tableroKanban),
 ]
