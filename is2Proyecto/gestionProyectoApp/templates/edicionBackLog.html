@@ -11,7 +11,7 @@
 			<h3>Editar Backlog</h3>
 			<div class="card">
 				<div class="card-body">
-					<form action="/editarBackLog/{{email}}/{{backLog.idBackLog}}" method="POST"> {% csrf_token %}
+					<form action="/editarBackLog/{{email}}/{{backLog.idBackLog}}/{{idProyecto}}/{{codigo}}" method="POST"> {% csrf_token %}
 						<div class="form-group py-2">
 							<input type="text" id="txtNombreBackLog" name='txtNombreBackLog' 
                                 value="{{backLog.nombre}}"
