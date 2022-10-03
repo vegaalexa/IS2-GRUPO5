@@ -955,7 +955,11 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
 
 def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
     #obtenemos el BackLog correspondiente
-    backLog = BackLog.objects.get(idBackLog=idBackLogAEliminar)
+    backLog = None
+    try:
+        backLog = BackLog.objects.get(idBackLog=idBackLogAEliminar)
+    except:
+        pass
     
     sprintBackLogs = []
     try:
@@ -969,12 +973,13 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
             sprintBackLog.delete()
     
     #eliminamos el backLog
-    backLog.delete()
+    if backLog:
+        backLog.delete()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     listaBackLogs = []
-    if codigo == 0:
+    if int(codigo) == 0:
         listaBackLogs = BackLog.objects.all().order_by('idBackLog')
         
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
