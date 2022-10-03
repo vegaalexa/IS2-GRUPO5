@@ -871,8 +871,11 @@ def backlog(request, emailAdmin, idProyecto, codigo):
     if int(codigo) == 0:
         listaBackLogs = BackLog.objects.all().order_by('idBackLog')
     else:
-        listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
-        proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+        try:
+            listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+            proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+        except:
+            pass
 
     #print(f'proyecto {proyecto}')
     #print('estoy aca????')
@@ -970,7 +973,10 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
-    listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    listaBackLogs = []
+    if codigo == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+        
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
