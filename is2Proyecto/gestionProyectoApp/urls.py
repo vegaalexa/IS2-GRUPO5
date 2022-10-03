@@ -37,11 +37,11 @@ urlpatterns = [
     path('desasignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.desasignarPermiso),
     path('proyecto/<emailAdmin>', views.proyecto),
     #BACKLOG
-    path('backlog/<emailAdmin>', views.backlog),
-    path('registrarBackLog/<emailAdmin>/<idProyecto>', views.registrarBackLog),
-    path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>', views.edicionBackLog),
-    path('editarBackLog/<emailAdmin>/<idBackLogAEditar>', views.editarBackLog),
-    path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>', views.eliminarBackLog),
+    path('backlog/<emailAdmin>/<idProyecto>/<codigo>', views.backlog),
+    path('registrarBackLog/<emailAdmin>/<idProyecto>/<codigo>', views.registrarBackLog),
+    path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>/<idProyecto>/<codigo>', views.edicionBackLog),
+    path('editarBackLog/<emailAdmin>/<idBackLogAEditar>/<idProyecto>/<codigo>', views.editarBackLog),
+    path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>/<codigo>', views.eliminarBackLog),
     #BACKLOG: ASIGNACION CON PROYECTO
     path('asignacionProyecto/<emailAdmin>', views.asignacionProyecto),
     path('asignarProyecto/<emailAdmin>/<idProyecto>', views.asignarProyecto),

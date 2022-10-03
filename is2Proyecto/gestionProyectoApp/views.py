@@ -862,19 +862,29 @@ def getSprintBackLogDisponibles():
 *************************
 '''
 
-def backlog(request, emailAdmin):
+def backlog(request, emailAdmin, idProyecto, codigo):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
 
-    listaBackLogs = BackLog.objects.all().order_by('idBackLog')
-
     proyecto = None
+    listaBackLogs = []
+    
+    if int(codigo) == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    else:
+        listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+        proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+
+    #print(f'proyecto {proyecto}')
+    #print('estoy aca????')
+    #if codigo == 0:
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'Backlog',
-                                        'proyecto':proyecto})
+                                        'proyecto':proyecto,
+                                        'codigo': codigo})
     
-def registrarBackLog(request, emailAdmin, idProyecto):
+def registrarBackLog(request, emailAdmin, idProyecto, codigo):
 
     nombre = request.POST.get('txtNombreBackLog')
     descripcion = request.POST.get('txtDescripcionBackLog')
@@ -891,18 +901,27 @@ def registrarBackLog(request, emailAdmin, idProyecto):
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog'})
+                                        'nombrePantalla': 'Backlog',
+                                        'codigo': codigo})
     
 
-def edicionBackLog(request, emailAdmin, idBackLogAEditar):
+def edicionBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
     backLog = BackLog.objects.get(idBackLog=idBackLogAEditar)
     
+    listaBackLogs = []
+    if int(codigo) == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    else:
+        listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+    
     return render(request, 'edicionBackLog.html', {'backLog': backLog,
-                                            'email':emailAdmin})  
+                                            'email':emailAdmin,
+                                            'idProyecto': idProyecto,
+                                            'codigo': codigo})  
     
 
 
-def editarBackLog(request, emailAdmin, idBackLogAEditar):
+def editarBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
     nombre = request.POST.get('txtNombreBackLog')
     descripcion = request.POST.get('txtDescripcionBackLog')
     
@@ -912,16 +931,26 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar):
     backLog.descripcion = descripcion
     backLog.save()
     
+    proyecto = None
+    listaBackLogs = []
+    if int(codigo) == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    else:
+        listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+        proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
-    listaBackLogs = BackLog.objects.all().order_by('idBackLog') 
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog'})
+                                        'nombrePantalla': 'Backlog',
+                                        'proyecto':proyecto,
+                                        'codigo': codigo})
 
 
-def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
+def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
     #obtenemos el BackLog correspondiente
     backLog = BackLog.objects.get(idBackLog=idBackLogAEliminar)
     
@@ -945,7 +974,8 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog'})
+                                        'nombrePantalla': 'Backlog',
+                                        'codigo': codigo})
 
 
 def asignacionProyecto(request, emailAdmin):
@@ -964,12 +994,16 @@ def asignarProyecto(request, emailAdmin, idProyecto):
     listaBackLogs = BackLog.objects.all().order_by('idBackLog')
 
     proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    
+    codigo = '0'
     #return render(request, 'backlog.html', {'email': emailAdmin})
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'Backlog',
-                                        'proyecto':proyecto})
+                                        'proyecto':proyecto,
+                                        'codigo': codigo})
 
 
 
