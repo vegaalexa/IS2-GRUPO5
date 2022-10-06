@@ -87,7 +87,10 @@ class SprintBackLog(models.Model):
     descripcion = models.CharField(max_length=200, default='')
     idSprintBackLog = models.IntegerField(primary_key=True, default=generarId)
     backLog = models.ForeignKey(BackLog, null=True,
-                                     blank=True, on_delete=models.CASCADE)    
+                                     blank=True, on_delete=models.CASCADE)
+    
+    #estados ['Por hacer', 'En curso', 'Finalizado']
+    estado = models.CharField(max_length=12, default='Por hacer')
     #sprint = models.OneToOneField('Sprint', on_delete=models.CASCADE,
     #                                null=True, blank=False)
    

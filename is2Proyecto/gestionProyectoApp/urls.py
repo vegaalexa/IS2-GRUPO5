@@ -37,11 +37,11 @@ urlpatterns = [
     path('desasignarPermiso/<emailAdmin>/<idRolAsignar>/<idPermiso>', views.desasignarPermiso),
     path('proyecto/<emailAdmin>', views.proyecto),
     #BACKLOG
-    path('backlog/<emailAdmin>', views.backlog),
-    path('registrarBackLog/<emailAdmin>/<idProyecto>', views.registrarBackLog),
-    path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>', views.edicionBackLog),
-    path('editarBackLog/<emailAdmin>/<idBackLogAEditar>', views.editarBackLog),
-    path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>', views.eliminarBackLog),
+    path('backlog/<emailAdmin>/<idProyecto>/<codigo>', views.backlog),
+    path('registrarBackLog/<emailAdmin>/<idProyecto>/<codigo>', views.registrarBackLog),
+    path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>/<idProyecto>/<codigo>', views.edicionBackLog),
+    path('editarBackLog/<emailAdmin>/<idBackLogAEditar>/<idProyecto>/<codigo>', views.editarBackLog),
+    path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>/<codigo>', views.eliminarBackLog),
     #BACKLOG: ASIGNACION CON PROYECTO
     path('asignacionProyecto/<emailAdmin>', views.asignacionProyecto),
     path('asignarProyecto/<emailAdmin>/<idProyecto>', views.asignarProyecto),
@@ -64,6 +64,7 @@ urlpatterns = [
     path('editarUserStory/<emailAdmin>/<idUserStoryAEditar>', views.editarUserStory),
     path('eliminarUserStory/<emailAdmin>/<idUserStoryAEliminar>', views.eliminarUserStory),
     path('cambiarEstadoUserStory/<emailAdmin>/<idUserStory>/<nuevoEstado>/<idSprintBackLog>', views.cambiarEstadoUserStory),
+    path('cambiarEstadoUSDesdeKanban/<emailAdmin>/<idUserStory>/<nuevoEstado>/<idProyecto>', views.cambiarEstadoUSDesdeKanban),
     #SPRINTBACKLOGS
     path('sprintBackLog/<emailAdmin>/<idBackLog>', views.sprintBackLog),
     path('registrarSprintBackLog/<emailAdmin>/<idBackLog>', views.registrarSprintBackLog),
@@ -82,4 +83,6 @@ urlpatterns = [
     path('edicionSprint/<emailAdmin>/<idSprintAEditar>', views.edicionSprint),
     path('editarSprint/<emailAdmin>/<idSprint>', views.editarSprint),
     path('asignacionSprintBackloASprint/<emailAdmin>/<idSprint>', views.asignacionSprintBackloASprint),
+    #KAMBAN
+    path('tableroKanban/<emailAdmin>/<idProyecto>', views.tableroKanban),
 ]

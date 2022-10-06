@@ -862,19 +862,32 @@ def getSprintBackLogDisponibles():
 *************************
 '''
 
-def backlog(request, emailAdmin):
+def backlog(request, emailAdmin, idProyecto, codigo):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
 
-    listaBackLogs = BackLog.objects.all().order_by('idBackLog')
-
     proyecto = None
+    listaBackLogs = []
+    
+    if int(codigo) == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    else:
+        try:
+            listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+            proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+        except:
+            pass
+
+    #print(f'proyecto {proyecto}')
+    #print('estoy aca????')
+    #if codigo == 0:
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'Backlog',
-                                        'proyecto':proyecto})
+                                        'proyecto':proyecto,
+                                        'codigo': codigo})
     
-def registrarBackLog(request, emailAdmin, idProyecto):
+def registrarBackLog(request, emailAdmin, idProyecto, codigo):
 
     nombre = request.POST.get('txtNombreBackLog')
     descripcion = request.POST.get('txtDescripcionBackLog')
@@ -891,18 +904,27 @@ def registrarBackLog(request, emailAdmin, idProyecto):
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog'})
+                                        'nombrePantalla': 'Backlog',
+                                        'codigo': codigo})
     
 
-def edicionBackLog(request, emailAdmin, idBackLogAEditar):
+def edicionBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
     backLog = BackLog.objects.get(idBackLog=idBackLogAEditar)
     
+    listaBackLogs = []
+    if int(codigo) == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    else:
+        listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+    
     return render(request, 'edicionBackLog.html', {'backLog': backLog,
-                                            'email':emailAdmin})  
+                                            'email':emailAdmin,
+                                            'idProyecto': idProyecto,
+                                            'codigo': codigo})  
     
 
 
-def editarBackLog(request, emailAdmin, idBackLogAEditar):
+def editarBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
     nombre = request.POST.get('txtNombreBackLog')
     descripcion = request.POST.get('txtDescripcionBackLog')
     
@@ -912,18 +934,32 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar):
     backLog.descripcion = descripcion
     backLog.save()
     
+    proyecto = None
+    listaBackLogs = []
+    if int(codigo) == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    else:
+        listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+        proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
-    listaBackLogs = BackLog.objects.all().order_by('idBackLog') 
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog'})
+                                        'nombrePantalla': 'Backlog',
+                                        'proyecto':proyecto,
+                                        'codigo': codigo})
 
 
-def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
+def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
     #obtenemos el BackLog correspondiente
-    backLog = BackLog.objects.get(idBackLog=idBackLogAEliminar)
+    backLog = None
+    try:
+        backLog = BackLog.objects.get(idBackLog=idBackLogAEliminar)
+    except:
+        pass
     
     sprintBackLogs = []
     try:
@@ -937,15 +973,20 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
             sprintBackLog.delete()
     
     #eliminamos el backLog
-    backLog.delete()
+    if backLog:
+        backLog.delete()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
-    listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    listaBackLogs = []
+    if int(codigo) == 0:
+        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+        
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog'})
+                                        'nombrePantalla': 'Backlog',
+                                        'codigo': codigo})
 
 
 def asignacionProyecto(request, emailAdmin):
@@ -964,12 +1005,16 @@ def asignarProyecto(request, emailAdmin, idProyecto):
     listaBackLogs = BackLog.objects.all().order_by('idBackLog')
 
     proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    
+    codigo = '0'
     #return render(request, 'backlog.html', {'email': emailAdmin})
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'Backlog',
-                                        'proyecto':proyecto})
+                                        'proyecto':proyecto,
+                                        'codigo': codigo})
 
 
 
@@ -1256,18 +1301,54 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
     
     if int(idSprintBackLog) == 0:
         #para este caso se asigna el estado desde el modulo PROYECTO/ USER STORY
+        print('1')
         return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
                                             'nombrePantalla': 'UserStory'})
     else:
         #para este caso se asigna el estado desde el modulo SPRINT BACKLOG/ USER STORY
+        print('2')
         sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
         userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
         return render(request, 'verUserStorySprintBackLog.html', {
                                     'email':emailAdmin,
                                     'sprintBackLog': sprintBackLog,
                                     'userStories':userStoryAsignados})
+
+def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, idProyecto):
+    #para este caso se asigna el estado desde el modulo PROYECTO / KANBAN
+    userStory = UserStory.objects.get(idUserStory=idUserStory)
+    userStory.estado = nuevoEstado
+    userStory.save()
+    
+    sprintBackLog = None
+    userStoryAsignados = []
+    try:
+        #sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        
+        #traemos el backlog asociado al proyecto
+        backLog = BackLog.objects.get(proyecto_id=int(idProyecto))
+        #traemos todos los sprint backlogs asociados
+        listaSprintBackLogs = getSprintBackLogAsociados(backLog.idBackLog)
+        #buscamos cual es el SprintBackLog en curso
+        #sbl: Sprint BackLog
+        for sbl in listaSprintBackLogs:
+            if sbl.estado == 'En curso':
+                sprintBackLog = sbl
+                break
+        
+        #obtenemos los UserStories relcionados a dicho SprintBackLog
+        userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
+    except:
+        print('no existe ningun sprintbacklog en curso')
+        pass
+    proyecto = Proyecto.objects.get(idProyecto = idProyecto)
+    
+    return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
+                                            'email':emailAdmin,
+                                            'proyecto': proyecto,
+                                            'nombrePantalla': 'UserStory'})
         
     
 def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
@@ -1388,3 +1469,41 @@ def asignacionSprintBackloASprint(request, emailAdmin, idSprint):
                                     'email':emailAdmin,
                                     'sprint': sprint,
                                     'sprintBackLogs': listaSprintBackLogDisponibles})
+    
+    
+    
+
+def tableroKanban(request, emailAdmin, idProyecto):
+    #permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    sprintBackLog = None
+    userStoryAsignados = []
+    try:
+        #sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        
+        #traemos el backlog asociado al proyecto
+        #print(f'idProyecto: {idProyecto}')
+        backLog = BackLog.objects.get(proyecto_id=int(idProyecto))
+        #print(f'backlog: {backLog}')
+        #traemos todos los sprint backlogs asociados
+        listaSprintBackLogs = getSprintBackLogAsociados(backLog.idBackLog)
+        print(listaSprintBackLogs)
+        #buscamos cual es el SprintBackLog en curso
+        #sbl: Sprint BackLog
+        for sbl in listaSprintBackLogs:
+            if sbl.estado == 'En curso':
+                sprintBackLog = sbl
+                break
+        
+        #obtenemos los UserStories relcionados a dicho SprintBackLog
+        userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
+    except:
+        print('no existe ningun sprintbacklog en curso')
+        pass
+    
+    print(sprintBackLog)
+    proyecto = Proyecto.objects.get(idProyecto = idProyecto)
+    
+    return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
+                                            'email':emailAdmin,
+                                            'proyecto': proyecto,
+                                            'nombrePantalla': 'UserStory'})
