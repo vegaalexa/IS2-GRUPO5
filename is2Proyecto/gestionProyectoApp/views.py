@@ -1301,12 +1301,14 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
     
     if int(idSprintBackLog) == 0:
         #para este caso se asigna el estado desde el modulo PROYECTO/ USER STORY
+        print('1')
         return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
                                             'nombrePantalla': 'UserStory'})
     else:
         #para este caso se asigna el estado desde el modulo SPRINT BACKLOG/ USER STORY
+        print('2')
         sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
         userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
         return render(request, 'verUserStorySprintBackLog.html', {
@@ -1315,14 +1317,22 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
                                     'userStories':userStoryAsignados})
 
 def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, idProyecto):
+    #para este caso se asigna el estado desde el modulo PROYECTO / KANBAN
     userStory = UserStory.objects.get(idUserStory=idUserStory)
     userStory.estado = nuevoEstado
     userStory.save()
     
-    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    sprintBackLog = None
+    userStoryAsignados = []
+    try:
+        sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
+    except:
+        print('no existe ningun sprintbacklog en curso')
+        pass
     proyecto = Proyecto.objects.get(idProyecto = idProyecto)
     
-    return render(request, 'tableroKanban.html', {'userstories': listaUserStory,
+    return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
                                             'email':emailAdmin,
                                             'proyecto': proyecto,
                                             'nombrePantalla': 'UserStory'})
@@ -1452,10 +1462,21 @@ def asignacionSprintBackloASprint(request, emailAdmin, idSprint):
 
 def tableroKanban(request, emailAdmin, idProyecto):
     #permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
-    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    sprintBackLog = None
+    userStoryAsignados = []
+    try:
+        sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
+    except:
+        print('no existe ningun sprintbacklog en curso')
+        pass
+    
+    print(sprintBackLog)
+    #print(userStoryAsignados)
+    #listaUserStory = UserStory.objects.all().order_by('idUserStory')
     proyecto = Proyecto.objects.get(idProyecto = idProyecto)
     
-    return render(request, 'tableroKanban.html', {'userstories': listaUserStory,
+    return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
                                             'email':emailAdmin,
                                             'proyecto': proyecto,
                                             'nombrePantalla': 'UserStory'})
