@@ -1325,7 +1325,20 @@ def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, id
     sprintBackLog = None
     userStoryAsignados = []
     try:
-        sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        #sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        
+        #traemos el backlog asociado al proyecto
+        backLog = BackLog.objects.get(proyecto_id=int(idProyecto))
+        #traemos todos los sprint backlogs asociados
+        listaSprintBackLogs = getSprintBackLogAsociados(backLog.idBackLog)
+        #buscamos cual es el SprintBackLog en curso
+        #sbl: Sprint BackLog
+        for sbl in listaSprintBackLogs:
+            if sbl.estado == 'En curso':
+                sprintBackLog = sbl
+                break
+        
+        #obtenemos los UserStories relcionados a dicho SprintBackLog
         userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
     except:
         print('no existe ningun sprintbacklog en curso')
@@ -1465,15 +1478,29 @@ def tableroKanban(request, emailAdmin, idProyecto):
     sprintBackLog = None
     userStoryAsignados = []
     try:
-        sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        #sprintBackLog = SprintBackLog.objects.get(estado='En curso')
+        
+        #traemos el backlog asociado al proyecto
+        #print(f'idProyecto: {idProyecto}')
+        backLog = BackLog.objects.get(proyecto_id=int(idProyecto))
+        #print(f'backlog: {backLog}')
+        #traemos todos los sprint backlogs asociados
+        listaSprintBackLogs = getSprintBackLogAsociados(backLog.idBackLog)
+        print(listaSprintBackLogs)
+        #buscamos cual es el SprintBackLog en curso
+        #sbl: Sprint BackLog
+        for sbl in listaSprintBackLogs:
+            if sbl.estado == 'En curso':
+                sprintBackLog = sbl
+                break
+        
+        #obtenemos los UserStories relcionados a dicho SprintBackLog
         userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
     except:
         print('no existe ningun sprintbacklog en curso')
         pass
     
     print(sprintBackLog)
-    #print(userStoryAsignados)
-    #listaUserStory = UserStory.objects.all().order_by('idUserStory')
     proyecto = Proyecto.objects.get(idProyecto = idProyecto)
     
     return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
