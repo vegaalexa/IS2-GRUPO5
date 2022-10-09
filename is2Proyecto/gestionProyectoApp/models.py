@@ -91,6 +91,12 @@ class SprintBackLog(models.Model):
     
     #estados ['Por hacer', 'En curso', 'Finalizado']
     estado = models.CharField(max_length=12, default='Por hacer')
+    #la duracion por defecto es de 2 semanas (default=2)
+    #1... es una semana
+    #2... es dos semanas y asi sucesivamente
+    duracion = models.IntegerField(default=2)
+    fechaInicio = models.DateField(null=True, default=django.utils.timezone.now)
+    fechaFin = models.DateField(null=True, default=None)
     #sprint = models.OneToOneField('Sprint', on_delete=models.CASCADE,
     #                                null=True, blank=False)
    
