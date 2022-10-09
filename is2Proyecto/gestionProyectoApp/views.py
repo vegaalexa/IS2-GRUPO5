@@ -1,5 +1,8 @@
 from ast import Return
+import datetime
+from time import sleep
 import email
+import threading
 from os import curdir
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
@@ -16,6 +19,8 @@ from .models import UsuariosProyectos
 from .models import UserStory
 from .models import Sprint
 from django.utils.dateparse import parse_date
+
+estado = False
 #ASIGNACION
 
 def login(request):
@@ -667,6 +672,20 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     #traemos todos los SprintBackLogs que corresponden al BackLog
     listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
     
+    #buscamos cual es el SprintBackLog en curso
+    #sbl: Sprint BackLog
+    sprintBackLog = None
+    for sbl in listaSprintBackLogs:
+        if sbl.estado == 'En curso':
+            sprintBackLog = sbl
+            break
+    
+    #cerrarSprintBackLog(sprintBackLog)
+    global estado
+    if estado == False:
+        thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
+        thread.start()
+    
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
@@ -674,6 +693,85 @@ def sprintBackLog(request, emailAdmin, idBackLog):
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': backLog,
                                         'nombrePantalla': 'SprintBacklog'})
+
+
+def  cerrarSprintBackLog(sprintBackLog):
+    '''
+    VERIFICA CON UN HILO QUE QUE LA FECHA FIN DEL SPRINT
+    SEA AUN MENOR A LA FECHA DE HOY PARA QUE SEA VALIDO,
+    SINO SE CIERRA EL SPRINT
+    '''
+    global estado
+    
+    hoy = datetime.datetime.now().strftime ("%Y-%m-%d")
+    hoy = str(hoy)
+    
+    fechaFin = str(sprintBackLog.fechaFin)
+    #delay de 5 segundos
+    delay = 5
+    estado = True
+    while estado:
+        if hoy > fechaFin:
+            estado = False
+            continue
+            
+        sleep(delay)
+    
+    estado = True
+    
+    # print(f'sprintbacklog actual: {sprintBackLog.estado}')
+    # print(f'sprintBackLog {sprintBackLog}')
+    # print('-------------')
+    
+    #listamos todos los SprintBackLog
+    listaSprintBackLog = SprintBackLog.objects.filter(backLog_id=sprintBackLog.backLog_id).order_by('fechaInicio')
+    for l in listaSprintBackLog:
+        print(l)
+    
+    indice = 0
+    for sbl in listaSprintBackLog:
+        if sbl.estado == 'En curso':
+            break
+        
+        indice += 1
+    
+    #cerramos el sprintbacklog actual
+    sprintBackLog.estado = 'Finalizado'
+    sprintBackLog.save()
+    
+    print(f'indice: {indice}')
+    
+    #traemos el siguiente SprintBacklog a ejecutarse
+    siguienteSprintBL = None
+    if indice < len(listaSprintBackLog) - 1:
+        print('se pasa al siguente sprint...')
+        #en caso de que ya este creado el siguiente sprint
+        siguienteSprintBL = listaSprintBackLog[indice + 1]
+    else:
+        #generamos los datos del siguiente sprintbacklog
+        print('se creo un nuevo SPRINTBACKLOG')
+        nombre_por_defecto = 'SPRINTBACKLOG ' + str(SprintBackLog.objects.count() + 1)
+        #debemos crear un nuevo sprintbacklog
+        #siguienteSprintBL = SprintBackLog.objects.create(nombre=nombre_por_defecto,
+        #                        descripcion=nombre_por_defecto, backLog=sprintBackLog.backLog)
+        
+        
+    print(f'siguiente: {siguienteSprintBL}')
+    print('----------------')
+    #obtenemos los UserStories asociados a ese SprintBackLog finalizado
+    listaUserStories = UserStory.objects.filter(sprintBackLog_id=sprintBackLog.idSprintBackLog)
+    for us in listaUserStories:
+        if us.estado != 'Finalizado':
+            print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {us.sprintBackLog}')
+            #le asignamos al siguiente SprintBackLog
+            us.sprintBackLog = siguienteSprintBL
+            #lo guardamos en la BD
+            us.save()
+            print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {siguienteSprintBL}')
+            
+    
+    #RETORNO TODOS LOS US NO FINALIZADOS
+    #FALTA AGREGAR AL SIGUIENTE SPRINTBACKLOG
 
 
 def registrarSprintBackLog(request, emailAdmin, idBackLog):
@@ -818,7 +916,7 @@ def getUserStoryAsignadosASprintBackLog(idSprintBackLog):
     listaUserStory = []
     
     #obtenemos todos los User Story
-    listaUserStoryAux = UserStory.objects.all()
+    listaUserStoryAux = UserStory.objects.all().order_by('idUserStory')
     
     #obtenemos todos los User Story asociados a el SprintBackLog
     for userStory in listaUserStoryAux:
@@ -1341,6 +1439,7 @@ def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, id
         #obtenemos los UserStories relcionados a dicho SprintBackLog
         userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
     except:
+        print('1')
         print('no existe ningun sprintbacklog en curso')
         pass
     proyecto = Proyecto.objects.get(idProyecto = idProyecto)
@@ -1486,7 +1585,6 @@ def tableroKanban(request, emailAdmin, idProyecto):
         #print(f'backlog: {backLog}')
         #traemos todos los sprint backlogs asociados
         listaSprintBackLogs = getSprintBackLogAsociados(backLog.idBackLog)
-        print(listaSprintBackLogs)
         #buscamos cual es el SprintBackLog en curso
         #sbl: Sprint BackLog
         for sbl in listaSprintBackLogs:
@@ -1500,7 +1598,6 @@ def tableroKanban(request, emailAdmin, idProyecto):
         print('no existe ningun sprintbacklog en curso')
         pass
     
-    print(sprintBackLog)
     proyecto = Proyecto.objects.get(idProyecto = idProyecto)
     
     return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
