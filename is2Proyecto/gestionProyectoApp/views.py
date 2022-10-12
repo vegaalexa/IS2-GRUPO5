@@ -679,6 +679,8 @@ def sprintBackLog(request, emailAdmin, idBackLog):
         if sbl.estado == 'En curso':
             sprintBackLog = sbl
             break
+        
+    print(f'###### {sprintBackLog}')
     
     #cerrarSprintBackLog(sprintBackLog)
     global estado
@@ -706,6 +708,8 @@ def  cerrarSprintBackLog(sprintBackLog):
     hoy = datetime.datetime.now().strftime ("%Y-%m-%d")
     hoy = str(hoy)
     
+    #print(f'sprintBackLog: {sprintBackLog}')
+    #print(f'fecha fin: {str(sprintBackLog.fechaFin)}')
     fechaFin = str(sprintBackLog.fechaFin)
     #delay de 5 segundos
     delay = 5
@@ -714,10 +718,10 @@ def  cerrarSprintBackLog(sprintBackLog):
         if hoy > fechaFin:
             estado = False
             continue
-            
+        print('.')
         sleep(delay)
     
-    estado = True
+    #estado = True
     
     # print(f'sprintbacklog actual: {sprintBackLog.estado}')
     # print(f'sprintBackLog {sprintBackLog}')
@@ -728,6 +732,7 @@ def  cerrarSprintBackLog(sprintBackLog):
     for l in listaSprintBackLog:
         print(l)
     
+    #buscamos el siguiente sprintbacklog en curso
     indice = 0
     for sbl in listaSprintBackLog:
         if sbl.estado == 'En curso':
@@ -739,7 +744,7 @@ def  cerrarSprintBackLog(sprintBackLog):
     sprintBackLog.estado = 'Finalizado'
     sprintBackLog.save()
     
-    print(f'indice: {indice}')
+    #print(f'indice: {indice}')
     
     #traemos el siguiente SprintBacklog a ejecutarse
     siguienteSprintBL = None
@@ -758,6 +763,9 @@ def  cerrarSprintBackLog(sprintBackLog):
         
     print(f'siguiente: {siguienteSprintBL}')
     print('----------------')
+    #iniciamos el siguiente sprint
+    siguienteSprintBL.estado = 'En curso'
+    siguienteSprintBL.save()
     #obtenemos los UserStories asociados a ese SprintBackLog finalizado
     listaUserStories = UserStory.objects.filter(sprintBackLog_id=sprintBackLog.idSprintBackLog)
     for us in listaUserStories:
