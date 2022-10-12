@@ -676,7 +676,7 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     #sbl: Sprint BackLog
     sprintBackLog = None
     for sbl in listaSprintBackLogs:
-        if sbl.estado == 'En curso':
+        if sbl.estado == 'C':
             sprintBackLog = sbl
             break
         
@@ -735,13 +735,13 @@ def  cerrarSprintBackLog(sprintBackLog):
     #buscamos el siguiente sprintbacklog en curso
     indice = 0
     for sbl in listaSprintBackLog:
-        if sbl.estado == 'En curso':
+        if sbl.estado == 'C':
             break
         
         indice += 1
     
     #cerramos el sprintbacklog actual
-    sprintBackLog.estado = 'Finalizado'
+    sprintBackLog.estado = 'F'
     sprintBackLog.save()
     
     #print(f'indice: {indice}')
@@ -764,12 +764,12 @@ def  cerrarSprintBackLog(sprintBackLog):
     print(f'siguiente: {siguienteSprintBL}')
     print('----------------')
     #iniciamos el siguiente sprint
-    siguienteSprintBL.estado = 'En curso'
+    siguienteSprintBL.estado = 'C'
     siguienteSprintBL.save()
     #obtenemos los UserStories asociados a ese SprintBackLog finalizado
     listaUserStories = UserStory.objects.filter(sprintBackLog_id=sprintBackLog.idSprintBackLog)
     for us in listaUserStories:
-        if us.estado != 'Finalizado':
+        if us.estado != 'F':
             print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {us.sprintBackLog}')
             #le asignamos al siguiente SprintBackLog
             us.sprintBackLog = siguienteSprintBL
