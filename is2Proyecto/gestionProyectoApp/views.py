@@ -683,10 +683,10 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     print(f'###### {sprintBackLog}')
     
     #cerrarSprintBackLog(sprintBackLog)
-    global estado
-    if estado == False:
-        thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
-        thread.start()
+    #global estado
+    #if estado == False:
+    #    thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
+    #    thread.start()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
@@ -1440,7 +1440,7 @@ def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, id
         #buscamos cual es el SprintBackLog en curso
         #sbl: Sprint BackLog
         for sbl in listaSprintBackLogs:
-            if sbl.estado == 'En curso':
+            if sbl.estado == 'C':
                 sprintBackLog = sbl
                 break
         
@@ -1596,7 +1596,7 @@ def tableroKanban(request, emailAdmin, idProyecto):
         #buscamos cual es el SprintBackLog en curso
         #sbl: Sprint BackLog
         for sbl in listaSprintBackLogs:
-            if sbl.estado == 'En curso':
+            if sbl.estado == 'C':
                 sprintBackLog = sbl
                 break
         
