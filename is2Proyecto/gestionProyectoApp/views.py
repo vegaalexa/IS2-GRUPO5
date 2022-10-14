@@ -29,6 +29,12 @@ def login(request):
 def iniciarSesion(request):
     email = request.POST['yourEmail']
     contrasenia = request.POST['yourPassword']
+    
+    try:
+        usuario = Usuario.objects.get(email=email)
+    except:
+        return render(request, 'index.html', {'mensaje': 'El usuario no existe'})
+    
     return render(request, 'homeProyecto.html', {'email': email})
 
 def iniciarSesion2(request, emailAdmin):
