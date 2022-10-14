@@ -683,10 +683,10 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     print(f'###### {sprintBackLog}')
     
     #cerrarSprintBackLog(sprintBackLog)
-    #global estado
-    #if estado == False:
-    #    thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
-    #    thread.start()
+    global estado
+    if estado == False:
+        thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
+        thread.start()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
