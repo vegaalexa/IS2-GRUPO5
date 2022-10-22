@@ -27,11 +27,19 @@ def login(request):
 	return render(request, 'index.html')
 
 def iniciarSesion(request):
+    '''
+        Solo el admin o los usuarios registrados pueden acceder
+    '''
     email = request.POST['yourEmail']
     contrasenia = request.POST['yourPassword']
     
+    emailArrobaIndice = email.index('@')
+    #extraemos el contenido antes del @
+    emailAux = email[:emailArrobaIndice]
+    
     try:
-        usuario = Usuario.objects.get(email=email)
+        if emailAux.lower() != 'admin':
+            usuario = Usuario.objects.get(email=email)
     except:
         return render(request, 'index.html', {'mensaje': 'El usuario no existe'})
     
