@@ -89,8 +89,8 @@ class SprintBackLog(models.Model):
     backLog = models.ForeignKey(BackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)
     
-    #estados ['Por hacer', 'En curso', 'Finalizado']
-    estado = models.CharField(max_length=12, default='Por hacer')
+    #estados ['I', 'C', 'F']
+    estado = models.CharField(max_length=12, default='I')
     #la duracion por defecto es de 2 semanas (default=2)
     #1... es una semana
     #2... es dos semanas y asi sucesivamente
