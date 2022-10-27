@@ -1,0 +1,107 @@
+{%extends './base.html'%}
+
+{% block title %} BurnDown {% endblock %}
+
+{% block body %}
+    <h1>MODULO PROYECTO/BURN DOWN</h1>
+    <h4>{{email}}</h4>
+	<h4>Proyecto: {{proyecto.nombre}} - {{proyecto.idProyecto}} </h4>
+	<!-- <h4>Permisos sobre UserStory:
+		{% for p in permisosPorPantalla %}
+			{{p}}
+		{% endfor %}
+	</h4> -->
+    <br>
+
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+			<h3>Sprint BackLog</h3>
+					<ul class="navbar-nav"> 
+						<li class="nav-item dropdown"> 
+							<a class="btn btn-info" href="http://example.com" id="navbarDropdownMenuLink"
+								data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								lista de SprintBackLogs
+								<i class="fa fa-angle-down"></i>
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
+								style="position: absolute; top: 100px;" > 
+								{% for s in sprintBackLogs %}
+									<!-- <a class="dropdown-item"
+										href="/cambiarEstadoUSDesdeKanban/{{email}}/{{u.idUserStory}}/Por hacer/{{proyecto.idProyecto}}">{{s.nombre}}</a>  -->
+									<a class="dropdown-item"
+										href="#" onclick='generarBurnDownChart( "{{s.idSprintBackLog}}")'>{{s.nombre}}</a> 
+									
+								{% endfor %}
+							</div> 
+						</li>
+					</ul>
+				
+			
+		</div>
+        
+		<div id="divListadoUserStory" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>BurnDown Chart</h3>
+			
+			<canvas id="myChart"></canvas>
+			
+		</div>
+
+		<script>
+			let myChart;
+			function generarBurnDownChart(idSprintBackLog){
+				console.log("idSprintBackLog : " + idSprintBackLog);
+				var endpoint = '/api/sprintBackLog/' + idSprintBackLog;
+				var defaultData = [];
+				var labels = [];
+				$.ajax({
+					method: "GET",
+					url: endpoint,
+					success: function(data){
+						labels = data.labels;
+						defaultData = data.default;
+						console.log(data)
+						console.log(data.labels);
+						console.log(data.default);
+						console.log('funciona');
+					},
+					error: function(error_data){
+						console.log('error');
+					}
+				}).always(function() {
+					const ctx = document.getElementById('myChart').getContext('2d');
+					
+					//en caso de que exista ya alguna instancia del grafico
+					if (myChart) {
+						myChart.destroy();
+					}
+
+					myChart = new Chart(ctx, {
+						type: 'line',
+						data: {
+							labels: labels,
+							datasets: [{
+								label: '# of Votes',
+								data: defaultData,
+								backgroundColor: [
+									'rgba(255, 99, 132, 0.2)',
+
+								],
+								borderColor: [
+									'rgba(255, 99, 132, 1)',
+								],
+								borderWidth: 1
+							}]
+						},
+						options: {
+							scales: {
+								y: {
+									beginAtZero: true
+								}
+							}
+						}
+					});
+				});
+			}
+			</script>
+
+{% endblock%}
