@@ -1,5 +1,6 @@
 from ast import Return
 import datetime
+from email.policy import default
 from time import sleep
 import email
 import threading
@@ -19,6 +20,7 @@ from .models import UsuariosProyectos
 from .models import UserStory
 from .models import Sprint
 from django.utils.dateparse import parse_date
+from django.http import JsonResponse
 
 estado = False
 #ASIGNACION
@@ -698,7 +700,7 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     
     #cerrarSprintBackLog(sprintBackLog)
     global estado
-    if estado == False:
+    if estado == False and sprintBackLog:
         thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
         thread.start()
     
@@ -1626,3 +1628,60 @@ def tableroKanban(request, emailAdmin, idProyecto):
                                             'email':emailAdmin,
                                             'proyecto': proyecto,
                                             'nombrePantalla': 'UserStory'})
+    
+    
+
+def verGrafico(request, emailAdmin, idProyecto):
+    
+    listaSprintBackLogs = []
+    backLog = None
+    proyecto = None
+    
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    try:
+        #obtenemos el backlog del proyecto
+        backLog = BackLog.objects.get(proyecto_id=idProyecto)
+    except:
+        pass
+    
+    #obtenemos los sprintbacklos de ese backlog
+    listaSprintBackLogs = SprintBackLog.objects.filter(backLog_id=backLog.idBackLog)
+    
+    
+    
+    return render(request, 'graficoBurnDown.html', {'sprintBackLogs': listaSprintBackLogs,
+                                            'email':emailAdmin,
+                                            'proyecto': proyecto,
+                                            'nombrePantalla': 'Proyecto'})
+    
+    
+def getSprintBackLogsApi(request, idSprintBackLog):
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
+    print(f'nombre del sprint: {sprintBackLog.nombre}')
+    
+    hoy = str(datetime.datetime.now().strftime ("%Y-%m-%d"))
+    fechaInicio = str(sprintBackLog.fechaInicio)
+    #print(f'fechaInicio: {fechaInicio} | hoy: {hoy}')
+    
+    # if fechaInicio < hoy:
+    #     print('ya paso todo')
+    # else:
+    #     print('todavia no paso')
+    listaUserStories = UserStory.objects.filter(sprintBackLog_id=idSprintBackLog)
+    print(f'us cant: {len(listaUserStories)}')
+    
+    defaultData = []
+    for i in range(len(listaUserStories)):
+        defaultData.append(i + 1)
+        
+    print(defaultData)
+    defaultData = [12, 19, 3, 5, 2, 3]
+    labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange',]
+ 
+    data = {
+        'labels': labels,
+        'default': defaultData
+    }
+    
+    return JsonResponse(data)
