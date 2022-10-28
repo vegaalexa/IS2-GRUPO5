@@ -413,21 +413,52 @@ def asignarRol(request, emailAdmin, emailUsuarioAsignar, idRol):
     fechaHasta = parse_date(request.POST.get('txtFechaHasta'))
     
     #obtenemos el rol y el permiso
-    print('asignando rol a un usuario...')
-    usuario = Usuario.objects.get(email=emailUsuarioAsignar)
-    rol = Rol.objects.get(idRol=idRol)
+    esValida = validarFechaRol(emailUsuarioAsignar, idRol, fechaDesde, fechaHasta)
     
-    #creamos la tabla intermedia la cual almacena los ids de rol y permiso
-    usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol,
-                            fechaDesde=fechaDesde, fechaHasta=fechaHasta)
-    
+    mensaje = None
+    seAsigno = None
+    if esValida[0]:
+        print('asignando rol a un usuario...')
+        
+        usuario = Usuario.objects.get(email=emailUsuarioAsignar)
+        rol = Rol.objects.get(idRol=idRol)
+        
+        #creamos la tabla intermedia la cual almacena los ids de rol y permiso
+        usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol,
+                                fechaDesde=fechaDesde, fechaHasta=fechaHasta)
+        mensaje = 'Asignacion exitosa'
+    else:
+        mensaje = 'La fecha seleccionada ' + fechaDesde.strftime("%d-%m-%Y") + ' - ' + fechaHasta.strftime("%d-%m-%Y") + ' se solapa con el rol: '
+        mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
+        print(f'mensaje: {mensaje}')
+        
     listaRolesDisponibles = getRolesDisponibles(emailUsuarioAsignar)
     
     return render(request, 'asignacionRol.html', {
                                     'email':emailAdmin,
                                     'emailUsuarioAsignar': emailUsuarioAsignar,
-                                    'roles': listaRolesDisponibles})
+                                    'roles': listaRolesDisponibles,
+                                    'mensaje': mensaje})
     
+def validarFechaRol(email, idRol, fechaDesdeNuevo, fechaHastaNuevo):
+    rolesAsignados = getRolesAsignados(email)
+    for rol in rolesAsignados:
+        #for fecha in rolesAsignados[rol]:
+        # print(rolesAsignados[rol])
+        # print(fechaDesde)
+        fechaDesde = rolesAsignados[rol][0]
+        fechaHasta = rolesAsignados[rol][1]
+        
+        if (fechaDesdeNuevo >= fechaDesde and fechaDesdeNuevo <= fechaHasta):
+            #la fecha coincide con otra fecha de un rol
+            return (False, rol, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
+            
+        if (fechaHastaNuevo >= fechaHasta and fechaHastaNuevo <= fechaHasta):
+            #la fecha coincide con otra fecha de un rol
+            return (False, rol, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
+
+    #fecha valida
+    return (True, None)
 
 
 def asignacionPermiso(request, emailAdmin, idRolAsignar):
@@ -721,7 +752,7 @@ def  cerrarSprintBackLog(sprintBackLog):
     '''
     global estado
     
-    hoy = datetime.datetime.now().strftime ("%Y-%m-%d")
+    hoy = datetime.datetime.now().strftime("%Y-%m-%d")
     hoy = str(hoy)
     
     #print(f'sprintBackLog: {sprintBackLog}')
