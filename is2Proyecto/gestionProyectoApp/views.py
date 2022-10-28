@@ -799,10 +799,12 @@ def  cerrarSprintBackLog(sprintBackLog):
 def registrarSprintBackLog(request, emailAdmin, idBackLog):
     nombre = request.POST.get('txtNombreSprintBackLog')
     descripcion = request.POST.get('txtDescripcionSprintBackLog')
+    fechaInicio = parse_date(request.POST.get('fechaInicio'))
+    fechaFin = parse_date(request.POST.get('fechaFin'))
     backLog = BackLog.objects.get(idBackLog=idBackLog)
     
     #se crear el SprintBackLog asociandolo a un BackLog
-    sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion, backLog=backLog)
+    sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
     
     listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
@@ -824,10 +826,14 @@ def edicionSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
 def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     nombre = request.POST.get('txtNombreSprintBackLog')
     descripcion = request.POST.get('txtDescripcionSprintBackLog')
+    fechaInicio = request.POST.get('fechaInicio')
+    fechaFin = request.POST.get('fechaFin')
     
     sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEditar)
     sprintBackLog.nombre = nombre
     sprintBackLog.descripcion = descripcion
+    sprintBackLog.fechaInicio = fechaInicio
+    sprintBackLog.fechaFin = fechaFin
     sprintBackLog.save()
     
     listaSprintBackLogs = getSprintBackLogAsociados(sprintBackLog.backLog.idBackLog)
@@ -1626,3 +1632,17 @@ def tableroKanban(request, emailAdmin, idProyecto):
                                             'email':emailAdmin,
                                             'proyecto': proyecto,
                                             'nombrePantalla': 'UserStory'})
+
+
+def cambiarEstadoSprintBackLog(request, emailAdmin, idSprintBackLog, nuevoEstado):
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
+    sprintBackLog.estado = nuevoEstado
+    sprintBackLog.save()
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'SprintBacklog')
+    listasprintBackLog = SprintBackLog.objects.all().order_by('idSprintBackLog')
+
+    return render(request, 'sprintBackLog.html', {'sprintBackLogs': listasprintBackLog,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'SprintBacklog'})
