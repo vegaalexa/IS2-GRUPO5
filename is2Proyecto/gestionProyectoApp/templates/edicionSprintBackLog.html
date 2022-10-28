@@ -24,6 +24,18 @@
 								class="form-control" placeholder="Descripcion" 
 							    required>
 						</div>
+						<div class="form-group py-2">
+							Fecha de Inicio<input type="date" id="fechaDesde" name='fechaDesde'
+								value="{{sprintBackLog.fechaDesde}}"
+								class="form-control" placeholder="fecha desde" 
+								maxlength="50" required>
+						</div>
+						<div class="form-group py-2">
+							Fecha de Finalización<input type="date" id="fechaHasta" name='fechaHasta' 
+								value="{{sprintBackLog.fechaHasta}}"
+								class="form-control" placeholder="fecha hasta" 
+								maxlength="50" required>
+						</div>
 
 						<div class="form-group py-2">
 							<button type="submit" class="btn btn-success btn-block text-white btnGuardarSprintBackLog">Guardar</button>
