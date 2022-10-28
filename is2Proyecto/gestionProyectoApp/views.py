@@ -1,5 +1,6 @@
 from ast import Return
 import datetime
+from email.policy import default
 from time import sleep
 import email
 import threading
@@ -19,6 +20,7 @@ from .models import UsuariosProyectos
 from .models import UserStory
 from .models import Sprint
 from django.utils.dateparse import parse_date
+from django.http import JsonResponse
 
 estado = False
 #ASIGNACION
@@ -411,21 +413,52 @@ def asignarRol(request, emailAdmin, emailUsuarioAsignar, idRol):
     fechaHasta = parse_date(request.POST.get('txtFechaHasta'))
     
     #obtenemos el rol y el permiso
-    print('asignando rol a un usuario...')
-    usuario = Usuario.objects.get(email=emailUsuarioAsignar)
-    rol = Rol.objects.get(idRol=idRol)
+    esValida = validarFechaRol(emailUsuarioAsignar, idRol, fechaDesde, fechaHasta)
     
-    #creamos la tabla intermedia la cual almacena los ids de rol y permiso
-    usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol,
-                            fechaDesde=fechaDesde, fechaHasta=fechaHasta)
-    
+    mensaje = None
+    seAsigno = None
+    if esValida[0]:
+        print('asignando rol a un usuario...')
+        
+        usuario = Usuario.objects.get(email=emailUsuarioAsignar)
+        rol = Rol.objects.get(idRol=idRol)
+        
+        #creamos la tabla intermedia la cual almacena los ids de rol y permiso
+        usuarioRol = UsuariosRoles.objects.create(usuario=usuario, rol=rol,
+                                fechaDesde=fechaDesde, fechaHasta=fechaHasta)
+        mensaje = 'Asignacion exitosa'
+    else:
+        mensaje = 'La fecha seleccionada ' + fechaDesde.strftime("%d-%m-%Y") + ' - ' + fechaHasta.strftime("%d-%m-%Y") + ' se solapa con el rol: '
+        mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
+        print(f'mensaje: {mensaje}')
+        
     listaRolesDisponibles = getRolesDisponibles(emailUsuarioAsignar)
     
     return render(request, 'asignacionRol.html', {
                                     'email':emailAdmin,
                                     'emailUsuarioAsignar': emailUsuarioAsignar,
-                                    'roles': listaRolesDisponibles})
+                                    'roles': listaRolesDisponibles,
+                                    'mensaje': mensaje})
     
+def validarFechaRol(email, idRol, fechaDesdeNuevo, fechaHastaNuevo):
+    rolesAsignados = getRolesAsignados(email)
+    for rol in rolesAsignados:
+        #for fecha in rolesAsignados[rol]:
+        # print(rolesAsignados[rol])
+        # print(fechaDesde)
+        fechaDesde = rolesAsignados[rol][0]
+        fechaHasta = rolesAsignados[rol][1]
+        
+        if (fechaDesdeNuevo >= fechaDesde and fechaDesdeNuevo <= fechaHasta):
+            #la fecha coincide con otra fecha de un rol
+            return (False, rol, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
+            
+        if (fechaHastaNuevo >= fechaHasta and fechaHastaNuevo <= fechaHasta):
+            #la fecha coincide con otra fecha de un rol
+            return (False, rol, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
+
+    #fecha valida
+    return (True, None)
 
 
 def asignacionPermiso(request, emailAdmin, idRolAsignar):
@@ -693,12 +726,10 @@ def sprintBackLog(request, emailAdmin, idBackLog):
         if sbl.estado == 'C':
             sprintBackLog = sbl
             break
-        
-    print(f'###### {sprintBackLog}')
     
     #cerrarSprintBackLog(sprintBackLog)
     global estado
-    if estado == False:
+    if estado == False and sprintBackLog:
         thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
         thread.start()
     
@@ -719,7 +750,7 @@ def  cerrarSprintBackLog(sprintBackLog):
     '''
     global estado
     
-    hoy = datetime.datetime.now().strftime ("%Y-%m-%d")
+    hoy = datetime.datetime.now().strftime("%Y-%m-%d")
     hoy = str(hoy)
     
     #print(f'sprintBackLog: {sprintBackLog}')
@@ -859,16 +890,11 @@ def eliminarSprintBackLog(request, emailAdmin, idSprintBackLogAEliminar):
     
 def getSprintBackLogAsociados(idBackLog):
     sprintBackLogs = []
-    sprintBackLogsTemp = []
     
     try:
-        sprintBackLogsTemp = SprintBackLog.objects.all()
+        sprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('fechaInicio')
     except:
         pass
-    
-    for sprintBackLog in sprintBackLogsTemp:
-        if sprintBackLog.backLog_id == int(idBackLog):
-            sprintBackLogs.append(sprintBackLog)
     
     return sprintBackLogs
 
@@ -1626,3 +1652,60 @@ def tableroKanban(request, emailAdmin, idProyecto):
                                             'email':emailAdmin,
                                             'proyecto': proyecto,
                                             'nombrePantalla': 'UserStory'})
+    
+    
+
+def verGrafico(request, emailAdmin, idProyecto):
+    
+    listaSprintBackLogs = []
+    backLog = None
+    proyecto = None
+    
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    
+    try:
+        #obtenemos el backlog del proyecto
+        backLog = BackLog.objects.get(proyecto_id=idProyecto)
+    except:
+        pass
+    
+    #obtenemos los sprintbacklos de ese backlog
+    listaSprintBackLogs = SprintBackLog.objects.filter(backLog_id=backLog.idBackLog)
+    
+    
+    
+    return render(request, 'graficoBurnDown.html', {'sprintBackLogs': listaSprintBackLogs,
+                                            'email':emailAdmin,
+                                            'proyecto': proyecto,
+                                            'nombrePantalla': 'Proyecto'})
+    
+    
+def getSprintBackLogsApi(request, idSprintBackLog):
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
+    print(f'nombre del sprint: {sprintBackLog.nombre}')
+    
+    hoy = str(datetime.datetime.now().strftime ("%Y-%m-%d"))
+    fechaInicio = str(sprintBackLog.fechaInicio)
+    #print(f'fechaInicio: {fechaInicio} | hoy: {hoy}')
+    
+    # if fechaInicio < hoy:
+    #     print('ya paso todo')
+    # else:
+    #     print('todavia no paso')
+    listaUserStories = UserStory.objects.filter(sprintBackLog_id=idSprintBackLog)
+    print(f'us cant: {len(listaUserStories)}')
+    
+    defaultData = []
+    for i in range(len(listaUserStories)):
+        defaultData.append(i + 1)
+        
+    print(defaultData)
+    defaultData = [12, 19, 3, 5, 2, 3]
+    labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange',]
+ 
+    data = {
+        'labels': labels,
+        'default': defaultData
+    }
+    
+    return JsonResponse(data)

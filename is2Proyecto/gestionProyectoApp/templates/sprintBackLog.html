@@ -49,6 +49,7 @@
 							<!--<th>Codigo</th>-->
 							<th>Nombre</th>
 							<th>Descripcion</th>
+							<th>Fecha inicio</th>
 							<th colspan="2">Opciones</th>
 						</tr>
 					</thead>
@@ -58,6 +59,7 @@
 							<td>{{forloop.counter}}</td>
 							<td>{{s.nombre}}</td>
 							<td>{{s.descripcion}}</td>
+							<td>{{s.fechaInicio}}</td>
 							<td><a href="/edicionSprintBackLog/{{email}}/{{s.idSprintBackLog}}" 
 								class="btn btn-info btnEditarSprintBackLog">Editar</a></td>
 							<td><a href="/asignacionUserStorySprintBackLog/{{email}}/{{s.idSprintBackLog}}" 
