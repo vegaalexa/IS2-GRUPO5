@@ -726,8 +726,6 @@ def sprintBackLog(request, emailAdmin, idBackLog):
         if sbl.estado == 'C':
             sprintBackLog = sbl
             break
-        
-    print(f'###### {sprintBackLog}')
     
     #cerrarSprintBackLog(sprintBackLog)
     global estado
@@ -892,16 +890,11 @@ def eliminarSprintBackLog(request, emailAdmin, idSprintBackLogAEliminar):
     
 def getSprintBackLogAsociados(idBackLog):
     sprintBackLogs = []
-    sprintBackLogsTemp = []
     
     try:
-        sprintBackLogsTemp = SprintBackLog.objects.all()
+        sprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('fechaInicio')
     except:
         pass
-    
-    for sprintBackLog in sprintBackLogsTemp:
-        if sprintBackLog.backLog_id == int(idBackLog):
-            sprintBackLogs.append(sprintBackLog)
     
     return sprintBackLogs
 
