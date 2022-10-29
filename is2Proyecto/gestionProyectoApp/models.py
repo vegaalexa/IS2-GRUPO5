@@ -229,7 +229,8 @@ class Permiso(models.Model):
     descripcion = models.CharField(max_length=200, default='')
     idPermiso = models.IntegerField(primary_key=True, default=generarIdPermisos)
     tipo = models.CharField(max_length=1, default='')
-    formulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
+    #formulario = models.ForeignKey(Formulario, null=True, on_delete=models.CASCADE)
+    formulario = models.CharField(max_length=50, default='')
     
     #personalizamos la tabla en posgres
     class Meta:
