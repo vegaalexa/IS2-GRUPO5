@@ -131,18 +131,21 @@ def permiso(request, emailAdmin):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
         
     listaPermisos = Permiso.objects.all().order_by('idPermiso')
+
+    formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
     return render(request, 'permiso.html', {'permisos': listaPermisos,
                                             'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Permiso'})
+                                        'nombrePantalla': 'Permiso',
+                                        'formularios': formularios})
     
     
-def registrarPermiso(request, emailAdmin):
+def registrarPermiso(request, emailAdmin, formulario):
     nombre = request.POST.get('txtNombre')
     descripcion = request.POST.get('txtDescripcion')
     tipo = request.POST.get('txtTipo')
     #nombreFormulario = request.POST.get('txtFormulario')
-    
+    #print(f'formulario: {formulario}')
     '''
     formulario = None
     try:
@@ -154,10 +157,18 @@ def registrarPermiso(request, emailAdmin):
     '''
     
     permiso = Permiso.objects.create(nombre=nombre, descripcion=descripcion,
-                                     tipo=tipo)
+                                     tipo=tipo, formulario=formulario)
+
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
     listaPermisos = Permiso.objects.all().order_by('idPermiso')
+
+    formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
     return render(request, 'permiso.html', {'permisos': listaPermisos,
-                                            'email':emailAdmin})
+                                            'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Permiso',
+                                        'formularios': formularios})
     
     
 
@@ -173,23 +184,30 @@ def eliminarPermiso(request, emailAdmin, idPermisoAEliminar):
         if int(rolPermiso.permiso_id) == int(idPermisoAEliminar):
             rolPermiso.delete()
     
-    
     permiso = Permiso.objects.get(idPermiso=idPermisoAEliminar)
     permiso.delete()
     
-    listaPermiso = Permiso.objects.all().order_by('idPermiso')
-    return render(request, 'permiso.html', {'permisos': listaPermiso,
-                                            'email':emailAdmin})
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
+    listaPermisos = Permiso.objects.all().order_by('idPermiso')
+
+    formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
+    return render(request, 'permiso.html', {'permisos': listaPermisos,
+                                            'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Permiso',
+                                        'formularios': formularios})
     
     
 def edicionPermiso(request, emailAdmin, idPermisoAEditar):
     permiso = Permiso.objects.get(idPermiso=idPermisoAEditar)
+    formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
     
     return render(request, 'edicionPermiso.html', {'permiso': permiso,
+                                            'formularios': formularios,
                                             'email':emailAdmin})
     
     
-def editarPermiso(request, emailAdmin, idPermisoAEditar):
+def editarPermiso(request, emailAdmin, idPermisoAEditar, formulario):
     nombre = request.POST.get('txtNombre')
     tipo = request.POST.get('txtTipo')
     descripcion = request.POST.get('txtDescripcion')
@@ -199,11 +217,18 @@ def editarPermiso(request, emailAdmin, idPermisoAEditar):
     permiso.nombre = nombre
     permiso.tipo = tipo
     permiso.descripcion = descripcion
+    permiso.formulario = formulario
     permiso.save()
     
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
     listaPermisos = Permiso.objects.all().order_by('idPermiso')
+
+    formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
     return render(request, 'permiso.html', {'permisos': listaPermisos,
-                                            'email':emailAdmin})
+                                            'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'Permiso',
+                                        'formularios': formularios})
 
 #********************************************
 
