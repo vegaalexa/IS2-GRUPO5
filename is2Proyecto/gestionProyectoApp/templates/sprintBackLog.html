@@ -29,7 +29,18 @@
 								class="form-control" placeholder="Descripcion" 
 							    required>
 						</div>
-
+						<div>
+							<div class="form-group py-2">
+								Fecha de Inicio<input type="date" id="fechaInicio" name='fechaInicio' 
+									class="form-control" placeholder="fecha desde" 
+									maxlength="50" required>
+							</div>
+							<div class="form-group py-2">
+								Fecha de Finalización<input type="date" id="fechaFin" name='fechaFin' 
+									class="form-control" placeholder="fecha hasta" 
+									maxlength="50" required>
+							</div>
+						</div>
 						<div class="form-group py-2">
 							<button type="submit" class="btn btn-success btn-block text-white btnGuardarSprintBackLog">Guardar</button>
 						</div>
@@ -46,9 +57,11 @@
 					<thead>
 						<tr>
 							<th>#</th>
-							<!--<th>Codigo</th>-->
 							<th>Nombre</th>
 							<th>Descripcion</th>
+
+							<!--<th>Duración</th>-->
+							<th>Estado</th>
 							<th>Fecha inicio</th>
 							<th colspan="2">Opciones</th>
 						</tr>
@@ -59,13 +72,58 @@
 							<td>{{forloop.counter}}</td>
 							<td>{{s.nombre}}</td>
 							<td>{{s.descripcion}}</td>
-							<td>{{s.fechaInicio}}</td>
+							<td>
+								{% if s.estado == 'I'%}
+									Por Iniciar
+								{% elif s.estado == 'C'%}
+									En curso
+								{% else %}
+									Finalizado
+								{% endif %}
+							</td>
+							<!--<td  style="width:150px;">
+								{{s.fechaInicio  | date:"d-m-Y" }} al {{s.fechaFin  | date:"d-m-Y" }}
+							</td>-->
+							<!--<td style="width:120px;">
+								<ul class="navbar-nav"> 
+									<li class="nav-item dropdown"> 
+										<a class="btn btn-info" href="http://example.com" id="navbarDropdownMenuLink"
+											data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											{% if s.estado == 'I'%}
+												Por Iniciar
+											{% elif s.estado == 'C'%}
+												En curso
+											{% else %}
+												Finalizado
+											{% endif %}
+											<i class="fa fa-angle-down"></i>
+										</a>
+										<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
+											style="position: absolute; top: 100px;" > 
+											<a class="dropdown-item"
+												href="/cambiarEstadoSprintBackLog/{{email}}/{{s.idSprintBackLog}}/I">
+												Iniciar</a> 
+											<a class="dropdown-item"
+												href="/cambiarEstadoSprintBackLog/{{email}}/{{s.idSprintBackLog}}/C">
+												En curso</a> 
+											<a class="dropdown-item"
+												href="/cambiarEstadoSprintBackLog/{{email}}/{{s.idSprintBackLog}}/F">
+												Finalizado</a> 
+										</div> 
+									</li>
+								</ul>
+							</td>-->
+              
+							<td>{{s.fechaInicio  | date:"d-m-Y"}}</td>
 							<td><a href="/edicionSprintBackLog/{{email}}/{{s.idSprintBackLog}}" 
 								class="btn btn-info btnEditarSprintBackLog">Editar</a></td>
+
 							<td><a href="/asignacionUserStorySprintBackLog/{{email}}/{{s.idSprintBackLog}}" 
-								class="btn btn-info btnAgregarUS">Agregar UserStory</a></td>
+								class="btn btn-info btnAgregarUS">Agregar US</a></td>
 							<td><a href="/verUserStorySprintBackLog/{{email}}/{{s.idSprintBackLog}}"
-								class="btn btn-info btnVerUS">Ver UserStory</a></td>
+								class="btn btn-info btnVerUS">Ver US</a></td>
+							<td><a href="/edicionSprintBackLog/{{email}}/{{s.idSprintBackLog}}" 
+								class="btn btn-info btnEditarSprintBackLog">Editar</a></td>
 							<td><a href="/eliminarSprintBackLog/{{email}}/{{s.idSprintBackLog}}" class="btn btn-danger
 								btnEliminarSprintBackLog btnEliminacion">Eliminar</a></td>
 						</tr>

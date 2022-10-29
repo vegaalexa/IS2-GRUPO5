@@ -71,6 +71,7 @@ urlpatterns = [
     path('edicionSprintBackLog/<emailAdmin>/<idSprintBackLogAEditar>', views.edicionSprintBackLog),
     path('editarSprintBackLog/<emailAdmin>/<idSprintBackLogAEditar>', views.editarSprintBackLog),
     path('eliminarSprintBackLog/<emailAdmin>/<idSprintBackLogAEliminar>', views.eliminarSprintBackLog),
+    path('cambiarEstadoSprintBackLog/<emailAdmin>/<idSprintBackLog>/<nuevoEstado>', views.cambiarEstadoSprintBackLog),
     #ASIGNACION USER STORY A SPRINT BACKLOGS
     path('asignacionUserStorySprintBackLog/<emailAdmin>/<idSprintBackLogAsignar>', views.asignacionUserStorySprintBackLog),
     path('asignarUserStorySprintBackLog/<emailAdmin>/<idSprintBackLog>/<idUserStory>', views.asignarUserStorySprintBackLog),
@@ -88,4 +89,3 @@ urlpatterns = [
     #MODULO BURNDOWN
     path('verGrafico/<emailAdmin>/<idProyecto>', views.verGrafico),
     path('api/sprintBackLog/<idSprintBackLog>', views.getSprintBackLogsApi),
-]
