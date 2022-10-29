@@ -1,18 +1,24 @@
 {%extends './base.html'%}
 
-{% block title %} gestion de proyectos {% endblock %}
+{% block title %} permisos {% endblock %}
 
 {% block body %}
+	
     <h1>MODULO SEGURIDAD/PERMISOS</h1>
     <h4>{{email}}</h4>
+	<h4>Permisos sobre Permiso:
+		{% for p in permisosPorPantalla %}
+			{{p}}
+		{% endfor %}
+	</h4>
     <br>
     <div class="row">
 		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-			<h3>Editar Permiso</h3>
+			<h3>Registrar Permiso</h3>
 			<div class="card">
 				<div class="card-body">
-					<form action="/editarPermiso/{{email}}/{{permiso.idPermiso}}" method="POST"> {% csrf_token %}
-						
+					<!--<form action='/editarPermiso/{{email}}/{{permiso.idPermiso}}' method="POST"> {% csrf_token %}-->
+					<form id='url' action='/editarPermiso/{{email}}/{{permiso.idPermiso}}' method="POST"> {% csrf_token%}
 						<div class="form-group py-2">
 							<input type="text" id="txtNombre" name='txtNombre' 
                                 value="{{permiso.nombre}}"
@@ -33,10 +39,93 @@
 						</div>
 
 						<div class="form-group py-2">
-							<button type="submit" class="btn btn-success btn-block text-white">Guardar</button>
+							<ul class="navbar-nav"> 
+								<li class="nav-item dropdown"> 
+									<a id='btnDropdown' style="width: 200px;" class="btn btn-info" href="http://example.com" id="navbarDropdownMenuLink"
+										data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											{{permiso.formulario}}
+										<i class="fa fa-angle-down"></i>
+									</a>
+									<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
+										style="position: absolute; top: 100px;" > 
+										{% for formulario in formularios %}
+											<a class="dropdown-item"
+												href='javascript:cambiarValorDropdown("{{formulario}}")'>{{formulario}}</a> 
+											
+										{% endfor %}
+									</div> 
+								</li>
+							</ul>
+						</div>
+
+						<!--
+						<div class="form-group py-2">
+							<input type="text" id="txtFormulario" name='txtFormulario' 
+								class="form-control" placeholder="Formulario" 
+							    required>
+						</div>-->
+
+						<div class="form-group py-2">
+							<button type="submit" class="btn btn-success btn-block text-white btnGuardarPermiso">Guardar</button>
 						</div>
 					</form>
 				</div>
 			</div>
 		</div>
-{% endblock %}
+
+    
+		</div>
+
+		<script>
+			function cambiarValorDropdown(formulario){
+				btnDropdown = document.getElementById('btnDropdown');
+				btnDropdown .innerHTML = formulario
+				btnDropdown.style.width = 200;
+				btnDropdown.innerHTML += "   <i class='fa fa-angle-down'></i>";
+
+				//actualizamos la url
+				url = document.getElementById('url');
+
+				var aux = 0;
+				for (var i = url.action.length -1; i >= 0; i--) {
+					if(url.action[i] == '/'){
+						aux = i;
+						break;
+					}
+				}
+
+				//eliminamos el formulario anterior
+				url.action = url.action.slice(0, aux);
+
+				//actualizamos la nueva url
+				url.action += '/' + formulario;
+				console.log(url.action)
+			}
+
+			function setUrl(){
+				btnDropdown = document.getElementById('btnDropdown');
+				contenido = btnDropdown.innerHTML
+				url = document.getElementById('url');
+
+
+				contenido = contenido.slice(12, 26);
+				var formulario = '';
+				var aux = 0;
+				for (var i =  0; i < contenido.length; i++) {
+					let ascii = contenido[i].toUpperCase().charCodeAt(0);
+
+					//consultamos si es un caracter
+					if(ascii > 64 && ascii < 91){
+						formulario += contenido[i];
+					}
+
+				}
+
+				url.action += '/' + formulario;
+				console.log(formulario);
+				console.log(url.action);
+			}
+
+			setUrl();
+		</script>
+{% endblock%}
