@@ -1689,7 +1689,10 @@ def verGrafico(request, emailAdmin, idProyecto):
         pass
     
     #obtenemos los sprintbacklos de ese backlog
-    listaSprintBackLogs = SprintBackLog.objects.filter(backLog_id=backLog.idBackLog)
+    try:
+        listaSprintBackLogs = SprintBackLog.objects.filter(backLog_id=backLog.idBackLog)
+    except:
+        pass
     
     
     
