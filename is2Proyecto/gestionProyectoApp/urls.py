@@ -89,3 +89,4 @@ urlpatterns = [
     #MODULO BURNDOWN
     path('verGrafico/<emailAdmin>/<idProyecto>', views.verGrafico),
     path('api/sprintBackLog/<idSprintBackLog>', views.getSprintBackLogsApi),
+]
