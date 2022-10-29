@@ -23,6 +23,8 @@
                 </thead>
                 <tbody>
                     {% for rol, permisos in rolesPermisos.items %}
+                    Rol: {{rol}} <br>
+                    Permiso: {{permiso}} <br>
                     <tr>
                         <td >{{forloop.counter}}</td>
                         <td>{{rol.nombre}}</td>
@@ -30,13 +32,15 @@
 
                         <td>
                             {% for r, fechas in roles.items %}
-                                <table class='table table-striped'>
-                                    <tbody>
-                                        {% for f in fechas %}
-                                            <tr><td>{{f}}</td></tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                {% if r.idRol == rol.idRol %}
+                                    <table class='table table-striped'>
+                                        <tbody>
+                                            {% for f in fechas %}
+                                                <tr><td>{{f}}</td></tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
                             {% endfor %}
                         </td>
 
