@@ -88,5 +88,5 @@ urlpatterns = [
     path('tableroKanban/<emailAdmin>/<idProyecto>', views.tableroKanban),
     #MODULO BURNDOWN
     path('verGrafico/<emailAdmin>/<idProyecto>', views.verGrafico),
-    path('api/sprintBackLog/<idSprintBackLog>', views.getSprintBackLogsApi),
+    path('api/grafico/<idProyecto>', views.getSprintBackLogsApi),
 ]
