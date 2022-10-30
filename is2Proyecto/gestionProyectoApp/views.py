@@ -838,7 +838,7 @@ def  cerrarSprintBackLog(sprintBackLog):
     #obtenemos los UserStories asociados a ese SprintBackLog finalizado
     listaUserStories = UserStory.objects.filter(sprintBackLog_id=sprintBackLog.idSprintBackLog)
     for us in listaUserStories:
-        if us.estado != 'F':
+        if us.estado != 'Finalizado':
             print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {us.sprintBackLog}')
             #le asignamos al siguiente SprintBackLog
             us.sprintBackLog = siguienteSprintBL
@@ -1755,28 +1755,31 @@ def verGrafico(request, emailAdmin, idProyecto):
                                             'nombrePantalla': 'Proyecto'})
     
     
-def getSprintBackLogsApi(request, idSprintBackLog):
-    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
-    print(f'nombre del sprint: {sprintBackLog.nombre}')
-    
-    hoy = str(datetime.datetime.now().strftime ("%Y-%m-%d"))
-    fechaInicio = str(sprintBackLog.fechaInicio)
-    #print(f'fechaInicio: {fechaInicio} | hoy: {hoy}')
-    
-    # if fechaInicio < hoy:
-    #     print('ya paso todo')
-    # else:
-    #     print('todavia no paso')
-    listaUserStories = UserStory.objects.filter(sprintBackLog_id=idSprintBackLog)
-    print(f'us cant: {len(listaUserStories)}')
-    
-    defaultData = []
-    for i in range(len(listaUserStories)):
-        defaultData.append(i + 1)
+def getSprintBackLogsApi(request, idProyecto):
+    backLog = BackLog.objects.get(proyecto_id=int(idProyecto))
+    sprintBackLogs = SprintBackLog.objects.filter(backLog_id=backLog.idBackLog).order_by('fechaInicio')
+    #totaLSprintBackLogs = SprintBackLog.objects.count()
+    totalUS = totalUserStories = UserStory.objects.count()
+
+    defaultData = [totalUserStories]
+    labels = ['']
+    sprint = 0
+    for sp in sprintBackLogs:
+        userstories = UserStory.objects.filter(sprintBackLog_id=sp.idSprintBackLog)
         
-    print(defaultData)
-    defaultData = [12, 19, 3, 5, 2, 3]
-    labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange',]
+        cantidadUserStories = 0
+        for us in userstories:
+            if us.estado == 'Finalizado':
+                cantidadUserStories += 1
+        
+
+        if cantidadUserStories > 0:
+            print(f'cantidadUserStories: {cantidadUserStories} --- totalUserStories: {totalUserStories}')
+            totalUserStories -= cantidadUserStories
+            
+        defaultData.append(totalUserStories)
+        sprint += 1
+        labels.append('Sprit ' + str(sprint))
  
     data = {
         'labels': labels,
