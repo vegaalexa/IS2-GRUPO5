@@ -82,18 +82,13 @@
 							<td>{{p.nombre}}</td>
 							<td>{{p.descripcion}}</td>
 							<td style="width:120px;">
-								<ul class="navbar-nav"> 
-									<a class="btn btn-success">
-											{% if p.estado == 'I'%}
-												Por iniciar
-											{% elif p.estado == 'C'%}
-												En curso
-											{% else %}
-												Finalizado
-											{% endif %}
-											<!--i class="fa fa-angle-down"></i-->
-										</a>
-								</ul>
+								{% if p.estado == 'I'%}
+									Por iniciar
+								{% elif p.estado == 'C'%}
+									En curso
+								{% else %}
+									Finalizado
+								{% endif %}
 							</td>
 							<!--td>{{r.descripcion}}</td-->
 							<td><a href="/edicionProyectoAbm/{{email}}/{{p.idProyecto}}" class="btn btn-info btnEditarProyecto">Editar</a></td>
