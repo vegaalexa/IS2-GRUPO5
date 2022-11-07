@@ -3,14 +3,45 @@
 {% block title %} Backlog {% endblock %}
 
 {% block body %}
+	<!--este input lo colocamos como hidden (oculto)
+	su funcion es asignarle el valor de permisosPorPantalla
+	para luego poder acceder a este valor desde el scrip
+	y pasarle como parametro a 
+	habilitarDeshabilitarCRUD()-->
+	<input id="permiso" name="permiso" type="hidden" value="{{permisosPorPantalla}}">
+	<input id="nombrePantalla" name="nombrePantalla" type="hidden" value="{{nombrePantalla}}">
+
+	<script type="text/javascript">
+		var input = document.getElementById("permiso");
+		var input_aux = document.getElementById("nombrePantalla");
+		var perPorPantalla = input.value;
+		var nombrePantalla = input_aux.value;
+		var permisosPorPantalla = "";
+		
+		//extraemos los permisos de perPorPantalla
+		for (let i = 0; i < perPorPantalla.length; i++) {
+			if(perPorPantalla[i] == 'C' || perPorPantalla[i] == 'R'
+						|| perPorPantalla[i] == 'U' || perPorPantalla[i] == 'D' ){
+				permisosPorPantalla = permisosPorPantalla.concat(perPorPantalla[i]);
+			}
+		}
+
+		//invocamos a la funcion de javascript
+		window.onload = function() { habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla); };
+	</script>
+	
     <h1>MODULO PROYECTO/BACKLOG</h1>
     <h4>{{email}}</h4>
 
 	{% if codigo == '0' %}
-		<h4>Permisos sobre Backlog:
-			{% for p in permisosPorPantalla %}
-				{{p}}
-			{% endfor %}
+		<h4>Permisos sobre "Backlog": &nbsp;
+			{% if permisosPorPantalla == None %}
+				Niguno
+			{% else %}
+				{% for p in permisosPorPantalla %}
+					{{p}}
+				{% endfor %}
+			{% endif %}
 		</h4>
 
 		<br>
