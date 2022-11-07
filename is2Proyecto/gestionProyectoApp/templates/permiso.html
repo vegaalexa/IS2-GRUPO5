@@ -32,10 +32,14 @@
 
     <h1>MODULO SEGURIDAD/PERMISOS</h1>
     <h4>{{email}}</h4>
-	<h4>Permisos sobre Permiso:
-		{% for p in permisosPorPantalla %}
-			{{p}}
-		{% endfor %}
+	<h4>Permisos sobre "Permiso": &nbsp;
+		{% if permisosPorPantalla == None %}
+			Niguno
+		{% else %}
+			{% for p in permisosPorPantalla %}
+				{{p}}
+			{% endfor %}
+		{% endif %}
 	</h4>
     <br>
     <div class="row">

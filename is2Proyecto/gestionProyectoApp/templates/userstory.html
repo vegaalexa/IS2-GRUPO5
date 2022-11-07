@@ -32,10 +32,14 @@
 
     <h1>MODULO PROYECTO/USER STORY</h1>
     <h4>{{email}}</h4>
-	<h4>Permisos sobre UserStory:
-		{% for p in permisosPorPantalla %}
-			{{p}}
-		{% endfor %}
+	<h4>Permisos sobre "UserStory": &nbsp;
+		{% if permisosPorPantalla == None %}
+			Niguno
+		{% else %}
+			{% for p in permisosPorPantalla %}
+				{{p}}
+			{% endfor %}
+		{% endif %}
 	</h4>
     <br>
 
