@@ -63,6 +63,10 @@ def siEsAdmin(emailAdmin):
 
 def usuario(request, emailAdmin):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'usuario')
+    print(f'permisosPorPantalla: {permisosPorPantalla}')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
@@ -131,6 +135,9 @@ def permiso(request, emailAdmin):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
         
     listaPermisos = Permiso.objects.all().order_by('idPermiso')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
 
     formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
     return render(request, 'permiso.html', {'permisos': listaPermisos,
@@ -161,6 +168,9 @@ def registrarPermiso(request, emailAdmin, formulario):
 
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+        
     listaPermisos = Permiso.objects.all().order_by('idPermiso')
 
     formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
@@ -189,6 +199,9 @@ def eliminarPermiso(request, emailAdmin, idPermisoAEliminar):
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
     listaPermisos = Permiso.objects.all().order_by('idPermiso')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
 
     formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
     return render(request, 'permiso.html', {'permisos': listaPermisos,
@@ -222,6 +235,9 @@ def editarPermiso(request, emailAdmin, idPermisoAEditar, formulario):
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'permiso')
     listaPermisos = Permiso.objects.all().order_by('idPermiso')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
 
     formularios = ['Usuario', 'Permiso', 'Rol', 'Proyecto', 'BackLog', 'SprintBackLog', 'UserStory']
     return render(request, 'permiso.html', {'permisos': listaPermisos,
@@ -237,6 +253,9 @@ def editarPermiso(request, emailAdmin, idPermisoAEditar, formulario):
 #********************************************
 def rol(request, emailAdmin):        
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'rol')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
     
     listaRol = Rol.objects.all().order_by('idRol')
     return render(request, 'rol.html', {'roles': listaRol,
@@ -695,6 +714,7 @@ def getPermisosAsignadosARol(idRol):
     try:
         #tabla intermedia entre Rol y Permiso (relacion M-M)
         rolesPermisos = RolesPermisos.objects.all()
+        #permisosAsignados = Permiso.objects.filter(idPermiso=rolPermiso.permiso_id)
     except:
         pass
     
@@ -702,6 +722,7 @@ def getPermisosAsignadosARol(idRol):
     for rolPermiso in rolesPermisos:
         if int(rolPermiso.rol_id) == int(idRol):
             permiso = Permiso.objects.get(idPermiso=rolPermiso.permiso_id)
+            #print(permiso)
             permisosAsignados.append(permiso)
 
     return permisosAsignados
@@ -759,11 +780,14 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': backLog,
-                                        'nombrePantalla': 'SprintBacklog'})
+                                        'nombrePantalla': 'SprintBackLog'})
 
 
 def  cerrarSprintBackLog(sprintBackLog):
@@ -872,11 +896,14 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
     listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': backLog,
-                                        'nombrePantalla': 'SprintBacklog',
+                                        'nombrePantalla': 'SprintBackLog',
                                         'mensaje': mensaje})
 
 
@@ -923,11 +950,14 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     listaSprintBackLogs = getSprintBackLogAsociados(sprintBackLog.backLog.idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': sprintBackLog.backLog,
-                                        'nombrePantalla': 'SprintBacklog'})
+                                        'nombrePantalla': 'SprintBackLog'})
     
 
 def eliminarSprintBackLog(request, emailAdmin, idSprintBackLogAEliminar):
@@ -940,11 +970,14 @@ def eliminarSprintBackLog(request, emailAdmin, idSprintBackLogAEliminar):
     listaSprintBackLogs = getSprintBackLogAsociados(backLog.idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': backLog,
-                                        'nombrePantalla': 'SprintBacklog'})
+                                        'nombrePantalla': 'SprintBackLog'})
     
     
 def getSprintBackLogAsociados(idBackLog):
@@ -1085,10 +1118,14 @@ def backlog(request, emailAdmin, idProyecto, codigo):
     #print(f'proyecto {proyecto}')
     #print('estoy aca????')
     #if codigo == 0:
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+        
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog',
+                                        'nombrePantalla': 'BackLog',
                                         'proyecto':proyecto,
                                         'codigo': codigo})
     
@@ -1105,11 +1142,14 @@ def registrarBackLog(request, emailAdmin, idProyecto, codigo):
         
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     listaBackLogs = BackLog.objects.all().order_by('idBackLog') 
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog',
+                                        'nombrePantalla': 'BackLog',
                                         'codigo': codigo})
     
 
@@ -1150,10 +1190,13 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog',
+                                        'nombrePantalla': 'BackLog',
                                         'proyecto':proyecto,
                                         'codigo': codigo})
 
@@ -1187,10 +1230,14 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
     if int(codigo) == 0:
         listaBackLogs = BackLog.objects.all().order_by('idBackLog')
         
+        
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+        
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog',
+                                        'nombrePantalla': 'BackLog',
                                         'codigo': codigo})
 
 
@@ -1211,13 +1258,16 @@ def asignarProyecto(request, emailAdmin, idProyecto):
 
     proyecto = Proyecto.objects.get(idProyecto=idProyecto)
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
     
     codigo = '0'
+    
     #return render(request, 'backlog.html', {'email': emailAdmin})
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'Backlog',
+                                        'nombrePantalla': 'BackLog',
                                         'proyecto':proyecto,
                                         'codigo': codigo})
 
@@ -1264,6 +1314,9 @@ def proyectoAbm(request, emailAdmin):
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     listaProyectoAbm = Proyecto.objects.all().order_by('idProyecto') #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                     'email':emailAdmin,
@@ -1278,6 +1331,9 @@ def registrarProyectoAbm(request, emailAdmin):
     proyectoAbm = Proyecto.objects.create(nombre=nombre, descripcion=descripcion)
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
     
     listaProyectoAbm = Proyecto.objects.all().order_by('idProyecto') #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
@@ -1308,6 +1364,10 @@ def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
     listaProyectoAbm = Proyecto.objects.all().order_by('idProyecto') #En models.py está creado el modelo como Proyecto
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+        
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
@@ -1332,6 +1392,9 @@ def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
     proyectoAbm.save()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
     
     listaProyectoAbm = Proyecto.objects.all().order_by('idProyecto') #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
@@ -1433,6 +1496,9 @@ def getUsuariosAsignadosProyecto(idProyecto):
 '''
 def userstory(request, emailAdmin):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
     return render(request, 'userstory.html', {'userstories': listaUserStory,
@@ -1448,6 +1514,9 @@ def registrarUserStory(request, emailAdmin):
     userStory = UserStory.objects.create(nombre=nombre, descripcion=descripcion)
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
     return render(request, 'userstory.html', {'userstories': listaUserStory,
@@ -1474,6 +1543,9 @@ def editarUserStory(request, emailAdmin, idUserStoryAEditar):
     userStory.save()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
     return render(request, 'userstory.html', {'userstories': listaUserStory,
@@ -1488,6 +1560,9 @@ def eliminarUserStory(request, emailAdmin, idUserStoryAEliminar):
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
     
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+        
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
     return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
@@ -1503,6 +1578,9 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
     
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
     
     if int(idSprintBackLog) == 0:
         #para este caso se asigna el estado desde el modulo PROYECTO/ USER STORY
@@ -1565,7 +1643,7 @@ def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
     if siEsAdmin(emailAdmin) == False:
         #obtenemos los roles del usuario 
         rolesAsignados = getRolesAsignados(emailAdmin)
-        
+        #print(f'rolesAsignados: {rolesAsignados}')
         #recorremos dichos roles para obtener los permisos
         for rolAsignado in rolesAsignados:
             perAsignados = getPermisosAsignadosARol(rolAsignado.idRol)
@@ -1573,8 +1651,10 @@ def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
         
         #verificamos que algunos de esos permisos correspondan a la pantalla/formulario
         for permisoAsignado in permisosAsignados:
-            if permisoAsignado.descripcion.lower() == nombrePantalla:
+            if permisoAsignado.formulario.lower() == nombrePantalla:
                 perPorPatalla.append(permisoAsignado)
+        
+        print(f'perPorPatalla: {perPorPatalla}')
                 
         for permiso in perPorPatalla:
             permisosPorPantalla.append(permiso.tipo)
@@ -1592,6 +1672,9 @@ def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
 
 def sprint(request, emailAdmin):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaSprint = Sprint.objects.all()
     return render(request, 'sprint.html', {'sprints': listaSprint,
@@ -1610,6 +1693,9 @@ def registrarSprint(request, emailAdmin):
     sprint = Sprint.objects.create(nombre=nombre, descripcion=descripcion)
         
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaSprint = Sprint.objects.all()
     return render(request, 'sprint.html', {'sprints': listaSprint,
@@ -1627,6 +1713,9 @@ def eliminarSprint(request, emailAdmin, idSprint):
     sprint.delete()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaSprints = Sprint.objects.all()
     return render(request, 'sprint.html', {'sprints': listaSprints,
@@ -1654,6 +1743,9 @@ def editarSprint(request, emailAdmin, idSprint):
     sprint.save()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprint')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
         
     listaSprints = Sprint.objects.all()
     return render(request, 'sprint.html', {'sprints': listaSprints,
@@ -1720,6 +1812,9 @@ def cambiarEstadoSprintBackLog(request, emailAdmin, idSprintBackLog, nuevoEstado
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'SprintBacklog')
     listasprintBackLog = SprintBackLog.objects.all().order_by('idSprintBackLog')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
 
     return render(request, 'sprintBackLog.html', {'sprintBackLogs': listasprintBackLog,
                                             'email':emailAdmin,
