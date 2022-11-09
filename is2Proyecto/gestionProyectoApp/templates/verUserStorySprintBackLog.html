@@ -1,6 +1,6 @@
 {%extends './base.html'%}
 
-{% block title %} permisos {% endblock %}
+{% block title %} User Story {% endblock %}
 
 {% block body %}
     <h1>MODULO PROYECTO/BACKLOG/SPRINT BACKLOG/USER STORY</h1>
@@ -30,6 +30,14 @@
                         <td><a href="/desasignarUserStorySprintBackLog/{{email}}/{{sprintBackLog.idSprintBackLog}}/{{p.idUserStory}}"
                             class="btn btn-danger btnDesasignarUserStorySprintBackLog
                             btnEliminacion">Quitar</a></td>
+                        
+                        {% if p.usuario_id == None %}
+                            <td><a href="/asignacionUserStoryUsuario/{{email}}/{{sprintBackLog.idSprintBackLog}}/{{p.idUserStory}}"
+                                class="btn btn-info" style="width: 70%;">Asignar a un usuario</a></td>
+                        {% else %}
+                            <td><a href="/asignacionUserStoryUsuario/{{email}}/{{sprintBackLog.idSprintBackLog}}/{{p.idUserStory}}"
+                                class="btn btn-secondary" style="width: 70%;">{{p.usuario_id}}</a></td>
+                        {% endif %}
                         <td>
                             <ul class="navbar-nav"> 
                                 <li class="nav-item dropdown"> 
