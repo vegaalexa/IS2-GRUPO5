@@ -4,6 +4,8 @@ from django.urls import path
 urlpatterns = [
 	path('', views.login), 
 	path('homeProyecto/', views.iniciarSesion),
+    #CERRAR SESION
+    path('cerrarSesion/', views.login), 
     #homeProyecto con el navbar
     path('homeProyecto2/<emailAdmin>', views.iniciarSesion2),
 	path('seguridad/<emailAdmin>', views.seguridad),

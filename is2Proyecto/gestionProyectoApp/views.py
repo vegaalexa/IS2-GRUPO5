@@ -43,7 +43,7 @@ def iniciarSesion(request):
         if emailAux.lower() != 'admin':
             usuario = Usuario.objects.get(email=email)
     except:
-        return render(request, 'index.html', {'mensaje': 'El usuario no existe'})
+        return render(request, 'index.html', {'mensaje': 'Ponga las credenciales correctas'})
     
     return render(request, 'homeProyecto.html', {'email': email})
 
