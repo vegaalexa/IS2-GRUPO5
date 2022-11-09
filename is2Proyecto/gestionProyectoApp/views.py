@@ -1882,3 +1882,53 @@ def getSprintBackLogsApi(request, idProyecto):
     }
     
     return JsonResponse(data)
+
+
+def asignacionUserStoryUsuario(request, emailAdmin, idSprintBackLog, idUserStory):
+    #obtenemos el sprintbacklog actual
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
+    #obtenemos el backlog asociado
+    backLog = BackLog.objects.get(idBackLog=sprintBackLog.backLog_id)
+    #obtenemos el proyecto asociado
+    proyecto = Proyecto.objects.get(idProyecto=backLog.proyecto_id)
+    
+    #obtenemos los ids de los usuarios del proyecto
+    listaUsuariosTemp = UsuariosProyectos.objects.filter(proyecto_id = proyecto.idProyecto)
+    listaUsuarios = []
+    
+    userStory = UserStory.objects.get(idUserStory=idUserStory)
+    
+    #obtenemos todos los usuarios
+    for usuario in listaUsuariosTemp:
+        if userStory.usuario_id != usuario.usuario_id: #si son iguales es por que ya tiene asignado ese US
+            listaUsuarios.append(Usuario.objects.get(email=usuario.usuario_id))
+
+    
+    
+
+    return render(request, 'asignacionUserStoryUsuario.html', {
+                                    'email':emailAdmin,
+                                    'sprintBackLog': sprintBackLog,
+                                    'usuarios':listaUsuarios,
+                                    'userStory': userStory,
+                                    'idProyecto': proyecto.idProyecto})
+
+#path('asignarUserStoryUsuario/<emailAdmin>/<idSprintBackLog>/<idUserStory>/<email>', views.asignarUserStoryUsuario),
+def asignarUserStoryUsuario(request, emailAdmin, idSprintBackLog, idUserStory, email):
+    #obtenemos el proyecto y el usuario
+    print('asignando un nuevo usuario al user story...')
+    userStory = UserStory.objects.get(idUserStory=int(idUserStory))
+    usuario = Usuario.objects.get(email=email)
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
+    
+    #asignamos el usuario al user story
+    userStory.usuario = usuario
+    userStory.save()
+    
+    #traemos los user stories que ya fueron asignados a esta sprintBackLog
+    userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
+    
+    return render(request, 'verUserStorySprintBackLog.html', {
+                                    'email':emailAdmin,
+                                    'sprintBackLog': sprintBackLog,
+                                    'userStories':userStoryAsignados})
