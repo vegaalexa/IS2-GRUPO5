@@ -77,6 +77,7 @@
 							<th>#</th>
 							<th>Nombre</th>
 							<th>Descripcion</th>
+							<th>Asignado a</th>
 							<th colspan="2">Opciones</th>
 						</tr>
 					</thead>
@@ -86,6 +87,18 @@
 							<td>{{forloop.counter}}</td>
 							<td>{{us.nombre}}</td>
 							<td>{{us.descripcion}}</td>
+						
+							{% if us.usuario_id == None %}
+								<td><a href="#"
+									class="btn btn-secondary" style="width: 70%;">por asignar</a></td>
+							{% else %}
+								<td><a href="#"
+									class="btn btn-secondary" style="width: 70%;">{{us.usuario_id}}</a></td>
+							{% endif %}
+
+
+
+
 							<td><a href="/edicionUserStory/{{email}}/{{us.idUserStory}}" class="btn btn-info btnEditarUserStory">Editar</a></td>
 							<td><a href="/eliminarUserStory/{{email}}/{{us.idUserStory}}" class="btn btn-danger 
 								btnEliminarUserStory btnEliminacion">Eliminar</a></td>
