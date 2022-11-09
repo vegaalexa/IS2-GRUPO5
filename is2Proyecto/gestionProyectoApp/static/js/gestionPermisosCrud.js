@@ -19,6 +19,30 @@ function habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla){
     editar(permisosPorPantalla, nombrePantalla);
     eliminar(permisosPorPantalla, nombrePantalla);
     leer(permisosPorPantalla, nombrePantalla);
+
+    if(nombrePantalla == 'BackLog'){
+        asignar(permisosPorPantalla, 'Proyecto');
+    }
+}
+
+
+function asignar(permisosPorPantalla, nombrePantalla){
+    //var btnGuardar = document.querySelectorAll(".btnAsignarProyecto");
+    var btnAsignar = document.getElementById("btnAsignar".concat(nombrePantalla));
+
+    //deshabilitamos la opcion de asignar
+    const link = btnAsignar.href;
+    btnAsignar.href = '#';
+    
+    //solo en caso de que tenga el permiso correspondiente
+    for (let i = 0; i < permisosPorPantalla.length; i++) {
+        if(permisosPorPantalla[i] == 'C'){
+            btnAsignar.href = link;
+            break;
+        }
+    }
+    //lo habilitamos
+    
 }
 
 
