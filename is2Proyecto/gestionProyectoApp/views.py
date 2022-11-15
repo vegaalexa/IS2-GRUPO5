@@ -1853,12 +1853,18 @@ def verGrafico(request, emailAdmin, idProyecto):
 def getSprintBackLogsApi(request, idProyecto):
     backLog = BackLog.objects.get(proyecto_id=int(idProyecto))
     sprintBackLogs = SprintBackLog.objects.filter(backLog_id=backLog.idBackLog).order_by('fechaInicio')
-    #totaLSprintBackLogs = SprintBackLog.objects.count()
-    totalUS = totalUserStories = UserStory.objects.count()
 
-    defaultData = [totalUserStories]
     labels = ['']
     sprint = 0
+    totalUserStories = 0
+    
+    #contamos cuantos User Stories tiene el proyecto
+    for sp in sprintBackLogs:
+        userstories = UserStory.objects.filter(sprintBackLog_id=sp.idSprintBackLog)
+        totalUserStories += len(userstories)
+        
+    defaultData = [totalUserStories]
+    
     for sp in sprintBackLogs:
         userstories = UserStory.objects.filter(sprintBackLog_id=sp.idSprintBackLog)
         
@@ -1869,7 +1875,7 @@ def getSprintBackLogsApi(request, idProyecto):
         
 
         if cantidadUserStories > 0:
-            print(f'cantidadUserStories: {cantidadUserStories} --- totalUserStories: {totalUserStories}')
+            #print(f'cantidadUserStories: {cantidadUserStories} --- totalUserStories: {totalUserStories}')
             totalUserStories -= cantidadUserStories
             
         defaultData.append(totalUserStories)
