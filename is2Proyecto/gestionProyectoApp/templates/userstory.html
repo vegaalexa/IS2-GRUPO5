@@ -31,7 +31,7 @@
 	</script>
 
     <h1>MODULO PROYECTO/USER STORY</h1>
-    <h4>{{email}}</h4>
+    <h4 id="email">{{email}}</h4>
 	<h4>Permisos sobre "UserStory": &nbsp;
 		{% if permisosPorPantalla == None %}
 			Niguno
@@ -124,6 +124,26 @@
 						{% endfor %}
 					</tbody>
 				</table>
+
+				<div>
+					<!-- <center>
+    					{% include 'paginator.html' %}
+					</center> -->
+				</div>
 			</div>
 		</div>
+
+		<!-- <script>
+			this.bandera = false;
+			function updateUrl(){
+				let urlNuevo = 'http://' + "{{ request.get_host }}" + "/userstory/";
+				//console.log("{{ request.get_absolute_url }}");
+				email = document.getElementById('email');
+				urlNuevo += email.innerHTML;
+				//console.log(urlNuevo);=
+				console.log(urlNuevo);
+			}
+
+			updateUrl();
+		</script> -->
 {% endblock%}
