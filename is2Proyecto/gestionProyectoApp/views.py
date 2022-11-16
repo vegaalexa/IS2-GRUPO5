@@ -21,6 +21,8 @@ from .models import UserStory
 from .models import Sprint
 from django.utils.dateparse import parse_date
 from django.http import JsonResponse
+from django.core.paginator import Paginator
+from django.http import Http404
 
 estado = False
 #ASIGNACION
@@ -882,11 +884,21 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
     fechaFin = parse_date(request.POST.get('fechaFin'))
     backLog = BackLog.objects.get(idBackLog=idBackLog)
     
+    #se verifica que la fecha sea valida
     esValida = validarFechaSprintBackLog(idBackLog, fechaInicio, fechaFin)
     mensaje = None
     if esValida[0]:
         #se crear el SprintBackLog asociandolo a un BackLog
-        sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
+        
+        hoy = datetime.date.today()
+        
+        #si la fecha de hoy se encuentra en el rango de fechas, entonces lo marcamos EN CURSO
+        if hoy >= fechaInicio and hoy <= fechaFin:
+            sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,
+                                                estado = 'C', fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
+        else:
+            sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
+        
         mensaje = 'Registro exitoso'
     else:
         mensaje = 'La fecha seleccionada ' + fechaInicio.strftime("%d-%m-%Y") + ' - ' + fechaFin.strftime("%d-%m-%Y") + ' se solapa con el SprintBackLog: '
@@ -917,11 +929,11 @@ def validarFechaSprintBackLog(idBackLog, fechaDesdeNuevo, fechaHastaNuevo):
         fechaHasta = sp.fechaFin
         
         if (fechaDesdeNuevo >= fechaDesde and fechaDesdeNuevo <= fechaHasta):
-            #la fecha coincide con otra fecha de un rol
+            #la fecha coincide con otra fecha de un sprintbacklog
             return (False, sp, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
             
-        if (fechaHastaNuevo >= fechaHasta and fechaHastaNuevo <= fechaHasta):
-            #la fecha coincide con otra fecha de un rol
+        if (fechaHastaNuevo >= fechaDesde and fechaHastaNuevo <= fechaHasta):
+            #la fecha coincide con otra fecha de un sprintbacklog
             return (False, sp, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
 
     #fecha valida
@@ -1501,10 +1513,21 @@ def userstory(request, emailAdmin):
         permisosPorPantalla = None
         
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    # page = request.GET.get('page', 1)
+    
+    # try:
+    #     paginator = Paginator(listaUserStory, 5)
+    #     listaUserStory = paginator.page(page)
+    # except:
+    #     raise Http404
+    
     return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'})
+                                            'nombrePantalla': 'UserStory'
+                                            #'paginator': paginator,
+                                            #'entity': listaUserStory
+                                            })
 
 
 def registrarUserStory(request, emailAdmin):
@@ -1518,11 +1541,23 @@ def registrarUserStory(request, emailAdmin):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
         
+    
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    # page = request.GET.get('page', 1)
+    
+    # try:
+    #     paginator = Paginator(listaUserStory, 5)
+    #     listaUserStory = paginator.page(page)
+    # except:
+    #     raise Http404
+    
     return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'})
+                                            'nombrePantalla': 'UserStory'
+                                            #'paginator': paginator,
+                                            #'entity': listaUserStory
+                                            })
 
 
 def edicionUserStory(request, emailAdmin, idUserStoryAEditar):
@@ -1547,11 +1582,23 @@ def editarUserStory(request, emailAdmin, idUserStoryAEditar):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
         
+        
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    # page = request.GET.get('page', 1)
+    
+    # try:
+    #     paginator = Paginator(listaUserStory, 5)
+    #     listaUserStory = paginator.page(page)
+    # except:
+    #     raise Http404
+    
     return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'})
+                                            'nombrePantalla': 'UserStory'
+                                            #'paginator': paginator,
+                                            #'entity': listaUserStory
+                                            })
     
     
 def eliminarUserStory(request, emailAdmin, idUserStoryAEliminar):
@@ -1564,10 +1611,21 @@ def eliminarUserStory(request, emailAdmin, idUserStoryAEliminar):
         permisosPorPantalla = None
         
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    # page = request.GET.get('page', 1)
+    
+    # try:
+    #     paginator = Paginator(listaUserStory, 5)
+    #     listaUserStory = paginator.page(page)
+    # except:
+    #     raise Http404
+    
     return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'})
+                                            'nombrePantalla': 'UserStory'
+                                            #'paginator': paginator,
+                                            #'entity': listaUserStory
+                                            })
     
 
 def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSprintBackLog):
@@ -1585,10 +1643,22 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
     if int(idSprintBackLog) == 0:
         #para este caso se asigna el estado desde el modulo PROYECTO/ USER STORY
         print('1')
+        listaUserStory = UserStory.objects.all().order_by('idUserStory')
+        # page = request.GET.get('page', 1)
+        
+        # try:
+        #     paginator = Paginator(listaUserStory, 5)
+        #     listaUserStory = paginator.page(page)
+        # except:
+        #     raise Http404
+        
         return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'})
+                                            'nombrePantalla': 'UserStory'
+                                            #'paginator': paginator,
+                                            #'entity': listaUserStory
+                                            })
     else:
         #para este caso se asigna el estado desde el modulo SPRINT BACKLOG/ USER STORY
         print('2')
