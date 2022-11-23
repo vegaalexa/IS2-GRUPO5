@@ -25,15 +25,16 @@
 							    required>
 						</div>
 						<div class="form-group py-2">
-							Fecha de Inicio<input type="date" id="fechaDesde" name='fechaDesde'
-								value="{{sprintBackLog.fechaDesde}}"
-								class="form-control" placeholder="fecha desde" 
+							Fecha de Inicio<input type="date" id="fechaInicio" name='fechaInicio'
+								value="{{sprintBackLog.fechaInicio | date:'Y-m-d'}}"
+								class="form-control" 
 								maxlength="50" required>
 						</div>
 						<div class="form-group py-2">
-							Fecha de Finalización<input type="date" id="fechaHasta" name='fechaHasta' 
-								value="{{sprintBackLog.fechaHasta}}"
-								class="form-control" placeholder="fecha hasta" 
+							
+							Fecha de Finalización<input type="date" id="fechaFin" name='fechaFin' 
+								value="{{sprintBackLog.fechaFin | date:'Y-m-d'}}"
+								class="form-control"
 								maxlength="50" required>
 						</div>
 

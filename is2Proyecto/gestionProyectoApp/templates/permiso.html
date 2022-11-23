@@ -31,11 +31,15 @@
 	</script>
 
     <h1>MODULO SEGURIDAD/PERMISOS</h1>
-    <h4>{{email}}</h4>
-	<h4>Permisos sobre Permiso:
-		{% for p in permisosPorPantalla %}
-			{{p}}
-		{% endfor %}
+    <h4 id="email">{{email}}</h4>
+	<h4>Permisos sobre "Permiso": &nbsp;
+		{% if permisosPorPantalla == None %}
+			Niguno
+		{% else %}
+			{% for p in permisosPorPantalla %}
+				{{p}}
+			{% endfor %}
+		{% endif %}
 	</h4>
     <br>
     <div class="row">
@@ -138,27 +142,14 @@
 				btnDropdown.style.width = 200;
 				btnDropdown.innerHTML += "   <i class='fa fa-angle-down'></i>";
 
-				//actualizamos la url
-				url = document.getElementById('url');
-				
-				if (this.bandera){
-					var aux = 0;
-					for (var i = url.action.length -1; i >= 0; i--) {
-						if(url.action[i] == '/'){
-							aux = i;
-							break;
-						}
-					}
 
-					//eliminamos el formulario anterior
-					url.action = url.action.slice(1, aux);
-				}
-				else{
-					this.bandera = true;
-				}
+				let urlNuevo = 'http://' + "{{ request.get_host }}" + "/registrarPermiso/";
+				//console.log("{{ request.get_absolute_url }}");
+				email = document.getElementById('email');
+				urlNuevo += email.innerHTML;
+				//console.log(urlNuevo);
 
-				//
-				url.action += '/' + formulario;
+				url.action = urlNuevo + '/' + formulario;
 				console.log(url.action)
 			}
 

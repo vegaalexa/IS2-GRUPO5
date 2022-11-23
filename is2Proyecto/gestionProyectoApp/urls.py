@@ -4,6 +4,8 @@ from django.urls import path
 urlpatterns = [
 	path('', views.login), 
 	path('homeProyecto/', views.iniciarSesion),
+    #CERRAR SESION
+    path('cerrarSesion/', views.login), 
     #homeProyecto con el navbar
     path('homeProyecto2/<emailAdmin>', views.iniciarSesion2),
 	path('seguridad/<emailAdmin>', views.seguridad),
@@ -84,6 +86,9 @@ urlpatterns = [
     path('edicionSprint/<emailAdmin>/<idSprintAEditar>', views.edicionSprint),
     path('editarSprint/<emailAdmin>/<idSprint>', views.editarSprint),
     path('asignacionSprintBackloASprint/<emailAdmin>/<idSprint>', views.asignacionSprintBackloASprint),
+    #ASIGNACION USUARIO A USER STORY
+    path('asignacionUserStoryUsuario/<emailAdmin>/<idSprintBackLog>/<idUserStory>', views.asignacionUserStoryUsuario),
+    path('asignarUserStoryUsuario/<emailAdmin>/<idSprintBackLog>/<idUserStory>/<email>', views.asignarUserStoryUsuario),
     #KAMBAN
     path('tableroKanban/<emailAdmin>/<idProyecto>', views.tableroKanban),
     #MODULO BURNDOWN

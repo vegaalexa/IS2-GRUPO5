@@ -163,6 +163,8 @@ class UserStory(models.Model):
     estado = models.CharField(max_length=200, default='Por hacer')
     sprintBackLog = models.ForeignKey(SprintBackLog, null=True,
                                      blank=True, on_delete=models.CASCADE)
+    usuario = models.ForeignKey('Usuario', null=True,
+                                     blank=True, on_delete=models.CASCADE)
     
    
     def __str__(self):

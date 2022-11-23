@@ -44,19 +44,18 @@
 						<a class="dropdown-item" href="/proyectoAbm/{{email}}">Proyecto</a> 
 						<a class="dropdown-item" href="/backlog/{{email}}/None/0">Backlog</a>
 						<a class="dropdown-item" href="/userstory/{{email}}">User Story</a> 
-						{% comment %} <a class="dropdown-item" href="/sprint/{{email}}">Sprint</a>  {% endcomment %}
+						<!-- <a class="dropdown-item" href="/sprint/{{email}}">Sprint</a> -->
 					</div> 
 				</li>
 				<li class="nav-item dropdown"> 
 					<a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Dashboard </a> 
-					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"> 
-						<a class="dropdown-item" href="#">Reporte 1</a> 
-						<a class="dropdown-item" href="#">Reporte 2</a> 
-						<a class="dropdown-item" href="#">Reporte 3</a> 
-					</div> 
+					
 				</li>
 				<li class="nav-item">
 					<a class="nav-link disabled">Usuario: {{email}}</a>
+				</li>
+				<li class="nav-item dropdown"> 
+					<a href='/cerrarSesion' class="nav-link">Cerrar Sesion</a>
 				</li>  
 			</ul> 
 		</div> 

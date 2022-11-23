@@ -5,10 +5,14 @@
 {% block body %}
     <h1>MODULO PROYECTO/BACKLOG/SPRINT BACKLOG</h1>
     <h4>{{email}}</h4>
-    <h4>Permisos sobre SprintBackLog:
-		{% for p in permisosPorPantalla %}
-			{{p}}
-		{% endfor %}
+    <h4>Permisos sobre "SprintBackLog": &nbsp;
+		{% if permisosPorPantalla == None %}
+			Niguno
+		{% else %}
+			{% for p in permisosPorPantalla %}
+				{{p}}
+			{% endfor %}
+		{% endif %}
 	</h4>
 	<h4>SprintBackLog correspondientes al BackLog: {{backLog.nombre}} - {{backLog.idBackLog}}
 	</h4>
