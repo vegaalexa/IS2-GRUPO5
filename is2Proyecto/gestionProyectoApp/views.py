@@ -271,9 +271,18 @@ def registrarRol(request, emailAdmin):
     descripcion = request.POST.get('txtDescripcion')
     
     rol = Rol.objects.create(nombre=nombre, descripcion=descripcion)
+    
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'rol')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     listaRol = Rol.objects.all().order_by('idRol')
     return render(request, 'rol.html', {'roles': listaRol,
-                                            'email':emailAdmin})
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'Rol'})
     
     
 
@@ -473,7 +482,7 @@ def asignarRol(request, emailAdmin, emailUsuarioAsignar, idRol):
                                 fechaDesde=fechaDesde, fechaHasta=fechaHasta)
         mensaje = 'Asignacion exitosa'
     else:
-        mensaje = 'La fecha seleccionada ' + fechaDesde.strftime("%d-%m-%Y") + ' - ' + fechaHasta.strftime("%d-%m-%Y") + ' se solapa con el rol: '
+        mensaje = 'Error: La fecha seleccionada ' + fechaDesde.strftime("%d-%m-%Y") + ' - ' + fechaHasta.strftime("%d-%m-%Y") + ' se solapa con el rol: '
         mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
         print(f'mensaje: {mensaje}')
         
@@ -885,7 +894,7 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
     backLog = BackLog.objects.get(idBackLog=idBackLog)
     
     #se verifica que la fecha sea valida
-    esValida = validarFechaSprintBackLog(idBackLog, fechaInicio, fechaFin)
+    esValida = validarFechaSprintBackLog(-1, idBackLog, fechaInicio, fechaFin)
     mensaje = None
     if esValida[0]:
         #se crear el SprintBackLog asociandolo a un BackLog
@@ -896,12 +905,15 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
         if hoy >= fechaInicio and hoy <= fechaFin:
             sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,
                                                 estado = 'C', fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
+        elif fechaInicio < hoy and fechaFin < hoy:
+            sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,
+                                                estado = 'F', fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
         else:
             sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
         
         mensaje = 'Registro exitoso'
     else:
-        mensaje = 'La fecha seleccionada ' + fechaInicio.strftime("%d-%m-%Y") + ' - ' + fechaFin.strftime("%d-%m-%Y") + ' se solapa con el SprintBackLog: '
+        mensaje = 'Error: La fecha seleccionada ' + fechaInicio.strftime("%d-%m-%Y") + ' - ' + fechaFin.strftime("%d-%m-%Y") + ' se solapa con el SprintBackLog: '
         mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
         print(f'mensaje: {mensaje}')
     
@@ -919,22 +931,23 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
                                         'mensaje': mensaje})
 
 
-def validarFechaSprintBackLog(idBackLog, fechaDesdeNuevo, fechaHastaNuevo):
+def validarFechaSprintBackLog(idSprintBackLog, idBackLog, fechaDesdeNuevo, fechaHastaNuevo):
     sprintBackLogsAsignados = getSprintBackLogAsociados(idBackLog)
     for sp in sprintBackLogsAsignados:
-        #for fecha in rolesAsignados[rol]:
-        # print(rolesAsignados[rol])
-        # print(fechaDesde)
-        fechaDesde = sp.fechaInicio
-        fechaHasta = sp.fechaFin
-        
-        if (fechaDesdeNuevo >= fechaDesde and fechaDesdeNuevo <= fechaHasta):
-            #la fecha coincide con otra fecha de un sprintbacklog
-            return (False, sp, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
+        if sp.idSprintBackLog != idSprintBackLog:
+            #for fecha in rolesAsignados[rol]:
+            # print(rolesAsignados[rol])
+            # print(fechaDesde)
+            fechaDesde = sp.fechaInicio
+            fechaHasta = sp.fechaFin
             
-        if (fechaHastaNuevo >= fechaDesde and fechaHastaNuevo <= fechaHasta):
-            #la fecha coincide con otra fecha de un sprintbacklog
-            return (False, sp, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
+            if (fechaDesdeNuevo >= fechaDesde and fechaDesdeNuevo <= fechaHasta):
+                #la fecha coincide con otra fecha de un sprintbacklog
+                return (False, sp, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
+                
+            if (fechaHastaNuevo >= fechaDesde and fechaHastaNuevo <= fechaHasta):
+                #la fecha coincide con otra fecha de un sprintbacklog
+                return (False, sp, fechaDesde.strftime("%d-%m-%Y"), fechaHasta.strftime("%d-%m-%Y"))
 
     #fecha valida
     return (True, None)
@@ -949,15 +962,42 @@ def edicionSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
 def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     nombre = request.POST.get('txtNombreSprintBackLog')
     descripcion = request.POST.get('txtDescripcionSprintBackLog')
-    fechaInicio = request.POST.get('fechaInicio')
-    fechaFin = request.POST.get('fechaFin')
+    fechaInicio = parse_date(request.POST.get('fechaInicio'))
+    fechaFin = parse_date(request.POST.get('fechaFin'))
     
     sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEditar)
-    sprintBackLog.nombre = nombre
-    sprintBackLog.descripcion = descripcion
-    sprintBackLog.fechaInicio = fechaInicio
-    sprintBackLog.fechaFin = fechaFin
-    sprintBackLog.save()
+    
+    
+    #se verifica que la fecha sea valida
+    esValida = validarFechaSprintBackLog(sprintBackLog.idSprintBackLog, sprintBackLog.backLog_id, fechaInicio, fechaFin)
+    mensaje = None
+    if esValida[0]:
+        #se crear el SprintBackLog asociandolo a un BackLog
+        
+        hoy = datetime.date.today()
+        
+        #si la fecha de hoy se encuentra en el rango de fechas, entonces lo marcamos EN CURSO
+        if hoy >= fechaInicio and hoy <= fechaFin:
+            sprintBackLog.estado = 'C'
+        elif fechaInicio < hoy and fechaFin < hoy:
+            sprintBackLog.estado = 'F'
+        else:
+            sprintBackLog.estado = 'I'
+            
+            
+        #guardamos las nuevos datos
+        sprintBackLog.nombre = nombre
+        sprintBackLog.descripcion = descripcion
+        sprintBackLog.fechaInicio = fechaInicio
+        sprintBackLog.fechaFin = fechaFin
+        sprintBackLog.save()
+        
+        mensaje = 'Edicion exitosa'
+    else:
+        mensaje = 'Error: La fecha seleccionada ' + fechaInicio.strftime("%d-%m-%Y") + ' - ' + fechaFin.strftime("%d-%m-%Y") + ' se solapa con el SprintBackLog: '
+        mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
+        print(f'mensaje: {mensaje}')
+        
     
     listaSprintBackLogs = getSprintBackLogAsociados(sprintBackLog.backLog.idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
@@ -969,7 +1009,8 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': sprintBackLog.backLog,
-                                        'nombrePantalla': 'SprintBackLog'})
+                                        'nombrePantalla': 'SprintBackLog',
+                                        'mensaje': mensaje})
     
 
 def eliminarSprintBackLog(request, emailAdmin, idSprintBackLogAEliminar):
