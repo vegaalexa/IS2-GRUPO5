@@ -21,8 +21,9 @@
 		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
 			<h3>Registrar SprintBackLog</h3>
 			{% if mensaje != 'None' %}
-				{% if mensaje == 'Registro exitoso' %}
+				{% if mensaje == 'Registro exitoso' or mensaje == 'Edicion exitosa' %}
 					<h4 style="color: green;">{{mensaje}}</h4>
+				
 				{% else %}
 					<h4 style="color: red;">{{mensaje}}</h4>
 				{% endif %}
