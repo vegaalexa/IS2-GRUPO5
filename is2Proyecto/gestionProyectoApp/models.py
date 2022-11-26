@@ -25,7 +25,8 @@ class Proyecto(models.Model):
 
     idProyecto = models.IntegerField(primary_key=True, default=generarIdProyecto)
     descripcion = models.CharField(max_length=200, default='')
-    
+    #estados ['I', 'C', 'F']
+    estado = models.CharField(max_length=2, default='I') 
    
     def __str__(self):
         texto = '{0} ({1})'
