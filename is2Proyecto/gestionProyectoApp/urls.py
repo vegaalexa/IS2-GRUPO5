@@ -71,6 +71,7 @@ urlpatterns = [
     path('sprintBackLog/<emailAdmin>/<idBackLog>', views.sprintBackLog),
     path('registrarSprintBackLog/<emailAdmin>/<idBackLog>', views.registrarSprintBackLog),
     path('edicionSprintBackLog/<emailAdmin>/<idSprintBackLogAEditar>', views.edicionSprintBackLog),
+    path('finalizarSprintBackLog/<emailAdmin>/<idSprintBackLog>', views.finalizarSprintBackLog),
     path('editarSprintBackLog/<emailAdmin>/<idSprintBackLogAEditar>', views.editarSprintBackLog),
     path('eliminarSprintBackLog/<emailAdmin>/<idSprintBackLogAEliminar>', views.eliminarSprintBackLog),
     path('cambiarEstadoSprintBackLog/<emailAdmin>/<idSprintBackLog>/<nuevoEstado>', views.cambiarEstadoSprintBackLog),
