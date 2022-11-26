@@ -783,12 +783,14 @@ def sprintBackLog(request, emailAdmin, idBackLog):
             sprintBackLog = sbl
             break
     
-    #cerrarSprintBackLog(sprintBackLog)
-    # global estado
+    #global estado
     # if estado == False and sprintBackLog:
-    #     thread = threading.Thread(target=cerrarSprintBackLog(sprintBackLog))
+    #     thread = threading.Thread(target=cerrarSprintBackLog, kwargs={'sprintBackLog':sprintBackLog})
     #     thread.start()
+    #if sprintBackLog:
+    #    cerrarSprintBackLog(sprintBackLog)
     
+    listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     if len(permisosPorPantalla) == 0:
@@ -807,7 +809,9 @@ def  cerrarSprintBackLog(sprintBackLog):
     SEA AUN MENOR A LA FECHA DE HOY PARA QUE SEA VALIDO,
     SINO SE CIERRA EL SPRINT
     '''
-    global estado
+    
+    #print('\nEjecutando hilo de verificacion de cierre del SprintBackLog...')
+    print('\nEjecutando verificacion de cierre del SprintBackLog...')
     
     hoy = datetime.datetime.now().strftime("%Y-%m-%d")
     hoy = str(hoy)
@@ -815,75 +819,97 @@ def  cerrarSprintBackLog(sprintBackLog):
     #print(f'sprintBackLog: {sprintBackLog}')
     #print(f'fecha fin: {str(sprintBackLog.fechaFin)}')
     fechaFin = str(sprintBackLog.fechaFin)
-    #delay de 5 segundos
-    delay = 5
-    estado = True
-    while estado:
-        if hoy > fechaFin:
-            estado = False
-            continue
-        print('.')
-        sleep(delay)
-    
-    #estado = True
-    
-    # print(f'sprintbacklog actual: {sprintBackLog.estado}')
-    # print(f'sprintBackLog {sprintBackLog}')
-    # print('-------------')
-    
-    #listamos todos los SprintBackLog
-    listaSprintBackLog = SprintBackLog.objects.filter(backLog_id=sprintBackLog.backLog_id).order_by('fechaInicio')
-    for l in listaSprintBackLog:
-        print(l)
-    
-    #buscamos el siguiente sprintbacklog en curso
-    indice = 0
-    for sbl in listaSprintBackLog:
-        if sbl.estado == 'C':
-            break
+    if hoy > fechaFin:
+            #continue
+        #print('.')
+        #sleep(delay)
         
-        indice += 1
-    
-    #cerramos el sprintbacklog actual
-    sprintBackLog.estado = 'F'
-    sprintBackLog.save()
-    
-    #print(f'indice: {indice}')
-    
-    #traemos el siguiente SprintBacklog a ejecutarse
-    siguienteSprintBL = None
-    if indice < len(listaSprintBackLog) - 1:
-        print('se pasa al siguente sprint...')
-        #en caso de que ya este creado el siguiente sprint
-        siguienteSprintBL = listaSprintBackLog[indice + 1]
-    else:
-        #generamos los datos del siguiente sprintbacklog
-        print('se creo un nuevo SPRINTBACKLOG')
-        nombre_por_defecto = 'SPRINTBACKLOG ' + str(SprintBackLog.objects.count() + 1)
-        #debemos crear un nuevo sprintbacklog
-        #siguienteSprintBL = SprintBackLog.objects.create(nombre=nombre_por_defecto,
-        #                        descripcion=nombre_por_defecto, backLog=sprintBackLog.backLog)
+        #estado = True
         
+        # print(f'sprintbacklog actual: {sprintBackLog.estado}')
+        # print(f'sprintBackLog {sprintBackLog}')
+        # print('-------------')
         
-    print(f'siguiente: {siguienteSprintBL}')
-    print('----------------')
-    #iniciamos el siguiente sprint
-    siguienteSprintBL.estado = 'C'
-    siguienteSprintBL.save()
-    #obtenemos los UserStories asociados a ese SprintBackLog finalizado
-    listaUserStories = UserStory.objects.filter(sprintBackLog_id=sprintBackLog.idSprintBackLog)
-    for us in listaUserStories:
-        if us.estado != 'Finalizado':
-            print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {us.sprintBackLog}')
-            #le asignamos al siguiente SprintBackLog
-            us.sprintBackLog = siguienteSprintBL
-            #lo guardamos en la BD
-            us.save()
-            print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {siguienteSprintBL}')
+        #listamos todos los SprintBackLog
+        listaSprintBackLog = SprintBackLog.objects.filter(backLog_id=sprintBackLog.backLog_id).order_by('fechaInicio')
+        #for l in listaSprintBackLog:
+        #    print(l)
+        
+        #buscamos el siguiente sprintbacklog en curso
+        indice = 0
+        for sbl in listaSprintBackLog:
+            if sbl.estado == 'C':
+                break
             
-    
-    #RETORNO TODOS LOS US NO FINALIZADOS
-    #FALTA AGREGAR AL SIGUIENTE SPRINTBACKLOG
+            indice += 1
+        
+        #cerramos el sprintbacklog actual
+        sprintBackLog.estado = 'F'
+        sprintBackLog.save()
+        
+        #print(f'indice: {indice}')
+        
+        #traemos el siguiente SprintBacklog a ejecutarse
+        siguienteSprintBL = None
+        
+        #bandera para indicar que es el ultimo SprintBacklog
+        esElUltimoSprintBackLog = False
+        
+        if indice < len(listaSprintBackLog) - 1:
+            print('se pasa al siguente sprint...')
+            #en caso de que ya este creado el siguiente sprint
+            siguienteSprintBL = listaSprintBackLog[indice + 1]
+            #iniciamos el siguiente sprint
+            siguienteSprintBL.estado = 'C'
+            siguienteSprintBL.save()
+        else:
+            esElUltimoSprintBackLog = True
+            
+            
+        # print(f'siguiente: {siguienteSprintBL}')
+        # print('----------------')
+
+        
+        tieneUserStoryPendientes = False
+        #obtenemos los UserStories asociados a ese SprintBackLog finalizado
+        listaUserStories = UserStory.objects.filter(sprintBackLog_id=sprintBackLog.idSprintBackLog)
+        for us in listaUserStories:
+            if us.estado != 'Finalizado':
+                if tieneUserStoryPendientes == False:
+                    tieneUserStoryPendientes = True
+                    
+                    #teniedo en cuenta que se trata del ultimo sprintbacklog y que 
+                    #todavia tiene usert stories pendientes, se debe generar otro sprintbacklog
+                    if esElUltimoSprintBackLog:
+                        print('se crea un nuevo SPRINTBACKLOG')
+                        nombre_por_defecto = 'SPRINTBACKLOG ' + str(SprintBackLog.objects.filter(backLog_id=sprintBackLog.backLog_id).count() + 1)
+                        
+                        #debemos crear un nuevo sprintbacklog
+                        siguienteSprintBL = SprintBackLog.objects.create(nombre=nombre_por_defecto,
+                                                descripcion=nombre_por_defecto, backLog=sprintBackLog.backLog, estado = 'C') 
+                        #siguienteSprintBL.estado = 'C'
+                        #siguienteSprintBL.save()
+            
+                
+                #print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {us.sprintBackLog}')
+                #le asignamos al siguiente SprintBackLog
+                us.sprintBackLog = siguienteSprintBL
+                #lo guardamos en la BD
+                us.save()
+                #print(f'us, nombre -> {us.nombre}, estado -> {us.estado}, sprintbacklog -> {siguienteSprintBL}')
+                
+        
+        #si el sprint a cerrar es el ultimo y si ya no ha US pendientes
+        #entonces se deberia de cerrar el proyecto
+        if esElUltimoSprintBackLog and tieneUserStoryPendientes == False:
+            print('FINALIZAMOS EL PROYECTO....')
+            #traemos el backlog asociado al sprint
+            backLog = BackLog.objects.get(idBackLog=sprintBackLog.backLog_id)
+            #traemos el proyecto en el que se encuentra
+            proyecto = Proyecto.objects.get(idProyecto=backLog.proyecto_id)
+            #finalizamos el proyecto
+            proyecto.estado = 'F'
+            proyecto.save()
 
 
 def registrarSprintBackLog(request, emailAdmin, idBackLog):
@@ -896,6 +922,8 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
     #se verifica que la fecha sea valida
     esValida = validarFechaSprintBackLog(-1, idBackLog, fechaInicio, fechaFin)
     mensaje = None
+    
+    operacionExitosa = ''
     if esValida[0]:
         #se crear el SprintBackLog asociandolo a un BackLog
         
@@ -912,10 +940,12 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
             sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
         
         mensaje = 'Registro exitoso'
+        operacionExitosa = 'si'
     else:
         mensaje = 'Error: La fecha seleccionada ' + fechaInicio.strftime("%d-%m-%Y") + ' - ' + fechaFin.strftime("%d-%m-%Y") + ' se solapa con el SprintBackLog: '
         mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
         print(f'mensaje: {mensaje}')
+        operacionExitosa = 'no'
     
     listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
@@ -928,7 +958,8 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': backLog,
                                         'nombrePantalla': 'SprintBackLog',
-                                        'mensaje': mensaje})
+                                        'mensaje': mensaje,
+                                        'operacionExitosa':operacionExitosa})
 
 
 def validarFechaSprintBackLog(idSprintBackLog, idBackLog, fechaDesdeNuevo, fechaHastaNuevo):
@@ -952,6 +983,103 @@ def validarFechaSprintBackLog(idSprintBackLog, idBackLog, fechaDesdeNuevo, fecha
     #fecha valida
     return (True, None)
 
+def finalizarSprintBackLog(request, emailAdmin, idSprintBackLog):
+    print('finalizando el SprintBackLog...')
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
+    
+    #traemos los user stories que ya fueron asignados a esta sprintBackLog
+    userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
+    operacionExitosa = ''
+    mensaje = ''
+        
+    if sprintBackLog.estado == 'C':
+        userStoryEstanFinalizados = True
+        for userStory in userStoryAsignados:
+            if userStory.estado != 'Finalizado':
+                userStoryEstanFinalizados = False
+                break
+        
+        if userStoryEstanFinalizados:
+            mensaje = 'SprintBackLog finalizado exitosamente'
+            
+            
+
+            #listamos todos los SprintBackLog
+            listaSprintBackLog = SprintBackLog.objects.filter(backLog_id=sprintBackLog.backLog_id).order_by('fechaInicio')
+            
+            #buscamos el siguiente sprintbacklog
+            indice = 0
+            for sbl in listaSprintBackLog:
+                if sbl.estado == 'C':
+                    break
+                
+                indice += 1
+            
+            #cerramos el sprintbacklog actual
+            sprintBackLog.estado = 'F'
+            #asignamos la fecha de finalizacion el de hoy
+            sprintBackLog.fechaFin = datetime.date.today()
+            sprintBackLog.save()
+            
+            #print(f'indice: {indice}')
+            
+            #traemos el siguiente SprintBacklog a ejecutarse
+            siguienteSprintBL = None
+            
+            #bandera para indicar que es el ultimo SprintBacklog
+            esElUltimoSprintBackLog = False
+            
+            if indice < len(listaSprintBackLog) - 1:
+                print('se pasa al siguente sprint...')
+                #en caso de que ya este creado el siguiente sprint
+                siguienteSprintBL = listaSprintBackLog[indice + 1]
+                #iniciamos el siguiente sprint
+                siguienteSprintBL.estado = 'C'
+                siguienteSprintBL.save()
+            else:
+                esElUltimoSprintBackLog = True 
+            
+            
+            #si el sprint a cerrar es el ultimo y si ya no ha US pendientes
+            #entonces se deberia de cerrar el proyecto
+            if esElUltimoSprintBackLog:
+                print('FINALIZAMOS EL PROYECTO....')
+                #traemos el backlog asociado al sprint
+                backLog = BackLog.objects.get(idBackLog=sprintBackLog.backLog_id)
+                #traemos el proyecto en el que se encuentra
+                proyecto = Proyecto.objects.get(idProyecto=backLog.proyecto_id)
+                #finalizamos el proyecto
+                proyecto.estado = 'F'
+                proyecto.save()
+                
+                
+                mensaje += '. Ademas el proyecto se ha FINALIZADO'
+                
+            operacionExitosa = 'si'
+        else:
+            mensaje = 'No se puede finalizar el SprintBackLog por que tiene US pendientes'   
+            operacionExitosa = 'no'
+    elif sprintBackLog.estado == 'F':
+        operacionExitosa = 'no'
+        mensaje = 'El EsprintBackLog ya esta "finalizado"'
+    else:
+        operacionExitosa = 'no'
+        mensaje = 'No se puede finalizar el SprintBackLog que no esta "en curso"'
+           
+    listaSprintBackLogs = getSprintBackLogAsociados(sprintBackLog.backLog_id)
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
+    return render(request, 'sprintBackLog.html', {'sprintBackLogs': listaSprintBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'backLog': sprintBackLog.backLog,
+                                        'nombrePantalla': 'SprintBackLog',
+                                        'mensaje': mensaje,
+                                        'operacionExitosa':operacionExitosa})
+    
 def edicionSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEditar)
     
@@ -971,7 +1099,12 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     #se verifica que la fecha sea valida
     esValida = validarFechaSprintBackLog(sprintBackLog.idSprintBackLog, sprintBackLog.backLog_id, fechaInicio, fechaFin)
     mensaje = None
+    operacionExitosa = ''
     if esValida[0]:
+        #if sprintBackLog.estado == 'C':
+        #    cerrarSprintBackLog(sprintBackLog)
+            
+            
         #se crear el SprintBackLog asociandolo a un BackLog
         
         hoy = datetime.date.today()
@@ -993,10 +1126,12 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
         sprintBackLog.save()
         
         mensaje = 'Edicion exitosa'
+        operacionExitosa = 'si'
     else:
         mensaje = 'Error: La fecha seleccionada ' + fechaInicio.strftime("%d-%m-%Y") + ' - ' + fechaFin.strftime("%d-%m-%Y") + ' se solapa con el SprintBackLog: '
         mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
         print(f'mensaje: {mensaje}')
+        operacionExitosa = 'no'
         
     
     listaSprintBackLogs = getSprintBackLogAsociados(sprintBackLog.backLog.idBackLog)
@@ -1010,8 +1145,9 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'backLog': sprintBackLog.backLog,
                                         'nombrePantalla': 'SprintBackLog',
-                                        'mensaje': mensaje})
-    
+                                        'mensaje': mensaje,
+                                        'operacionExitosa':operacionExitosa})
+        
 
 def eliminarSprintBackLog(request, emailAdmin, idSprintBackLogAEliminar):
     #obtenemos el SprintBackLog correspondiente
