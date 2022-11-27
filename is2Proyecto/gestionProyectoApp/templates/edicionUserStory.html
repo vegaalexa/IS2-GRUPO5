@@ -11,7 +11,8 @@
 			<h3>Editar User Story</h3>
 			<div class="card">
 				<div class="card-body">
-					<form action="/editarUserStory/{{email}}/{{userStory.idUserStory}}" method="POST"> {% csrf_token %}
+					
+					<form action="/editarUserStory/{{email}}/{{userStory.idUserStory}}/{{sprintBackLog.idSprintBackLog}}" method="POST"> {% csrf_token %}
 						
 						<div class="form-group py-2">
 							<input type="text" id="txtNombreUserStory" name='txtNombreUserStory' 
@@ -24,6 +25,14 @@
                             value="{{userStory.descripcion}}"
 								class="form-control" placeholder="Descripcion" 
 							    required>
+						</div>
+
+						<div style="height:50px; border-width:10px; padding-top: 10px" class="backLogUserStory">
+							SprintBackLog: {{sprintBackLog.nombre}} - {{sprintBackLog.idSprintBackLog}}
+						</div>
+
+						<div class="form-group py-2">	
+							<a href="/edicionAsignacionBackLog/{{email}}/{{userStory.idUserStory}}" id='btnAsignarBackLog' class="btn btn-info">Asignar SprintBackLog</a>
 						</div>
 
 						<div class="form-group py-2">
