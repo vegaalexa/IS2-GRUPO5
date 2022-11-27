@@ -46,9 +46,20 @@
     <div class="row">
 		<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
 			<h3>Registrar UserStory</h3>
+			{% if operacionExitosa != 'None' %}
+				{% if operacionExitosa == 'si' %}
+					<h4 style="color: green;">{{mensaje}}</h4>
+				{% else %}
+					<h4 style="color: red;">{{mensaje}}</h4>
+				{% endif %}
+			{% endif %}
 			<div class="card">
 				<div class="card-body">
-					<form action="/registrarUserStory/{{email}}" method="POST"> {% csrf_token%}
+					{% if sprintBackLog != None %}
+						<form action="/registrarUserStory/{{email}}/{{sprintBackLog.idSprintBackLog}}" method="POST"> {% csrf_token%}
+					{% else %}
+						<form action="/registrarUserStory/{{email}}/0" method="POST"> {% csrf_token%}
+					{% endif %}
 						<div class="form-group py-2">
 							<input type="text" id="txtNombreUserStory" name='txtNombreUserStory' 
 								class="form-control" placeholder="Nombre" 
@@ -58,6 +69,17 @@
 							<input type="text" id="txtDescripcionUserStory" name='txtDescripcionUserStory' 
 								class="form-control" placeholder="Descripcion" 
 							    required>
+						</div>
+
+						<div style="height:50px; border-width:10px; padding-top: 10px" class="backLogUserStory">
+							{% if sprintBackLog != None %}
+								SprintBackLog: {{sprintBackLog.nombre}} - {{sprintBackLog.idSprintBackLog}}
+							{% else %}
+								SprintBackLog: Por asignar
+							{% endif %}
+						</div>
+						<div class="form-group py-2">	
+							<a href="/asignacionBackLog/{{email}}" id='btnAsignarBackLog' class="btn btn-info">Asignar SprintBackLog</a>
 						</div>
 
 						<div class="form-group py-2">
@@ -78,6 +100,7 @@
 							<th>Nombre</th>
 							<th>Descripcion</th>
 							<th>Asignado a</th>
+							<th>SprintBackLog</th>
 							<th colspan="2">Opciones</th>
 						</tr>
 					</thead>
@@ -97,7 +120,7 @@
 							{% endif %}
 
 
-
+							<td>{{us.sprintBackLog.nombre}}</td>		
 
 							<td><a href="/edicionUserStory/{{email}}/{{us.idUserStory}}" class="btn btn-info btnEditarUserStory">Editar</a></td>
 							<td><a href="/eliminarUserStory/{{email}}/{{us.idUserStory}}" class="btn btn-danger 
