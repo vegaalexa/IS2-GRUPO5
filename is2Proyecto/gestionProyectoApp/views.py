@@ -1712,6 +1712,32 @@ def userstory(request, emailAdmin):
                                             #'entity': listaUserStory
                                             })
 
+def edicionAsignacionBackLog(request, emailAdmin, idUserStory):
+    print('asginando backlog...')
+    dicBackLogSprintBL = getTodosLosBackLogYSprints()
+    
+    return render(request, 'editarAsignacionBackLogAUserStory.html', {
+                                    'email':emailAdmin,
+                                    'idUserStory': idUserStory,
+                                    'dic': dicBackLogSprintBL})
+    
+    
+def editarAsignacionBackLog(request, emailAdmin, idSprintBackLog, idUserStory):    
+    userStory = UserStory.objects.get(idUserStory=int(idUserStory))
+    # page = request.GET.get('page', 1)
+    
+    # try:
+    #     paginator = Paginator(listaUserStory, 5)
+    #     listaUserStory = paginator.page(page)
+    # except:
+    #     raise Http404
+    
+    sp = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
+    
+    return render(request, 'edicionUserStory.html', {'userStory': userStory,
+                                            'sprintBackLog': sp,
+                                            'email':emailAdmin})
+
 
 def asignacionBackLog(request, emailAdmin):
     print('asginando backlog...')
@@ -1812,17 +1838,20 @@ def edicionUserStory(request, emailAdmin, idUserStoryAEditar):
     userStory = UserStory.objects.get(idUserStory=idUserStoryAEditar)
     
     return render(request, 'edicionUserStory.html', {'userStory': userStory,
+                                            'sprintBackLog': userStory.sprintBackLog,
                                             'email':emailAdmin})
 
 
-def editarUserStory(request, emailAdmin, idUserStoryAEditar):
+def editarUserStory(request, emailAdmin, idUserStoryAEditar, idSprintBackLog):
     nombre = request.POST.get('txtNombreUserStory')
     descripcion = request.POST.get('txtDescripcionUserStory')
     
     userStory = UserStory.objects.get(idUserStory=idUserStoryAEditar)
+    sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
     
     userStory.nombre = nombre
     userStory.descripcion = descripcion
+    userStory.sprintBackLog = sprintBackLog
     userStory.save()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')

@@ -63,12 +63,15 @@ urlpatterns = [
     path('userstory/<emailAdmin>', views.userstory),
     path('registrarUserStory/<emailAdmin>/<idSprintBackLog>', views.registrarUserStory),
     path('edicionUserStory/<emailAdmin>/<idUserStoryAEditar>', views.edicionUserStory),
-    path('editarUserStory/<emailAdmin>/<idUserStoryAEditar>', views.editarUserStory),
+    path('editarUserStory/<emailAdmin>/<idUserStoryAEditar>/<idSprintBackLog>', views.editarUserStory),
     path('eliminarUserStory/<emailAdmin>/<idUserStoryAEliminar>', views.eliminarUserStory),
     path('cambiarEstadoUserStory/<emailAdmin>/<idUserStory>/<nuevoEstado>/<idSprintBackLog>', views.cambiarEstadoUserStory),
     path('cambiarEstadoUSDesdeKanban/<emailAdmin>/<idUserStory>/<nuevoEstado>/<idProyecto>', views.cambiarEstadoUSDesdeKanban),
     path('asignacionBackLog/<emailAdmin>', views.asignacionBackLog),
     path('asignarBackLog/<emailAdmin>/<idSprintBackLog>', views.asignarBackLog),
+    path('edicionAsignacionBackLog/<emailAdmin>/<idUserStory>', views.edicionAsignacionBackLog),
+    path('editarAsignacionBackLog/<emailAdmin>/<idSprintBackLog>/<idUserStory>', views.editarAsignacionBackLog),
+    
     #SPRINTBACKLOGS
     path('sprintBackLog/<emailAdmin>/<idBackLog>', views.sprintBackLog),
     path('registrarSprintBackLog/<emailAdmin>/<idBackLog>', views.registrarSprintBackLog),
