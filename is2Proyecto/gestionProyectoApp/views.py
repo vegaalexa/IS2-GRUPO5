@@ -1230,8 +1230,9 @@ def desasignarUserStorySprintBackLog(request, emailAdmin, idSprintBackLog, idUse
     sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLog)
     userStory = UserStory.objects.get(idUserStory=idUserStory)
     
-    userStory.sprintBackLog = None
-    userStory.save()
+    # userStory.sprintBackLog = None
+    # userStory.save()
+    userStory.delete()
     
     userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
     
@@ -1436,6 +1437,7 @@ def asignacionProyecto(request, emailAdmin):
     return render(request, 'asignacionProyecto.html', {
                                     'email':emailAdmin,
                                     'proyectos': proyectos})
+    
 
 
 def asignarProyecto(request, emailAdmin, idProyecto):
@@ -1689,6 +1691,55 @@ def userstory(request, emailAdmin):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
         
+    listaUserStory = UserStory.objects.all().order_by('sprintBackLog')
+    # page = request.GET.get('page', 1)
+    
+    # try:
+    #     paginator = Paginator(listaUserStory, 5)
+    #     listaUserStory = paginator.page(page)
+    # except:
+    #     raise Http404
+    
+    sprintBackLog = None
+    
+    
+    return render(request, 'userstory.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'UserStory',
+                                            'sprintBackLog': sprintBackLog
+                                            #'paginator': paginator,
+                                            #'entity': listaUserStory
+                                            })
+
+
+def asignacionBackLog(request, emailAdmin):
+    print('asginando backlog...')
+    dicBackLogSprintBL = getTodosLosBackLogYSprints()
+    
+    return render(request, 'asignacionBackLogAUserStory.html', {
+                                    'email':emailAdmin,
+                                    'dic': dicBackLogSprintBL})
+
+def getTodosLosBackLogYSprints():
+    listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    listaSprintBackLogs = []
+    dicBackLogSprintBL = {}
+    
+    for backLog in listaBackLogs:
+        listaSprintBackLogs = SprintBackLog.objects.filter(backLog_id=backLog.idBackLog)
+        dicBackLogSprintBL[backLog] = listaSprintBackLogs
+    
+    
+    return dicBackLogSprintBL
+
+
+def asignarBackLog(request, emailAdmin, idSprintBackLog):
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+        
     listaUserStory = UserStory.objects.all().order_by('idUserStory')
     # page = request.GET.get('page', 1)
     
@@ -1698,20 +1749,38 @@ def userstory(request, emailAdmin):
     # except:
     #     raise Http404
     
+    sp = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
+    
+    
     return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'
+                                            'nombrePantalla': 'UserStory',
+                                            'sprintBackLog': sp,
                                             #'paginator': paginator,
                                             #'entity': listaUserStory
                                             })
 
+ 
 
-def registrarUserStory(request, emailAdmin):
-    nombre = request.POST.get('txtNombreUserStory')
-    descripcion = request.POST.get('txtDescripcionUserStory')
+def registrarUserStory(request, emailAdmin, idSprintBackLog):
     
-    userStory = UserStory.objects.create(nombre=nombre, descripcion=descripcion)
+    
+    operacionExitosa = ''
+    mensaje = ''
+    
+    if int(idSprintBackLog) != 0:
+        nombre = request.POST.get('txtNombreUserStory')
+        descripcion = request.POST.get('txtDescripcionUserStory')
+        
+        sp = SprintBackLog.objects.get(idSprintBackLog=int(idSprintBackLog))
+        userStory = UserStory.objects.create(nombre=nombre, descripcion=descripcion, sprintBackLog=sp)
+        operacionExitosa = 'si'
+        mensaje = 'User Story registrado con exito'
+    else:
+        operacionExitosa = 'no'
+        mensaje = 'Debe asignarse un SprintBackLog'
+    
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
     
@@ -1731,7 +1800,9 @@ def registrarUserStory(request, emailAdmin):
     return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'
+                                            'nombrePantalla': 'UserStory',
+                                            'operacionExitosa':operacionExitosa,
+                                            'mensaje': mensaje
                                             #'paginator': paginator,
                                             #'entity': listaUserStory
                                             })
