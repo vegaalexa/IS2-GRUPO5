@@ -56,7 +56,7 @@ class BackLog(models.Model):
     descripcion = models.CharField(max_length=200, default='')
     idBackLog = models.IntegerField(primary_key=True, default=generarIdBackLog)
     proyecto = models.OneToOneField(Proyecto,on_delete=models.CASCADE,
-                                    null=False, blank=False)
+                                    null=True, blank=True)
     
    
     def __str__(self):
