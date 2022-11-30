@@ -33,7 +33,6 @@
     <h1>MODULO PROYECTO/BACKLOG</h1>
     <h4>{{email}}</h4>
 
-	{% if codigo == '0' %}
 		<h4>Permisos sobre "Backlog": &nbsp;
 			{% if permisosPorPantalla == None %}
 				Niguno
@@ -44,40 +43,49 @@
 			{% endif %}
 		</h4>
 
-		<br>
-		<div class="row">
-			<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-				<h3>Registrar Backlog</h3>
-				<div class="card">
-					<div class="card-body">
-						<form action="/registrarBackLog/{{email}}/{{proyecto.idProyecto}}/0" method="POST"> {% csrf_token%}
-							<div class="form-group py-2">
-								<input type="text" id="txtNombreBackLog" name='txtNombreBackLog' 
-									class="form-control" placeholder="Nombre" 
-									maxlength="50" required>
-							</div>
-							<div class="form-group py-2">
-								<input type="text" id="txtDescripcionBackLog" name='txtDescripcionBackLog' 
-									class="form-control" placeholder="Descripcion" 
-									required>
-							</div>
-							<div style="height:50px; border-width:10px; padding-top: 10px" class="proyectoBackLog">
-								Proyecto: {{proyecto.nombre}}
-							</div>
-							<div class="form-group py-2">
-								
-								<a href="/asignacionProyecto/{{email}}" id='btnAsignarProyecto' class="btn btn-info">Asignar proyecto</a>
-							</div>
+		
+		{% if codigo != '1' %}
+			<br>
+			<div class="row">
+				<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+					<h3>Registrar Backlog</h3>
+					<div class="card">
+						<div class="card-body">
+							<form action="/registrarBackLog/{{email}}/{{proyecto}}/{{descripcionProyecto}}" method="POST"> {% csrf_token%}
+								<div class="form-group py-2">
+									<input type="text" id="txtNombreBackLog" name='txtNombreBackLog' 
+										class="form-control" placeholder="Nombre" 
+										maxlength="50" required>
+								</div>
+								<div class="form-group py-2">
+									<input type="text" id="txtDescripcionBackLog" name='txtDescripcionBackLog' 
+										class="form-control" placeholder="Descripcion" 
+										required>
+								</div>
+								<div style="height:50px; border-width:10px; padding-top: 10px" class="proyectoBackLog">
+									<strong>
+										
+										{% if proyecto != 'None' %}
+											Proyecto: {{proyecto}}
+										{% else %}
+											Proyecto: Por asignar
+										{% endif %}
+									</strong>
+								</div>
+								<div class="form-group py-2">
+									
+									<a href="/asignacionProyecto/{{email}}" id='btnAsignarProyecto' class="btn btn-info">Asignar proyecto</a>
+								</div>
 
-							<div class="form-group py-2">
-								<button type="submit" class="btn btn-success btn-block text-white btnGuardarBackLog">Guardar</button>
-							</div>
-						</form>
+								<div class="form-group py-2">
+									<button type="submit" class="btn btn-success btn-block text-white btnGuardarBackLog">Guardar</button>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
-			</div>
-		{% endif %}
-        
+        {% endif %}
+		
 		<div id="divListadoBackLog" class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
 			<h3>Listado de Backlogs</h3>
 			<div class="table-responsive py-2">
@@ -105,7 +113,7 @@
 								<td><a href="/edicionBackLog/{{email}}/{{bg.idBackLog}}/None/{{codigo}}" class="btn btn-info btnEditarBackLog">Editar</a></td>
 							{% endif %}
 							<td><a href="/sprintBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-info btnSprintBackLog">SprintBackLog</a></td>
-							<td><a href="/eliminarBackLog/{{email}}/{{bg.idBackLog}}/{{codigo}}" class="btn btn-danger
+							<td><a href="/eliminarBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-danger
 								btnEliminarBackLog btnEliminacion">Eliminar</a></td>
 						</tr>
 						{% endfor %}

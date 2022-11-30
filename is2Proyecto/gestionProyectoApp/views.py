@@ -1293,7 +1293,7 @@ def getSprintBackLogDisponibles():
 def backlog(request, emailAdmin, idProyecto, codigo):
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
 
-    proyecto = None
+    proyecto = 'None'
     listaBackLogs = []
     
     if int(codigo) == 0:
@@ -1319,16 +1319,17 @@ def backlog(request, emailAdmin, idProyecto, codigo):
                                         'proyecto':proyecto,
                                         'codigo': codigo})
     
-def registrarBackLog(request, emailAdmin, idProyecto, codigo):
+def registrarBackLog(request, emailAdmin, nombreProyecto, descripcionProyecto):
 
-    nombre = request.POST.get('txtNombreBackLog')
-    descripcion = request.POST.get('txtDescripcionBackLog')
+    nombreBackLog = request.POST.get('txtNombreBackLog')
+    descripcionBackLog = request.POST.get('txtDescripcionBackLog')
 
     #verificar en caso de que no tenga un proyecto
-    print(f'{nombre} {descripcion}')
-    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
-    print(f'proyecto {proyecto}')
-    backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion, proyecto=proyecto)
+    #print(f'{nombre} {descripcion}')
+    #proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    proyecto = Proyecto.objects.create(nombre=nombreProyecto, descripcion=descripcionProyecto)
+    #print(f'proyecto {proyecto}')
+    backLog = BackLog.objects.create(nombre=nombreBackLog, descripcion=descripcionBackLog, proyecto=proyecto)
         
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
@@ -1340,7 +1341,7 @@ def registrarBackLog(request, emailAdmin, idProyecto, codigo):
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'BackLog',
-                                        'codigo': codigo})
+                                        'proyecto': 'None'})
     
 
 def edicionBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
@@ -1391,7 +1392,7 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
                                         'codigo': codigo})
 
 
-def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
+def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
     #obtenemos el BackLog correspondiente
     backLog = None
     try:
@@ -1412,13 +1413,15 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
     
     #eliminamos el backLog
     if backLog:
+        proyecto = Proyecto.objects.get(idProyecto=backLog.proyecto_id)
+        proyecto.delete()
         backLog.delete()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     listaBackLogs = []
-    if int(codigo) == 0:
-        listaBackLogs = BackLog.objects.all().order_by('idBackLog')
+    #if int(codigo) == 0:
+    listaBackLogs = BackLog.objects.all().order_by('idBackLog')
         
         
     if len(permisosPorPantalla) == 0:
@@ -1427,27 +1430,38 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar, codigo):
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'BackLog',
-                                        'codigo': codigo})
+                                        'nombrePantalla': 'BackLog'
+                                        #'codigo': codigo
+                                        })
 
 
 def asignacionProyecto(request, emailAdmin):
-    proyectos = getProyectosSinBackLog()
+    print('asginando proyecto a backlog...')
     
+    permisosPorPantalla = []
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+
     return render(request, 'asignacionProyecto.html', {
                                     'email':emailAdmin,
-                                    'proyectos': proyectos})
-    
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'Proyecto'})
 
 
-def asignarProyecto(request, emailAdmin, idProyecto):
+def asignarProyecto(request, emailAdmin):
     permisosPorPantalla = []
+
+    nombreProyecto = request.POST.get('txtNombreProyecto')
+    descripcion = request.POST.get('txtDescripcionProyecto')
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
 
     listaBackLogs = BackLog.objects.all().order_by('idBackLog')
 
-    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    #proyecto = Proyecto.objects.get(idProyecto=idProyecto)
     
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
@@ -1459,8 +1473,8 @@ def asignarProyecto(request, emailAdmin, idProyecto):
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'BackLog',
-                                        'proyecto':proyecto,
-                                        'codigo': codigo})
+                                        'proyecto': nombreProyecto,
+                                        'descripcionProyecto': descripcion})
 
 
 
@@ -1561,28 +1575,6 @@ def asignarBackLogAProyecto(request, emailAdmin):
                                     'nombrePantalla': 'Proyecto'})
     
     
-    '''
-    nombre = request.POST.get('txtNombreBackLog')
-    descripcion = request.POST.get('txtDescripcionBackLog')
-
-    #verificar en caso de que no tenga un proyecto
-    print(f'{nombre} {descripcion}')
-    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
-    print(f'proyecto {proyecto}')
-    backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion, proyecto=proyecto)
-        
-    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
-    
-    if len(permisosPorPantalla) == 0:
-        permisosPorPantalla = None
-    
-    listaBackLogs = BackLog.objects.all().order_by('idBackLog') 
-    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
-                                        'email':emailAdmin,
-                                        'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'BackLog',
-                                        'codigo': codigo})
-    '''
     
 def registrarProyectoAbm(request, emailAdmin, nombreBackLog, descripcionBackLog):
     nombre = request.POST.get('txtNombreProyecto')
@@ -1605,6 +1597,7 @@ def registrarProyectoAbm(request, emailAdmin, nombreBackLog, descripcionBackLog)
 
 def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
     #obtenemos el Proyecto correspondiente
+    backLog = BackLog.objects.get(proyecto_id=idProyectoAbmAEliminar)
     proyectoAbm = Proyecto.objects.get(idProyecto=idProyectoAbmAEliminar)
     
     #tabla intermedia entre Proyecto y Usuario (relacion M-M)
@@ -1621,6 +1614,7 @@ def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
     
     #eliminamos el proyecto
     proyectoAbm.delete()
+    backLog.delete()
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
