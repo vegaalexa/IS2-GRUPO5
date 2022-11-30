@@ -1497,10 +1497,12 @@ def getProyectosSinBackLog():
 
 #Home del modulo
 def proyecto(request, emailAdmin):
-    return render(request, 'proyecto.html', {'email': emailAdmin})
+    backLog = None
+    return render(request, 'proyecto.html', {'email': emailAdmin,
+                                             'backLog': backLog})
 
 #ABM de Proyecto
-def proyectoAbm(request, emailAdmin):
+def proyectoAbm(request, emailAdmin, backLog):
     permisosPorPantalla = []
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
@@ -1508,18 +1510,86 @@ def proyectoAbm(request, emailAdmin):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
     
+    print(f'type: {type(backLog)}')
+    
     listaProyectoAbm = Proyecto.objects.all().order_by('idProyecto') #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
+                                    'backLog': backLog,
+                                    'nombrePantalla': 'Proyecto'})
+    
+
+def asignacionBackLogAProyecto(request, emailAdmin):
+    print('asginando backlog a proyecto...')
+    
+    permisosPorPantalla = []
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+
+    return render(request, 'asignacionBackLogAProyecto.html', {
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'BackLog'})
+    
+
+def asignarBackLogAProyecto(request, emailAdmin):
+    nombre = request.POST.get('txtNombreBackLog')
+    descripcion = request.POST.get('txtDescripcionBackLog')
+    
+    #backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion)
+    #backLog.delete()
+    
+    permisosPorPantalla = []
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
+    #print(f'type: {type(backLog)}')
+    
+    listaProyectoAbm = Proyecto.objects.all().order_by('idProyecto') #En models.py está creado el modelo como Proyecto
+    return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
+                                    'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'backLog': nombre,
+                                    'descripcion': descripcion,
                                     'nombrePantalla': 'Proyecto'})
     
     
-def registrarProyectoAbm(request, emailAdmin):
+    '''
+    nombre = request.POST.get('txtNombreBackLog')
+    descripcion = request.POST.get('txtDescripcionBackLog')
+
+    #verificar en caso de que no tenga un proyecto
+    print(f'{nombre} {descripcion}')
+    proyecto = Proyecto.objects.get(idProyecto=idProyecto)
+    print(f'proyecto {proyecto}')
+    backLog = BackLog.objects.create(nombre=nombre, descripcion=descripcion, proyecto=proyecto)
+        
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
+    listaBackLogs = BackLog.objects.all().order_by('idBackLog') 
+    return render(request, 'backlog.html', {'backlogs': listaBackLogs,
+                                        'email':emailAdmin,
+                                        'permisosPorPantalla':permisosPorPantalla,
+                                        'nombrePantalla': 'BackLog',
+                                        'codigo': codigo})
+    '''
+    
+def registrarProyectoAbm(request, emailAdmin, nombreBackLog, descripcionBackLog):
     nombre = request.POST.get('txtNombreProyecto')
     descripcion = request.POST.get('txtDescripcionProyecto')
 
     proyectoAbm = Proyecto.objects.create(nombre=nombre, descripcion=descripcion)
+    backlog = BackLog.objects.create(nombre=nombreBackLog, descripcion=descripcionBackLog, proyecto=proyectoAbm)
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
@@ -1903,12 +1973,37 @@ def eliminarUserStory(request, emailAdmin, idUserStoryAEliminar):
                                             #'paginator': paginator,
                                             #'entity': listaUserStory
                                             })
-    
 
 def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSprintBackLog):
     userStory = UserStory.objects.get(idUserStory=idUserStory)
-    userStory.estado = nuevoEstado
-    userStory.save()
+
+    operacionExitosa = ''
+    mensaje = ''
+    band = False
+    
+    if siEsAdmin(emailAdmin):
+        band = True
+    else:
+        if userStory.usuario:
+            band = userStory.usuario.email == emailAdmin
+            
+            if band == False:
+                print(f'userStory.estado: {userStory.estado}')
+                print(f'nuevoEstado: {nuevoEstado}')
+                if nuevoEstado != 'Finalizado':
+                    band = True
+                else:
+                    operacionExitosa = 'no'
+                    mensaje = 'Solo el usuario asignado a este US puede finalizarlo'
+        else:
+            band = False
+            operacionExitosa = 'no'
+            mensaje = 'No tiene asignado ningun usuario'
+    
+    if band:
+        userStory.estado = nuevoEstado
+        userStory.save()
+        
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
     
@@ -1932,7 +2027,9 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
         return render(request, 'userstory.html', {'userstories': listaUserStory,
                                             'email':emailAdmin,
                                             'permisosPorPantalla': permisosPorPantalla,
-                                            'nombrePantalla': 'UserStory'
+                                            'nombrePantalla': 'UserStory',
+                                            'operacionExitosa': operacionExitosa,
+                                            'mensaje': mensaje
                                             #'paginator': paginator,
                                             #'entity': listaUserStory
                                             })
@@ -1949,9 +2046,37 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
 def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, idProyecto):
     #para este caso se asigna el estado desde el modulo PROYECTO / KANBAN
     userStory = UserStory.objects.get(idUserStory=idUserStory)
-    userStory.estado = nuevoEstado
-    userStory.save()
     
+    
+    operacionExitosa = ''
+    mensaje = ''
+    band = False
+
+    if siEsAdmin(emailAdmin):
+        band = True
+    else:
+        if userStory.usuario:
+            band = userStory.usuario.email == emailAdmin
+            
+            if band == False:
+                print(f'userStory.estado: {userStory.estado}')
+                print(f'nuevoEstado: {nuevoEstado}')
+                if nuevoEstado != 'Finalizado':
+                    band = True
+                else:
+                    operacionExitosa = 'no'
+                    mensaje = 'Solo el usuario asignado a este US puede finalizarlo'
+        else:
+            band = False
+            operacionExitosa = 'no'
+            mensaje = 'No tiene asignado ningun usuario'
+    
+    
+    if band == True:
+        print('Cambio de estado permitido...')
+        userStory.estado = nuevoEstado
+        userStory.save()
+        
     sprintBackLog = None
     userStoryAsignados = []
     try:
@@ -1979,9 +2104,13 @@ def cambiarEstadoUSDesdeKanban(request, emailAdmin, idUserStory, nuevoEstado, id
     return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
                                             'email':emailAdmin,
                                             'proyecto': proyecto,
-                                            'nombrePantalla': 'UserStory'})
+                                            'nombrePantalla': 'UserStory',
+                                            'operacionExitosa': operacionExitosa,
+                                            'mensaje': mensaje})
         
-    
+
+
+
 def getPermisosPorPantallaNuevo(emailAdmin, nombrePantalla):
     permisosPorPantalla = []
     permisosAsignados = []
@@ -2122,6 +2251,8 @@ def tableroKanban(request, emailAdmin, idProyecto):
     #permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
     sprintBackLog = None
     userStoryAsignados = []
+    mensaje = ''
+    operacionExitosa = ''
     try:
         #sprintBackLog = SprintBackLog.objects.get(estado='En curso')
         
@@ -2142,6 +2273,8 @@ def tableroKanban(request, emailAdmin, idProyecto):
         userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
     except:
         print('no existe ningun sprintbacklog en curso')
+        operacionExitosa = 'no'
+        mensaje = 'No existe ningun sprintbacklog en curso por mostrar'
         pass
     
     proyecto = Proyecto.objects.get(idProyecto = idProyecto)
@@ -2149,7 +2282,8 @@ def tableroKanban(request, emailAdmin, idProyecto):
     return render(request, 'tableroKanban.html', {'userstories': userStoryAsignados,
                                             'email':emailAdmin,
                                             'proyecto': proyecto,
-                                            'nombrePantalla': 'UserStory'})
+                                            'nombrePantalla': 'UserStory',
+                                            'mensaje': mensaje})
 
 
 def cambiarEstadoSprintBackLog(request, emailAdmin, idSprintBackLog, nuevoEstado):
