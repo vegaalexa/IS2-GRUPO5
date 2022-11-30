@@ -1645,7 +1645,8 @@ def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
     proyectoAbm.nombre = nombre
     proyectoAbm.descripcion = descripcion
     proyectoAbm.save()
-    
+    operacionExitosa = 'si'
+    mensaje = 'Se ha editado el proyecto con exito'
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
     if len(permisosPorPantalla) == 0:
@@ -1655,7 +1656,9 @@ def editarProyectoAbm(request, emailAdmin, idProyectoAbmAEditar):
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
-                                    'nombrePantalla': 'ProyectoAbm'})
+                                    'nombrePantalla': 'ProyectoAbm',
+                                    'operacionExitosa': operacionExitosa,
+                                    'mensaje': mensaje})
     
     
 
