@@ -48,8 +48,8 @@ urlpatterns = [
     path('asignacionProyecto/<emailAdmin>', views.asignacionProyecto),
     path('asignarProyecto/<emailAdmin>/<idProyecto>', views.asignarProyecto),
     #PROYECTO
-    path('proyectoAbm/<emailAdmin>', views.proyectoAbm),
-    path('registrarProyectoAbm/<emailAdmin>', views.registrarProyectoAbm),
+    path('proyectoAbm/<emailAdmin>/<backLog>', views.proyectoAbm),
+    path('registrarProyectoAbm/<emailAdmin>/<nombreBackLog>/<descripcionBackLog>', views.registrarProyectoAbm),
     path('eliminarProyectoAbm/<emailAdmin>/<idProyectoAbmAEliminar>', views.eliminarProyectoAbm),
     path('edicionProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.edicionProyectoAbm),
     path('editarProyectoAbm/<emailAdmin>/<idProyectoAbmAEditar>', views.editarProyectoAbm),
@@ -71,7 +71,9 @@ urlpatterns = [
     path('asignarBackLog/<emailAdmin>/<idSprintBackLog>', views.asignarBackLog),
     path('edicionAsignacionBackLog/<emailAdmin>/<idUserStory>', views.edicionAsignacionBackLog),
     path('editarAsignacionBackLog/<emailAdmin>/<idSprintBackLog>/<idUserStory>', views.editarAsignacionBackLog),
-    
+    #ASIGNACION BACKLOG A PROYECTO
+    path('asignacionBackLogAProyecto/<emailAdmin>', views.asignacionBackLogAProyecto),
+    path('asignarBackLogAProyecto/<emailAdmin>', views.asignarBackLogAProyecto),
     #SPRINTBACKLOGS
     path('sprintBackLog/<emailAdmin>/<idBackLog>', views.sprintBackLog),
     path('registrarSprintBackLog/<emailAdmin>/<idBackLog>', views.registrarSprintBackLog),
