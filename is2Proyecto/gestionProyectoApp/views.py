@@ -349,6 +349,8 @@ def editarRol(request, emailAdmin, idRolAEditar):
 
 def verRolesAsignados(request, emailAdmin, emailUsuario):
     rolesAsignados = getRolesAsignados(emailUsuario)
+
+    
     dic = {}
     dicRolesPermisos = {}
     
@@ -360,26 +362,32 @@ def verRolesAsignados(request, emailAdmin, emailUsuario):
         
         if len(permisosAsignadosARol) == 0:
             print('Error: este rol no tiene ningun permiso asociado')
-            break
+            dic_temp = {}
+            dic_temp[''] = 'Este rol no tiene permisos asignados'
+            dicRolesPermisos[rolAsignado] = dic_temp
+            continue
         
         p_aux = permisosAsignadosARol[0]
         permisosTipos = ''
         dic = {}
+        
+        print(f'ROL: {rolAsignado}')
         for p in permisosAsignadosARol:
-            if str(p.descripcion) != str(p_aux.descripcion):
-                dic[str(p_aux.descripcion)] = permisosTipos
+            if str(p.formulario) != str(p_aux.formulario):
+                dic[str(p_aux.formulario)] = permisosTipos
                 p_aux = p
                 permisosTipos = ''
                 
             permisosTipos = permisosTipos + p.tipo + ' '
 
-        dic[str(p_aux.descripcion)] = permisosTipos
+        dic[str(p_aux.formulario)] = permisosTipos
         dicRolesPermisos[rolAsignado] = dic
        
-    #print('--------------')
-    #for clave in dicRolesPermisos.keys(): 
-    #    for clave1 in dicRolesPermisos[clave].keys():
-    #        print(f'{clave} {clave1} {dicRolesPermisos[clave][clave1]}')
+    print('--------------')
+    for clave in dicRolesPermisos.keys(): 
+        print('****************')
+        for clave1 in dicRolesPermisos[clave].keys():
+           print(f'{clave} {clave1} {dicRolesPermisos[clave][clave1]}')
     
     return render(request, 'rolesAsignados.html', {
                                     'email':emailAdmin,
@@ -1344,18 +1352,18 @@ def registrarBackLog(request, emailAdmin, nombreProyecto, descripcionProyecto):
                                         'proyecto': 'None'})
     
 
-def edicionBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
+def edicionBackLog(request, emailAdmin, idBackLogAEditar, codigo):
     backLog = BackLog.objects.get(idBackLog=idBackLogAEditar)
     
     listaBackLogs = []
     if int(codigo) == 0:
         listaBackLogs = BackLog.objects.all().order_by('idBackLog')
     else:
-        listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
+        listaBackLogs.append(BackLog.objects.get(proyecto_id=backLog.proyecto_id))
     
     return render(request, 'edicionBackLog.html', {'backLog': backLog,
                                             'email':emailAdmin,
-                                            'idProyecto': idProyecto,
+                                            'idProyecto': backLog.proyecto_id,
                                             'codigo': codigo})  
     
 
@@ -1370,11 +1378,16 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
     backLog.descripcion = descripcion
     backLog.save()
     
+    operacionExitosa = 'si'
+    mensaje = 'Edicion exitosa'
+    
     proyecto = None
     listaBackLogs = []
     if int(codigo) == 0:
+        print('codigo 0')
         listaBackLogs = BackLog.objects.all().order_by('idBackLog')
     else:
+        print('codigo no 0')
         listaBackLogs.append(BackLog.objects.get(proyecto_id=idProyecto))
         proyecto = Proyecto.objects.get(idProyecto=idProyecto)
     
@@ -1389,7 +1402,9 @@ def editarBackLog(request, emailAdmin, idBackLogAEditar, idProyecto, codigo):
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'BackLog',
                                         'proyecto':proyecto,
-                                        'codigo': codigo})
+                                        'codigo': codigo,
+                                    'operacionExitosa': operacionExitosa,
+                                    'mensaje': mensaje})
 
 
 def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):

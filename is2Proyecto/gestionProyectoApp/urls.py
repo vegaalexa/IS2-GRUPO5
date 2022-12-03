@@ -41,7 +41,7 @@ urlpatterns = [
     #BACKLOG
     path('backlog/<emailAdmin>/<idProyecto>/<codigo>', views.backlog),
     path('registrarBackLog/<emailAdmin>/<nombreProyecto>/<descripcionProyecto>', views.registrarBackLog),
-    path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>/<idProyecto>/<codigo>', views.edicionBackLog),
+    path('edicionBackLog/<emailAdmin>/<idBackLogAEditar>/<codigo>', views.edicionBackLog),
     path('editarBackLog/<emailAdmin>/<idBackLogAEditar>/<idProyecto>/<codigo>', views.editarBackLog),
     path('eliminarBackLog/<emailAdmin>/<idBackLogAEliminar>', views.eliminarBackLog),
     #BACKLOG: ASIGNACION CON PROYECTO

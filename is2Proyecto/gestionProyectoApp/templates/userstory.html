@@ -72,11 +72,13 @@
 						</div>
 
 						<div style="height:50px; border-width:10px; padding-top: 10px" class="backLogUserStory">
-							{% if sprintBackLog != None %}
-								SprintBackLog: {{sprintBackLog.nombre}} - {{sprintBackLog.idSprintBackLog}}
-							{% else %}
-								SprintBackLog: Por asignar
-							{% endif %}
+							<strong>
+								{% if sprintBackLog != None %}
+									SprintBackLog: {{sprintBackLog.nombre}} - {{sprintBackLog.idSprintBackLog}}
+								{% else %}
+									SprintBackLog: Por asignar
+								{% endif %}
+							</strong>
 						</div>
 						<div class="form-group py-2">	
 							<a href="/asignacionBackLog/{{email}}" id='btnAsignarSprintBackLog' class="btn btn-info">Asignar SprintBackLog</a>
@@ -113,10 +115,10 @@
 						
 							{% if us.usuario_id == None %}
 								<td><a href="#"
-									class="btn btn-secondary" style="width: 70%;">por asignar</a></td>
+									class="btn btn-secondary" style="width: 85%;">por asignar</a></td>
 							{% else %}
 								<td><a href="#"
-									class="btn btn-secondary" style="width: 70%;">{{us.usuario_id}}</a></td>
+									class="btn btn-secondary" style="width: 85%;">{{us.usuario_id}}</a></td>
 							{% endif %}
 
 

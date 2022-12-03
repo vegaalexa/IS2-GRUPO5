@@ -49,6 +49,13 @@
 			<div class="row">
 				<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
 					<h3>Registrar Backlog</h3>
+					{% if operacionExitosa != 'None' %}
+						{% if operacionExitosa == 'si' %}
+							<h4 style="color: green;">{{mensaje}}</h4>
+						{% else %}
+							<h4 style="color: red;">{{mensaje}}</h4>
+						{% endif %}
+					{% endif %}
 					<div class="card">
 						<div class="card-body">
 							<form action="/registrarBackLog/{{email}}/{{proyecto}}/{{descripcionProyecto}}" method="POST"> {% csrf_token%}
@@ -108,9 +115,9 @@
 							<td>{{bg.descripcion}}</td>
 							<td>{{bg.proyecto.nombre}}</td>
 							{% if proyecto != None %}
-								<td><a href="/edicionBackLog/{{email}}/{{bg.idBackLog}}/{{proyecto.idProyecto}}/{{codigo}}" class="btn btn-info btnEditarBackLog">Editar</a></td>
+								<td><a href="/edicionBackLog/{{email}}/{{bg.idBackLog}}/{{codigo}}" class="btn btn-info btnEditarBackLog">Editar</a></td>
 							{% else %}
-								<td><a href="/edicionBackLog/{{email}}/{{bg.idBackLog}}/None/{{codigo}}" class="btn btn-info btnEditarBackLog">Editar</a></td>
+								<td><a href="/edicionBackLog/{{email}}/{{bg.idBackLog}}/{{codigo}}" class="btn btn-info btnEditarBackLog">Editar</a></td>
 							{% endif %}
 							<td><a href="/sprintBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-info btnSprintBackLog">SprintBackLog</a></td>
 							<td><a href="/eliminarBackLog/{{email}}/{{bg.idBackLog}}" class="btn btn-danger
