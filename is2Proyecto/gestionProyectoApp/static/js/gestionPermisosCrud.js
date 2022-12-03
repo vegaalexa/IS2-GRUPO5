@@ -20,8 +20,11 @@ function habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla){
     eliminar(permisosPorPantalla, nombrePantalla);
     leer(permisosPorPantalla, nombrePantalla);
 
-    if(nombrePantalla == 'BackLog'){
+    if(nombrePantalla == 'BackLog' ){
         asignar(permisosPorPantalla, 'Proyecto');
+    }
+    else if(nombrePantalla == 'Proyecto'){
+        asignar(permisosPorPantalla, 'BackLog');
     }
 }
 
