@@ -23,6 +23,7 @@ from django.utils.dateparse import parse_date
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.http import Http404
+from datetime import timedelta
 
 estado = False
 #ASIGNACION
@@ -923,8 +924,27 @@ def  cerrarSprintBackLog(sprintBackLog):
 def registrarSprintBackLog(request, emailAdmin, idBackLog):
     nombre = request.POST.get('txtNombreSprintBackLog')
     descripcion = request.POST.get('txtDescripcionSprintBackLog')
-    fechaInicio = parse_date(request.POST.get('fechaInicio'))
-    fechaFin = parse_date(request.POST.get('fechaFin'))
+
+    fechaInicio= request.POST.get('fechaInicio')
+    fechaFin= request.POST.get('fechaFin')
+    hayFechaPorDefecto = False
+
+    if fechaInicio == '' or fechaFin == '':
+        print('Agregamos por defecto las fecha por defecto a 2 semanas')
+        hayFechaPorDefecto = True
+        getSprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('-fechaFin')
+        ultimoSBL = getSprintBackLogs[0]
+        fechaFinUltimo = ultimoSBL.fechaFin
+        #print(f'fechaFinUltimo: {fechaFinUltimo}')
+        #print(f'type: {type(fechaFinUltimo)}')
+        fechaInicio = fechaFinUltimo + timedelta(days = 1)
+        print(f'fechaInicioSiguiente: {fechaInicio}')
+        fechaFin = fechaFinUltimo + timedelta(days = 16)
+        print(f'fechaFinSiguiente: {fechaFin}')
+    else:
+        fechaInicio = parse_date(request.POST.get('fechaInicio'))
+        fechaFin = parse_date(request.POST.get('fechaFin'))
+        
     backLog = BackLog.objects.get(idBackLog=idBackLog)
     
     #se verifica que la fecha sea valida
@@ -947,8 +967,11 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
         else:
             sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
         
-        mensaje = 'Registro exitoso'
+        mensaje = 'Registro exitoso.'
         operacionExitosa = 'si'
+        
+        if hayFechaPorDefecto:
+            mensaje += ' Se agrego la fecha por DEFECTO A 2 SEMANAS'
     else:
         mensaje = 'Error: La fecha seleccionada ' + fechaInicio.strftime("%d-%m-%Y") + ' - ' + fechaFin.strftime("%d-%m-%Y") + ' se solapa con el SprintBackLog: '
         mensaje += esValida[1].nombre  + ' - '  + str(esValida[2]) + ' - ' + str(esValida[3])
