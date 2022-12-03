@@ -26,6 +26,9 @@ function habilitarDeshabilitarCRUD(permisosPorPantalla, nombrePantalla){
     else if(nombrePantalla == 'Proyecto'){
         asignar(permisosPorPantalla, 'BackLog');
     }
+    else if(nombrePantalla == 'UserStory'){
+        asignar(permisosPorPantalla, 'SprintBackLog');
+    }
 }
 
 
