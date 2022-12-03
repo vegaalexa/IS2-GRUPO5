@@ -791,7 +791,7 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     #    cerrarSprintBackLog(sprintBackLog)
     
     listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
-    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
     
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
