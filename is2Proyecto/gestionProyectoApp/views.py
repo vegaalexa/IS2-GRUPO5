@@ -932,15 +932,24 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
     if fechaInicio == '' or fechaFin == '':
         print('Agregamos por defecto las fecha por defecto a 2 semanas')
         hayFechaPorDefecto = True
-        getSprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('-fechaFin')
+        siVacio = False
+        try:
+            getSprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('-fechaFin')
+        except:
+            siVacio = True
+        
         ultimoSBL = getSprintBackLogs[0]
         fechaFinUltimo = ultimoSBL.fechaFin
         #print(f'fechaFinUltimo: {fechaFinUltimo}')
         #print(f'type: {type(fechaFinUltimo)}')
-        fechaInicio = fechaFinUltimo + timedelta(days = 1)
-        print(f'fechaInicioSiguiente: {fechaInicio}')
-        fechaFin = fechaFinUltimo + timedelta(days = 16)
-        print(f'fechaFinSiguiente: {fechaFin}')
+        if siVacio == False:
+            fechaInicio = fechaFinUltimo + timedelta(days = 1)
+            print(f'fechaInicioSiguiente: {fechaInicio}')
+            fechaFin = fechaFinUltimo + timedelta(days = 16)
+            print(f'fechaFinSiguiente: {fechaFin}')
+        else:
+            fechaInicio = datetime.date.today()
+            fechaFin = fechaInicio + timedelta(days = 16)
     else:
         fechaInicio = parse_date(request.POST.get('fechaInicio'))
         fechaFin = parse_date(request.POST.get('fechaFin'))
