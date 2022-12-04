@@ -1075,7 +1075,7 @@ def finalizarSprintBackLog(request, emailAdmin, idSprintBackLog):
                 siguienteSprintBL.estado = 'C'
                 siguienteSprintBL.save()
                 
-                actualizarFechasSprintBackLog(listaSprintBackLog, indice + 1)
+                actualizarFechasSprintBackLog(listaSprintBackLog, datetime.date.today(), indice + 1)
             else:
                 esElUltimoSprintBackLog = True 
             
@@ -1120,9 +1120,31 @@ def finalizarSprintBackLog(request, emailAdmin, idSprintBackLog):
                                         'mensaje': mensaje,
                                         'operacionExitosa':operacionExitosa})
     
-def actualizarFechasSprintBackLog(listaSprintBackLog, indiceNuevo):
+def actualizarFechasSprintBackLog(listaSprintBackLog, fechaFinAnterior, indiceNuevo):
     actual = listaSprintBackLog[indiceNuevo]
-    print(f'diferencia entre fechas: {actual.fechaFin - actual.fechaInicio}')
+    #obtenemos la deferencia de dias entre la fecha de finalizacion del sprint actual
+    #e incio del siguiente
+    diferenciasDias = actual.fechaInicio - fechaFinAnterior
+    # print(f'tipo: {type(actual.fechaInicio)}')
+    # print(f'tipo: {type(fechaFinAnterior)}')
+    # print(f'tipo: {type(diferenciasDias)}')
+    # print(f'diferencia entre fechas: {diferenciasDias}')
+    # print(f'diferencia entre fechas: {diferenciasDias.days}')
+
+    print('Nuevas fechas para los SprintBackLogs')
+    if diferenciasDias.days > 0:
+        for i in range(indiceNuevo, len(listaSprintBackLog)):
+            #adelantamos los sprints de acuerdo a la cantidad de dias
+
+            listaSprintBackLog[i].fechaInicio = fechaFinAnterior
+            listaSprintBackLog[i].fechaFin = listaSprintBackLog[i].fechaFin - timedelta(days = diferenciasDias.days)
+            listaSprintBackLog[i].save()
+                
+            fechaFinAnterior = listaSprintBackLog[i].fechaFin
+            
+            print(f'inicio1: {listaSprintBackLog[i].fechaInicio} - fin1: {listaSprintBackLog[i].fechaFin}')
+            fechaFinAnterior = fechaFinAnterior + timedelta(days = 1)
+        
     
 def edicionSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEditar)
