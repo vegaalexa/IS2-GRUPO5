@@ -83,9 +83,18 @@ def registrarUsuario(request, emailAdmin):
     email = request.POST.get('txtEmail')
     
     usuario = Usuario.objects.create(nombre=nombre, email=email)
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'usuario')
+    print(f'permisosPorPantalla: {permisosPorPantalla}')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
-                                            'email':emailAdmin})
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'Usuario'})
 
 
 def eliminarUsuario(request, emailAdmin, emailAEliminar):
