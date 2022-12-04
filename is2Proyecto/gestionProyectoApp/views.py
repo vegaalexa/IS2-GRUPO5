@@ -282,7 +282,6 @@ def registrarRol(request, emailAdmin):
     
     rol = Rol.objects.create(nombre=nombre, descripcion=descripcion)
     
-    
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'rol')
     
     if len(permisosPorPantalla) == 0:
@@ -351,10 +350,16 @@ def editarRol(request, emailAdmin, idRolAEditar):
     rol.descripcion = descripcion
     rol.save()
     
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'rol')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     listaRoles = Rol.objects.all().order_by('idRol')
     return render(request, 'rol.html', {'roles': listaRoles,
-                                            'email':emailAdmin})
-    
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla':permisosPorPantalla,
+                                            'nombrePantalla': 'Rol'})
 
 
 def verRolesAsignados(request, emailAdmin, emailUsuario):
