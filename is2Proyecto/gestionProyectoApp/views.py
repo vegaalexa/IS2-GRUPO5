@@ -108,6 +108,13 @@ def eliminarUsuario(request, emailAdmin, emailAEliminar):
         if usuarioRol.usuario_id == emailAEliminar:
             usuarioRol.delete()
     
+    
+    usuariosProyectos = UsuariosProyectos.objects.all()
+    #eliminamos todos las asociaciones entre el usuario a eliminar y sus roles
+    for usuarioProyecto in usuariosProyectos:
+        if usuarioProyecto.usuario_id == emailAEliminar:
+            usuarioProyecto.delete()
+    
     #eliminamos el usuario
     usuario.delete()
     
