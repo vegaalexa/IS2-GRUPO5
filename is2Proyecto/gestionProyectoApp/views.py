@@ -934,15 +934,15 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
         hayFechaPorDefecto = True
         siVacio = False
         try:
-            getSprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('-fechaFin')
+            sprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('-fechaFin')
         except:
             siVacio = True
         
-        ultimoSBL = getSprintBackLogs[0]
-        fechaFinUltimo = ultimoSBL.fechaFin
-        #print(f'fechaFinUltimo: {fechaFinUltimo}')
-        #print(f'type: {type(fechaFinUltimo)}')
         if siVacio == False:
+            ultimoSBL = sprintBackLogs[0]
+            fechaFinUltimo = ultimoSBL.fechaFin
+            #print(f'fechaFinUltimo: {fechaFinUltimo}')
+            #print(f'type: {type(fechaFinUltimo)}')
             fechaInicio = fechaFinUltimo + timedelta(days = 1)
             print(f'fechaInicioSiguiente: {fechaInicio}')
             fechaFin = fechaFinUltimo + timedelta(days = 16)
@@ -1042,8 +1042,6 @@ def finalizarSprintBackLog(request, emailAdmin, idSprintBackLog):
         if userStoryEstanFinalizados:
             mensaje = 'SprintBackLog finalizado exitosamente'
             
-            
-
             #listamos todos los SprintBackLog
             listaSprintBackLog = SprintBackLog.objects.filter(backLog_id=sprintBackLog.backLog_id).order_by('fechaInicio')
             
@@ -1076,6 +1074,8 @@ def finalizarSprintBackLog(request, emailAdmin, idSprintBackLog):
                 #iniciamos el siguiente sprint
                 siguienteSprintBL.estado = 'C'
                 siguienteSprintBL.save()
+                
+                actualizarFechasSprintBackLog(listaSprintBackLog, indice + 1)
             else:
                 esElUltimoSprintBackLog = True 
             
@@ -1119,6 +1119,10 @@ def finalizarSprintBackLog(request, emailAdmin, idSprintBackLog):
                                         'nombrePantalla': 'SprintBackLog',
                                         'mensaje': mensaje,
                                         'operacionExitosa':operacionExitosa})
+    
+def actualizarFechasSprintBackLog(listaSprintBackLog, indiceNuevo):
+    actual = listaSprintBackLog[indiceNuevo]
+    print(f'diferencia entre fechas: {actual.fechaFin - actual.fechaInicio}')
     
 def edicionSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     sprintBackLog = SprintBackLog.objects.get(idSprintBackLog=idSprintBackLogAEditar)
