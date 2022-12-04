@@ -1375,17 +1375,21 @@ def registrarBackLog(request, emailAdmin, nombreProyecto, descripcionProyecto):
     #print(f'proyecto {proyecto}')
     backLog = BackLog.objects.create(nombre=nombreBackLog, descripcion=descripcionBackLog, proyecto=proyecto)
         
+    codigo = '0'
+    
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'backlog')
     
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
-    
+        
+        
     listaBackLogs = BackLog.objects.all().order_by('idBackLog') 
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'BackLog',
-                                        'proyecto': 'None'})
+                                        'proyecto': 'None',
+                                        'codigo': codigo})
     
 
 def edicionBackLog(request, emailAdmin, idBackLogAEditar, codigo):
@@ -1457,6 +1461,8 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
     except:
         pass
     
+    codigo = '0'
+    
     #eliminamos todos las asociaciones entre el BackLog a eliminar y sus SprintBackLog
     for sprintBackLog in sprintBackLogs:
         if int(sprintBackLog.backLog_id) == int(idBackLogAEliminar):
@@ -1481,8 +1487,8 @@ def eliminarBackLog(request, emailAdmin, idBackLogAEliminar):
     return render(request, 'backlog.html', {'backlogs': listaBackLogs,
                                         'email':emailAdmin,
                                         'permisosPorPantalla':permisosPorPantalla,
-                                        'nombrePantalla': 'BackLog'
-                                        #'codigo': codigo
+                                        'nombrePantalla': 'BackLog',
+                                        'codigo': codigo
                                         })
 
 
