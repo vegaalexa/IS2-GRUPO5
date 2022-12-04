@@ -328,9 +328,16 @@ def eliminarRol(request, emailAdmin, idRolAEliminar):
     #eliminamos el rol
     rol.delete()
     
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'rol')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     listaRol = Rol.objects.all().order_by('idRol')
     return render(request, 'rol.html', {'roles': listaRol,
-                                            'email':emailAdmin})
+                                            'email':emailAdmin,
+                                    'permisosPorPantalla':permisosPorPantalla,
+                                    'nombrePantalla': 'Rol'})
     
     
 def edicionRol(request, emailAdmin, idRolAEditar):
