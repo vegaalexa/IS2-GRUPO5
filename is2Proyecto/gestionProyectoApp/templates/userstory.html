@@ -55,21 +55,11 @@
 			{% endif %}
 			<div class="card">
 				<div class="card-body">
-					{% if sprintBackLog != None %}
-						<form action="/registrarUserStory/{{email}}/{{sprintBackLog.idSprintBackLog}}" method="POST"> {% csrf_token%}
-					{% else %}
-						<form action="/registrarUserStory/{{email}}/0" method="POST"> {% csrf_token%}
-					{% endif %}
-						<div class="form-group py-2">
-							<input type="text" id="txtNombreUserStory" name='txtNombreUserStory' 
-								class="form-control" placeholder="Nombre" 
-								maxlength="50" required>
-						</div>
-                        <div class="form-group py-2">
-							<input type="text" id="txtDescripcionUserStory" name='txtDescripcionUserStory' 
-								class="form-control" placeholder="Descripcion" 
-							    required>
-						</div>
+						{% if sprintBackLog != None %}
+							<form action="/registrarUserStory/{{email}}/{{sprintBackLog.idSprintBackLog}}" method="POST"> {% csrf_token%}
+						{% else %}
+							<form action="/registrarUserStory/{{email}}/0" method="POST"> {% csrf_token%}
+						{% endif %}
 
 						<div style="height:50px; border-width:10px; padding-top: 10px" class="backLogUserStory">
 							<strong>
@@ -83,6 +73,18 @@
 						<div class="form-group py-2">	
 							<a href="/asignacionBackLog/{{email}}" id='btnAsignarSprintBackLog' class="btn btn-info">Asignar SprintBackLog</a>
 						</div>
+						<div class="form-group py-2">
+							<input type="text" id="txtNombreUserStory" name='txtNombreUserStory' 
+								class="form-control" placeholder="Nombre" 
+								maxlength="50" required>
+						</div>
+                        <div class="form-group py-2">
+							<input type="text" id="txtDescripcionUserStory" name='txtDescripcionUserStory' 
+								class="form-control" placeholder="Descripcion" 
+							    required>
+						</div>
+
+						
 
 						<div class="form-group py-2">
 							<button type="submit" class="btn btn-success btn-block text-white btnGuardarUserStory">Guardar</button>
