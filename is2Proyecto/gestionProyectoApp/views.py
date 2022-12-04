@@ -970,6 +970,10 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
         if hoy >= fechaInicio and hoy <= fechaFin:
             sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,
                                                 estado = 'C', fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
+            
+            proyecto = Proyecto.objects.get(idProyecto = backLog.proyecto_id)
+            proyecto.estado = 'C'
+            proyecto.save()
         elif fechaInicio < hoy and fechaFin < hoy:
             sprintBackLog = SprintBackLog.objects.create(nombre=nombre, descripcion=descripcion,
                                                 estado = 'F', fechaInicio=fechaInicio, fechaFin=fechaFin, backLog=backLog)
@@ -1178,6 +1182,12 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
         #si la fecha de hoy se encuentra en el rango de fechas, entonces lo marcamos EN CURSO
         if hoy >= fechaInicio and hoy <= fechaFin:
             sprintBackLog.estado = 'C'
+            
+            backLog = BackLog.objects.get(idBackLog = sprintBackLog.backLog_id)
+            proyecto = Proyecto.objects.get(idProyecto = backLog.proyecto_id)
+            proyecto.estado = 'C'
+            proyecto.save()
+            
         elif fechaInicio < hoy and fechaFin < hoy:
             sprintBackLog.estado = 'F'
         else:
