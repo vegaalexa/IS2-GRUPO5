@@ -945,11 +945,11 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
             #print(f'type: {type(fechaFinUltimo)}')
             fechaInicio = fechaFinUltimo + timedelta(days = 1)
             print(f'fechaInicioSiguiente: {fechaInicio}')
-            fechaFin = fechaFinUltimo + timedelta(days = 16)
+            fechaFin = fechaFinUltimo + timedelta(days = 15)
             print(f'fechaFinSiguiente: {fechaFin}')
         else:
             fechaInicio = datetime.date.today()
-            fechaFin = fechaInicio + timedelta(days = 16)
+            fechaFin = fechaInicio + timedelta(days = 15)
     else:
         fechaInicio = parse_date(request.POST.get('fechaInicio'))
         fechaFin = parse_date(request.POST.get('fechaFin'))
