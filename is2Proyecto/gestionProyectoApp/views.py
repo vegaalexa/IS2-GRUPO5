@@ -1525,7 +1525,8 @@ def asignarProyecto(request, emailAdmin):
                                         'permisosPorPantalla':permisosPorPantalla,
                                         'nombrePantalla': 'BackLog',
                                         'proyecto': nombreProyecto,
-                                        'descripcionProyecto': descripcion})
+                                        'descripcionProyecto': descripcion,
+                                        'codigo': codigo})
 
 
 
