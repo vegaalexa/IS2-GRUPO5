@@ -933,9 +933,9 @@ def registrarSprintBackLog(request, emailAdmin, idBackLog):
         print('Agregamos por defecto las fecha por defecto a 2 semanas')
         hayFechaPorDefecto = True
         siVacio = False
-        try:
-            sprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('-fechaFin')
-        except:
+
+        sprintBackLogs = SprintBackLog.objects.filter(backLog_id=int(idBackLog)).order_by('-fechaFin')
+        if len(sprintBackLogs) == 0:
             siVacio = True
         
         if siVacio == False:
