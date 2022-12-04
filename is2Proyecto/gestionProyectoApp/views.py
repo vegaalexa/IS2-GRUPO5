@@ -129,14 +129,43 @@ def editarUsuario(request, emailAdmin, emailAEditar):
     
     usuario = Usuario.objects.get(email=emailAEditar)
     usuario.nombre = nombre
-    usuario.email = email
-    usuario.save()
+    
+    if usuario.email == email:
+        print('son iguales')
+        usuario.email = email
+        usuario.save()
+    else:
+        print('son diferentes')
+        usuario_temp = Usuario.objects.create(nombre=nombre, email=email)
+        
+        actualizarProyectoUsuario(usuario.email, usuario_temp)
+        actualizarRolesUsuario(usuario.email, usuario_temp)
+        actualizarUserStoryUsuario(usuario.email, usuario_temp)
+        
+        usuario.delete()
     
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
                                             'email':emailAdmin})
     
     
+def actualizarProyectoUsuario(email, usuario_temp):
+    proyectos_query = UsuariosProyectos.objects.filter(usuario_id = email)
+    for p in proyectos_query:
+        p.usuario = usuario_temp
+        p.save()
+
+def actualizarRolesUsuario(email, usuario_temp):
+    roles_query = UsuariosRoles.objects.filter(usuario_id = email)
+    for r in roles_query:
+        r.usuario = usuario_temp
+        r.save()
+        
+def actualizarUserStoryUsuario(email, usuario_temp):
+    us_query = UserStory.objects.filter(usuario_id = email)
+    for us in us_query:
+        us.usuario = usuario_temp
+        us.save()
 #********************************************
 
 #Agregamos las vistas para ABM de los permisos
