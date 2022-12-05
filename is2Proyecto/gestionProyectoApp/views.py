@@ -118,9 +118,17 @@ def eliminarUsuario(request, emailAdmin, emailAEliminar):
     #eliminamos el usuario
     usuario.delete()
     
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'usuario')
+    print(f'permisosPorPantalla: {permisosPorPantalla}')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+    
     listaUsuarios = Usuario.objects.all()
     return render(request, 'usuario.html', {'usuarios': listaUsuarios,
-                                            'email':emailAdmin})
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'Usuario'})
 
 
 def edicionUsuario(request, emailAdmin, emailAEditar):
@@ -2412,9 +2420,13 @@ def tableroKanban(request, emailAdmin, idProyecto):
             if sbl.estado == 'C':
                 sprintBackLog = sbl
                 break
-        
         #obtenemos los UserStories relcionados a dicho SprintBackLog
         userStoryAsignados = getUserStoryAsignadosASprintBackLog(sprintBackLog.idSprintBackLog)
+        
+        if len(userStoryAsignados) == 0:
+            print('el sprintBackLog esta vacio')
+            operacionExitosa = 'no'
+            mensaje = 'El sprintBackLog esta vacio. Nada por mostrar'
     except:
         print('no existe ningun sprintbacklog en curso')
         operacionExitosa = 'no'
