@@ -1410,7 +1410,7 @@ def porAsignarUsuarioAUserStory(request, emailAdmin, idUserStory, email):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
         
-    listaUserStory = UserStory.objects.all().order_by('sprintBackLog')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
     sprintBackLog = None
     
     
@@ -1972,7 +1972,7 @@ def userstory(request, emailAdmin):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
         
-    listaUserStory = UserStory.objects.all().order_by('sprintBackLog')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
     # page = request.GET.get('page', 1)
     
     # try:
@@ -2047,7 +2047,7 @@ def asignarBackLog(request, emailAdmin, idSprintBackLog):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
         
-    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
     # page = request.GET.get('page', 1)
     
     # try:
@@ -2095,7 +2095,7 @@ def registrarUserStory(request, emailAdmin, idSprintBackLog):
         permisosPorPantalla = None
         
     
-    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
     # page = request.GET.get('page', 1)
     
     # try:
@@ -2141,7 +2141,7 @@ def editarUserStory(request, emailAdmin, idUserStoryAEditar, idSprintBackLog):
         permisosPorPantalla = None
         
         
-    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
     # page = request.GET.get('page', 1)
     
     # try:
@@ -2168,7 +2168,7 @@ def eliminarUserStory(request, emailAdmin, idUserStoryAEliminar):
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
         
-    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
     # page = request.GET.get('page', 1)
     
     # try:
@@ -2218,7 +2218,7 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
     
-    listaUserStory = UserStory.objects.all().order_by('idUserStory')
+    listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
     
     if len(permisosPorPantalla) == 0:
         permisosPorPantalla = None
@@ -2226,7 +2226,7 @@ def cambiarEstadoUserStory(request, emailAdmin, idUserStory, nuevoEstado, idSpri
     if int(idSprintBackLog) == 0:
         #para este caso se asigna el estado desde el modulo PROYECTO/ USER STORY
         print('1')
-        listaUserStory = UserStory.objects.all().order_by('idUserStory')
+        listaUserStory = UserStory.objects.all().order_by('idUserStory', 'sprintBackLog')
         # page = request.GET.get('page', 1)
         
         # try:
