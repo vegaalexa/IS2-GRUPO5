@@ -861,8 +861,8 @@ def sprintBackLog(request, emailAdmin, idBackLog):
     # if estado == False and sprintBackLog:
     #     thread = threading.Thread(target=cerrarSprintBackLog, kwargs={'sprintBackLog':sprintBackLog})
     #     thread.start()
-    #if sprintBackLog:
-    #    cerrarSprintBackLog(sprintBackLog)
+    if sprintBackLog:
+        cerrarSprintBackLog(sprintBackLog, '')
     
     listaSprintBackLogs = getSprintBackLogAsociados(idBackLog)
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'sprintbacklog')
@@ -877,7 +877,7 @@ def sprintBackLog(request, emailAdmin, idBackLog):
                                         'nombrePantalla': 'SprintBackLog'})
 
 
-def  cerrarSprintBackLog(sprintBackLog):
+def  cerrarSprintBackLog(sprintBackLog, fechaFin):
     '''
     VERIFICA CON UN HILO QUE QUE LA FECHA FIN DEL SPRINT
     SEA AUN MENOR A LA FECHA DE HOY PARA QUE SEA VALIDO,
@@ -890,10 +890,16 @@ def  cerrarSprintBackLog(sprintBackLog):
     hoy = datetime.datetime.now().strftime("%Y-%m-%d")
     hoy = str(hoy)
     
-    #print(f'sprintBackLog: {sprintBackLog}')
+    print(f'sprintBackLog: {sprintBackLog}')
     #print(f'fecha fin: {str(sprintBackLog.fechaFin)}')
-    fechaFin = str(sprintBackLog.fechaFin)
+    if fechaFin == '':
+        fechaFin = str(sprintBackLog.fechaFin)
+    else:
+        fechaFin = str(fechaFin)
+        
+    print(f'hoy: {hoy} - fechaFin: {fechaFin}')
     if hoy > fechaFin:
+        print('deberia de finalizar...')
             #continue
         #print('.')
         #sleep(delay)
@@ -936,6 +942,8 @@ def  cerrarSprintBackLog(sprintBackLog):
             #iniciamos el siguiente sprint
             siguienteSprintBL.estado = 'C'
             siguienteSprintBL.save()
+            
+            actualizarFechasSprintBackLog(listaSprintBackLog, datetime.date.today(), indice + 1)
         else:
             esElUltimoSprintBackLog = True
             
@@ -1236,13 +1244,15 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
     mensaje = None
     operacionExitosa = ''
     if esValida[0]:
-        #if sprintBackLog.estado == 'C':
-        #    cerrarSprintBackLog(sprintBackLog)
             
             
         #se crear el SprintBackLog asociandolo a un BackLog
         
         hoy = datetime.date.today()
+        
+        if sprintBackLog.estado == 'C':
+            print('-----> valida?')
+            cerrarSprintBackLog(sprintBackLog, fechaFin)
         
         #si la fecha de hoy se encuentra en el rango de fechas, entonces lo marcamos EN CURSO
         if hoy >= fechaInicio and hoy <= fechaFin:
@@ -1263,7 +1273,14 @@ def editarSprintBackLog(request, emailAdmin, idSprintBackLogAEditar):
         sprintBackLog.nombre = nombre
         sprintBackLog.descripcion = descripcion
         sprintBackLog.fechaInicio = fechaInicio
+        
+        print(f'fecha fin: {fechaFin}')
+        
         sprintBackLog.fechaFin = fechaFin
+        
+        #print(f'fecha fin: {sprintBackLog.fechaFin}')
+        #print(f'estado: {sprintBackLog.estado}')
+            
         sprintBackLog.save()
         
         mensaje = 'Edicion exitosa'
