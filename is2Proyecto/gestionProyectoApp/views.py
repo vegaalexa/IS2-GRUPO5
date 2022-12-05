@@ -1360,11 +1360,19 @@ def verUserStorySprintBackLog(request, emailAdmin, idSprintBackLog):
     
     #traemos los user stories que ya fueron asignados a esta sprintBackLog
     userStoryAsignados = getUserStoryAsignadosASprintBackLog(idSprintBackLog)
+    operacionExitosa = ''
+    mensaje = ''
+
+    if(len(userStoryAsignados) == 0):
+        operacionExitosa = 'no'
+        mensaje = 'El sprintBackLog esta vacio. Nada por mostrar'
     
     return render(request, 'verUserStorySprintBackLog.html', {
                                     'email':emailAdmin,
                                     'sprintBackLog': sprintBackLog,
-                                    'userStories':userStoryAsignados})
+                                    'userStories':userStoryAsignados,
+                                    'operacionExitosa': operacionExitosa,
+                                    'mensaje': mensaje})
     
 
 def desasignarUserStorySprintBackLog(request, emailAdmin, idSprintBackLog, idUserStory):

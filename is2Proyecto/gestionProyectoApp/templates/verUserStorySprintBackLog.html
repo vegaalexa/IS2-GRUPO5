@@ -9,6 +9,13 @@
 	</h4>
     <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
         <h3>Listado de User Stories</h3>
+        {% if operacionExitosa != 'None' %}
+            {% if operacionExitosa == 'si' %}
+                <h4 style="color: green;">{{mensaje}}</h4>
+            {% else %}
+                <h4 style="color: red;">{{mensaje}}</h4>
+            {% endif %}
+        {% endif %}
         <div class="table-responsive py-2">
             <table class='table table-striped'>
                 <thead>
