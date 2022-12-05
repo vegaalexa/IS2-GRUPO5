@@ -116,10 +116,11 @@
 							<td>{{us.descripcion}}</td>
 						
 							{% if us.usuario_id == None %}
-								<td><a href="#"
+								<!-- <td><a href="#" -->
+								<td><a href="/porAsignacionUsuarioAUserStory/{{email}}/{{us.idUserStory}}"
 									class="btn btn-secondary" style="width: 85%;">por asignar</a></td>
 							{% else %}
-								<td><a href="#"
+								<td><a href="/porAsignacionUsuarioAUserStory/{{email}}/{{us.idUserStory}}"
 									class="btn btn-secondary" style="width: 85%;">{{us.usuario_id}}</a></td>
 							{% endif %}
 

@@ -71,6 +71,8 @@ urlpatterns = [
     path('asignarBackLog/<emailAdmin>/<idSprintBackLog>', views.asignarBackLog),
     path('edicionAsignacionBackLog/<emailAdmin>/<idUserStory>', views.edicionAsignacionBackLog),
     path('editarAsignacionBackLog/<emailAdmin>/<idSprintBackLog>/<idUserStory>', views.editarAsignacionBackLog),
+    path('porAsignacionUsuarioAUserStory/<email>/<idUserStory>', views.porAsignacionUsuarioAUserStory),
+    path('porAsignarUsuarioAUserStory/<emailAdmin>/<idUserStory>/<email>', views.porAsignarUsuarioAUserStory),
     #ASIGNACION BACKLOG A PROYECTO
     path('asignacionBackLogAProyecto/<emailAdmin>', views.asignacionBackLogAProyecto),
     path('asignarBackLogAProyecto/<emailAdmin>', views.asignarBackLogAProyecto),

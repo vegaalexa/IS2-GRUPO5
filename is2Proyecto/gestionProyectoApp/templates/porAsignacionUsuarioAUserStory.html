@@ -1,0 +1,54 @@
+{%extends './base.html'%}
+
+{% block title %} asignacion {% endblock %}
+
+{% block body %}
+    <h1>MODULO USER STORY/ASIGNAR USUARIO</h1>
+    <h4>{{email}}</h4>
+    <h4>User Story actual: {{userStory.nombre}} - {{userStory.idUserStory}}</h4>
+    <br>
+    <div class="row">
+		<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+			<h3>Listado de Usuarios por Proyecto</h3>
+			<div class="table-responsive py-2">
+				<table class='table table-striped'>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Nombre</th>
+							<th>Usuarios</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for proyecto, usuarios in dicProyectosUsuarios.items %}
+						<!-- Rol: {{rol}} <br>
+						Permiso: {{permiso}} <br> -->
+						<tr>
+							<td >{{forloop.counter}}</td>
+							<td>{{proyecto.nombre}}</td>
+
+							<td>
+								<table class='table table-striped'>
+									<tbody>
+										{% for u in usuarios %}
+											<tr>
+												<td>{{u.email}}</td>
+												<td>
+													<a href="/porAsignarUsuarioAUserStory/{{email}}/{{userStory.idUserStory}}/{{u.email}}" 
+														id='btnAsignarUStoryUsuario' class="btn btn-info">Asignar</a>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</td>
+
+							
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				</div>
+		</div>
+	</div>
+{% endblock %}

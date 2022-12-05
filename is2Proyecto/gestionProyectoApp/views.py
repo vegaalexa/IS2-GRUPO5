@@ -1373,6 +1373,57 @@ def verUserStorySprintBackLog(request, emailAdmin, idSprintBackLog):
                                     'userStories':userStoryAsignados,
                                     'operacionExitosa': operacionExitosa,
                                     'mensaje': mensaje})
+
+def porAsignacionUsuarioAUserStory(request, email, idUserStory):
+    userStory = UserStory.objects.get(idUserStory=int(idUserStory))
+    userStories = UserStory.objects.all()
+    
+    
+    proyectos = Proyecto.objects.all().order_by('idProyecto')
+    usuarios = []
+    dic = {}
+    for proyecto in proyectos:
+        usuariosProyectos = UsuariosProyectos.objects.filter(proyecto_id=proyecto.idProyecto)
+        usuarios = []
+        for u in usuariosProyectos:
+            usuarios.append(Usuario.objects.get(email=u.usuario_id))
+        
+        dic[proyecto] = usuarios
+        
+    return render(request, 'porAsignacionUsuarioAUserStory.html', {
+                                    'email':email,
+                                    'userStory': userStory,
+                                    'dicProyectosUsuarios': dic})
+    
+    
+def porAsignarUsuarioAUserStory(request, emailAdmin, idUserStory, email):
+    userStory = UserStory.objects.get(idUserStory=int(idUserStory))
+    usuario = Usuario.objects.get(email=email)
+    
+    #asignamos el usuario al user story
+    userStory.usuario = usuario
+    userStory.save()
+    
+    
+    permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'userstory')
+    
+    if len(permisosPorPantalla) == 0:
+        permisosPorPantalla = None
+        
+    listaUserStory = UserStory.objects.all().order_by('sprintBackLog')
+    sprintBackLog = None
+    
+    
+    return render(request, 'userstory.html', {'userstories': listaUserStory,
+                                            'email':emailAdmin,
+                                            'permisosPorPantalla': permisosPorPantalla,
+                                            'nombrePantalla': 'UserStory',
+                                            'sprintBackLog': sprintBackLog
+                                            })
+    
+    
+    
+    
     
 
 def desasignarUserStorySprintBackLog(request, emailAdmin, idSprintBackLog, idUserStory):
