@@ -57,7 +57,7 @@
 					<form action="/registrarProyectoAbm/{{email}}/{{backLog}}/{{descripcion}}" method="POST"> {% csrf_token%}
 						<div style="height:50px; border-width:10px; padding-top: 10px" class="backLogProyecto">
 							<strong>
-								{% if backLog != 'None' %}
+								{% if backLog != 'None' and backLog != None %}
 									BackLog: {{backLog}}
 								{% else %}
 									BackLog: Por asignar

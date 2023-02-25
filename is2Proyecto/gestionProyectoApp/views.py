@@ -1762,6 +1762,7 @@ def proyectoAbm(request, emailAdmin, backLog):
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
                                     'backLog': backLog,
+                                    'descripcion': None,
                                     'nombrePantalla': 'Proyecto'})
     
 
@@ -1811,19 +1812,35 @@ def registrarProyectoAbm(request, emailAdmin, nombreBackLog, descripcionBackLog)
     nombre = request.POST.get('txtNombreProyecto')
     descripcion = request.POST.get('txtDescripcionProyecto')
 
-    proyectoAbm = Proyecto.objects.create(nombre=nombre, descripcion=descripcion)
-    backlog = BackLog.objects.create(nombre=nombreBackLog, descripcion=descripcionBackLog, proyecto=proyectoAbm)
+    print(f'nombreBackLog: {type(nombreBackLog)}')
+    print(f'descripcionBackLog: {type(descripcionBackLog)}')
+    
+    
+    operacionExitosa = 'si'
+    mensaje = 'Si registro satisfactoriamente un nuevo proyecto'
+    
+    if nombreBackLog == 'None' or descripcionBackLog == 'None':
+        operacionExitosa = 'no'
+        mensaje = 'Error: se debe de agregar un backlog para crear un proyecto'
+    else:
+        proyectoAbm = Proyecto.objects.create(nombre=nombre, descripcion=descripcion)
+        backlog = BackLog.objects.create(nombre=nombreBackLog, descripcion=descripcionBackLog, proyecto=proyectoAbm)
     
     permisosPorPantalla = getPermisosPorPantallaNuevo(emailAdmin, 'proyecto')
     
-    if len(permisosPorPantalla) == 0:
+    
+    if len(permisosPorPantalla) == 0: 
         permisosPorPantalla = None
     
     listaProyectoAbm = Proyecto.objects.all().order_by('idProyecto') #En models.py está creado el modelo como Proyecto
     return render(request, 'proyectoAbm.html', {'proyectos': listaProyectoAbm,
                                     'email':emailAdmin,
                                     'permisosPorPantalla':permisosPorPantalla,
-                                    'nombrePantalla': 'ProyectoAbm'})
+                                    'nombrePantalla': 'ProyectoAbm',
+                                    'operacionExitosa': operacionExitosa,
+                                    'mensaje': mensaje,
+                                    'backLog': None,
+                                    'descripcion': None,})
 
 
 def eliminarProyectoAbm(request, emailAdmin, idProyectoAbmAEliminar):
